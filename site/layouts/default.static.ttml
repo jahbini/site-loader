@@ -1,0 +1,33 @@
+---
+front: "matter"
+_options:
+  partials:
+---
+{tag,section,footer} = require "teacup"
+doctype 5
+html ->
+  head ->
+    title "someNewTitle" + 'front - ' + options.front
+    meta "http-equiv": "content-type", content: "text/html; charset=utf-8"
+    meta name: "description", content: ""
+    meta name: "viewport", content: "width=device-width"
+    base href: "/"
+    meta name: "keywords", content: ""
+    link rel: "stylesheet", href: "stylesheets/app.css"
+    script src: 'javascripts/vendor.js'
+    script src: 'javascripts/app.js'
+    script "require('initialize');"
+  body ->
+    header "data-id":"header"
+    section ".app-container", "data-id":"app"
+    comment "The Main template"
+    div "#main.wrapper.style4", ->
+      div ".container", ->
+        div ".row", ->
+          comment "Content"
+          div "#content.eight.columns", ->
+            raw options.content
+          comment "Sidebar"
+          div "#sidebar.four.columns", ->
+            a href:'showit', "this is contents of sidebar"
+    tag 'footer', "data-id":"footer"

@@ -1,0 +1,55 @@
+---
+id: 58
+className: Story
+created: '2010-11-14 14:34:03'
+lastEdited: '2010-11-14 16:02:17'
+title: 'And the Pursuit of Happiness'
+published: '2010-11-14 16:02:17'
+category: story
+nextID: 0
+previousID: 0
+_options:
+  layout: /Users/jim/static-site-development/stjohnsjim/site/layouts/default.static.ttml
+  partials: ""
+slug: and-the-pursuit-of-happiness
+---
+<p>[First Name], my closest friends have lamented that I&rsquo;m not telling MY story.&nbsp; What&rsquo;s happening in Jim&rsquo;s life?&nbsp; While the details are incredibly boring, Not Safe For Work (NSFW), and would simply be indiscrete to mention here, I can give you a pretty accurate view of &ldquo;whassup!?&rdquo; &nbsp;So while <em>The St. John's Lighthouse</em> is me telling the story of St. John's, I thought I'd mention what St. John's most famous citizen (me) is up to.</p>
+<p >I&rsquo;m sitting in the James John Cafe,&nbsp; Suzanne delivers my exquisite entree and says &ldquo;Sorry for the wait.&rdquo;</p>
+
+<p >Southwick falls from the ceiling, dusts himself off and misquotes Yoda sideways: &ldquo;No, there is no wait.&nbsp; Only enjoy.&nbsp; Enjoy or Enjoy NOT.&rdquo; &mdash; That&rsquo;s one&rsquo;s an easy choice at the James John Cafe.</p>
+
+<p >I&rsquo;m enjoying the beets and horseradish.&nbsp; I have just finished rereading Tom Robbins&rsquo; Jitterbug Perfume and seemingly, <a target="_blank" href="http://twitter.com/StJohnsJim/status/3872848519110656">beets</a> are everywhere.&nbsp; But what else do I do with my time?</p>
+
+<p >I spend much of my time distilling reality.&nbsp; I do that with reflection, introspection, observation, and writing. Why? How?&nbsp; Hmmm.&nbsp; It&rsquo;s that <i>Life, Liberty and the Pursuit of Happiness</i> thing.</p>
+
+<p ><i>LIfe, liberty, and the pursuit of happiness.</i>&nbsp; Nice.&nbsp; not much overlap among these concepts.&nbsp; That&rsquo;s intelligent.&nbsp; It shows an underlying passion for clarity and completeness in the service of enlightenment.&nbsp; That&rsquo;s why we love Ben Franklin and Thomas Jefferson.</p>
+
+<p >But let&rsquo;s not forget <em><a target="_blank" href="http://www.rallytorestoresanity.com/">Domestic Tranquillity</a></em>.</p>
+<p >Mighty nice, Mr. <a target="_blank" href="http://www.google.com/search?rls=en&amp;q=rupert+murdoch+australia&amp;ie=UTF-8&amp;oe=UTF-8">Furriner</a> from Australia, &nbsp;sewing such seeds of domestic discord as your Fox Gnus does.&nbsp; Maybe you could learn from another <a target="_blank" href="http://gov.ca.gov/about/arnold">Furriner</a>, &nbsp;who seems to ooze domestic tranquility, if not total prosperity for the state of California.</p>
+
+<p >Mr. Mega-corpo-politician, is it simply more profitable to sew and harvest discord than sanity? &nbsp;That's just sad.</p>
+<p >And, by the way, when you are being <a target="_blank" href="http://romancecapitol.com">domestic</a>, be also <a target="_blank" href="http://en.wikipedia.org/wiki/Love_the_One_You're_With">tranquil</a>.&nbsp; OK, [first Name]?</p>
+
+<p ><em>Life</em>:&nbsp; That has to do with protection, health, safety, food supply.</p>
+
+<p >Speaking of Food Supply, protection and such: Southwick says Tommy put workman&rsquo;s overalls on 6 foot amoeba.&nbsp; Tried to get the thing served at the Food Carts.&nbsp; Tommy has evidently been using the Storage Center as a safe-house for amoeba&rsquo;s.</p>
+
+<p ><em>Liberty</em>:&nbsp; That has to do with [First Name]-created choices and the ability to follow through with those choices.</p>
+
+<p >Bambi Brew over at the City Council affirms that the businesses do have the liberty to refuse service to these ungodly amoebas.&nbsp; &ldquo;St. John&rsquo;s is amoeba free!&rdquo;</p>
+
+<p ><i>Pursuit of Happiness</i>:&nbsp; <i>Pursuit</i> &mdash; an ongoing goal directed action.&nbsp; <i>Happiness</i>.&nbsp; Specifically, deliberately, understandably vague.&nbsp; Who knows what the heck it is?&nbsp; We all know what may make ourselves happy, or at least we think we do.&nbsp; But we can only guess at what might make someone else happy. &nbsp;<em>Who knows what is your Happiness</em>? &nbsp;I've got the answer right here: Lemme look this up... Oh, here it is it's, umm, &nbsp;&quot;[First Name]&quot;. &nbsp;I'm sure you've met.</p>
+
+<p >Tommy is also <i>Pursuing Happiness</i> with the ladies who run the &ldquo;Kiss and Tell&rdquo; concessions at the Hope for Health bar and vomitorium.&nbsp; He seems to equate the one-night-stand with heaven and anything longer as hell.</p>
+
+<p >The choice of happiness cannot be made by the Government.&nbsp; The gov can do all it can to assure a playing field where Life, Liberty, and the Pursuit of Happiness are possible.&nbsp; Whether it actually does it&rsquo;s part is certainly debatable.</p>
+
+<p >The point is that the gov can neither choose, nor pursue happiness for you.</p>
+
+<p >But [First Name], you might be asking: &ldquo;How is this about St. John&rsquo;s Jim&rsquo;s life?&rdquo; &mdash; Well, here it is:</p>
+
+<p >I&rsquo;ll define happiness myself, thank you.&nbsp; At this time in my life, it has to do with channeling whatever wisdom I may possess and putting that wisdom out into the universe and seeing what sticks.&nbsp; Along with as many jokes as I can think of.&nbsp; I can&rsquo;t rely on the rut any more, so I&rsquo;m furiously finding if I have a groove.</p>
+
+<p >I&rsquo;m enjoying Life, Liberty and the Pursuit of Happiness.&nbsp; As much as possible.&nbsp; And I&rsquo;ll do that as long as I&rsquo;m able: They haven&rsquo;t ground me down yet.&nbsp; I&rsquo;ll survive and thrive, like Jitterbug Perfume&rsquo;s King Alobar, I&rsquo;ll be an undigestible <a target="_blank" href="http://twitter.com/StJohnsJim/status/3872848519110656">beet</a> in our society&rsquo;s alimentary canal.</p>
+
+<p >How about you?&nbsp;</p>

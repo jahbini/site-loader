@@ -1,0 +1,22 @@
+{
+  "name": "stjohnsjim",
+  "version": "1.0.0",
+  "description": "Stories from portland",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "portland",
+    "stories"
+  ],
+  "author": "James Hinds",
+  "license": "ISC",
+  "devDependencies": {
+    "minimist": "^1.2.0",
+    "slug": "^0.9.1",
+    "underscore": "^1.8.3",
+    "yamljs": "^0.2.6",
+    "yamljs-front-matter": "git+https://github.com/chrisprice/yamljs-front-matter.git"
+  }
+}

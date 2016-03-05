@@ -1,0 +1,39 @@
+---
+id: 39
+className: Story
+created: '2010-10-26 16:15:26'
+lastEdited: '2010-10-27 23:55:34'
+title: 'St Johns Tweets'
+published: '2010-10-27 23:55:34'
+category: story
+nextID: 0
+previousID: 0
+_options:
+  layout: /Users/jim/static-site-development/stjohnsjim/site/layouts/default.static.ttml
+  partials: ""
+slug: st-johns-tweets
+---
+<p>&nbsp;<b>Follow @StJohnsJim:</b></p>
+<p >Jim's Note - If you want real brevity, I'd suggest Twitter. Here are some recent tweets from @StJohnsJim -- And for my promise to make up for the lack of belly laughs, I hope you find something to like here.&nbsp;</p>
+
+<ul>
+    <li ><span >Your spirituality is harvested off of the fruits of your emotional garden. Tend it well. <a href="http://celarien.com/"><span >http://celarien.com/</span></a>&nbsp;</span></li>
+    <li ><span >Reverend Sh*tPants is preaching on the corner: &quot;As... was is... was were&quot; and then he looks you in the eye.</span></li>
+    <li ><span >Let Reality test your faith in the bible. Not the bible test your faith in reality. The Celarien, 2010</span></li>
+    <li ><span ><a href="http://twitter.com/search?q=%23GeezerTalk"><span >#GeezerTalk</span></a></span><span > Cant forget what you forgot till you forget it.</span></li>
+    <li ><span >Endtimes got you down, Bunkie? Do we tell Rotwang to hit the switch labelled &quot;bang&quot; or &quot;whimper&quot;?</span></li>
+    <li ><span >Quasimodo Productions: If you know molten lead up the butt, then you know the blues.</span></li>
+    <li ><span >Flash! St. John's declares itself to be an amoeba free zone!</span></li>
+    <li ><span >North End Art Gallery, St. John's... Word.</span></li>
+    <li ><span >Thickest crema? Espresso Dopio at the James John Cafe. I, St. John's Jim, have spoken.</span></li>
+    <li ><span >The BIG fishing pond is the sea of human energy.</span></li>
+    <li ><span >Sign on trendy downtown Portland eatery: &quot;Tender fish eyelids in a broth of prawn antennae&quot;</span></li>
+    <li ><span >And what about the Early Classic: the Baa-Baa Sutras? Shepherd chonkUdonk's 123 positions to have sex with sheep?</span></li>
+    <li ><span >He loved the truth so much to have invented so many ways to have sex with it</span></li>
+    <li ><span >The shanghai tunnels of Portland are still used. Today you end up as an unpaid tester for Redmond WA</span></li>
+    <li ><span >Lost Wisdom of the Ancients, my patootie! If it was real wisdom, it would not be lost. Real wisdom sticks around because it is wise!</span></li>
+    <li ><span >When people use the word &quot;basically&quot; they are basically spewing BS.</span></li>
+    <li ><span >How did Scheherazade save herself from an insane middle eastern doom? -- Tell 'em stories! Lots. Farkle their brains!</span></li>
+    <li ><span >Can you teach a dog to fetch an imaginary stick?</span></li>
+    <li ><span >An unexamined mind is a hazardous place for the resident -- The Celarien</span></li>
+</ul>
