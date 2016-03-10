@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: mothers-day-and-the-parade-of-the-johns
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   'first name': 'first name'

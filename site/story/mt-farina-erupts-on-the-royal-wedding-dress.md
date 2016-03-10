@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: mt-farina-erupts-on-the-royal-wedding-dress
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

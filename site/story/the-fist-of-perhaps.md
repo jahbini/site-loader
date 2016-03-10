@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: the-fist-of-perhaps
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

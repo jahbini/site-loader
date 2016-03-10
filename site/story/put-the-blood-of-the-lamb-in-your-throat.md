@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: put-the-blood-of-the-lamb-in-your-throat
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   'first name': 'first name'

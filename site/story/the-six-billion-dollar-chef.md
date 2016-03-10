@@ -11,7 +11,7 @@ nextID: 0
 previousID: 0
 slug: the-six-billion-dollar-chef
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   author: author

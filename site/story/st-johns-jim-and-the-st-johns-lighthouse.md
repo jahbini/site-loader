@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: st-johns-jim-and-the-st-johns-lighthouse
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

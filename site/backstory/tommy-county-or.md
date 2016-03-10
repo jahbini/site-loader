@@ -11,7 +11,7 @@ nextID: 0
 previousID: 0
 slug: tommy-county-or
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   3gunas: 3gunas

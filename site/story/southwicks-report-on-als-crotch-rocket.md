@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: southwicks-report-on-als-crotch-rocket
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   'first name': 'first name'

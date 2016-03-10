@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: ex-employee-spring-given-forcible-escort-out-of
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   'first name': 'first name'

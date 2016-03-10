@@ -11,7 +11,7 @@ nextID: 0
 previousID: 0
 slug: the-catalyst-of-august
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   'first name': 'first name'

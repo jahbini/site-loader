@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: dishwasher-to-the-prickly-tickly
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   'first name': 'first name'

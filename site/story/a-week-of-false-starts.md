@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: a-week-of-false-starts
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   'comment,soto': 'comment,soto'

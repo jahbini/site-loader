@@ -49,7 +49,7 @@ upgradeStory = (story)->
         remove: /[.]/g
     # upgrade the options header for the layout engines
     story.set "_options",
-      layout: "site/layouts/default.coffee"
+      layout: "default"
       partials: ""
     # remove grandfather's styling
     content = story.get "content"

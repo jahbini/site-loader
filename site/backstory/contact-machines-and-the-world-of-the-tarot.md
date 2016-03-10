@@ -12,7 +12,7 @@ nextID: 0
 previousID: 0
 slug: contact-machines-and-the-world-of-the-tarot
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

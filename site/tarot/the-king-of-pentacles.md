@@ -12,7 +12,7 @@ nextID: 0
 previousID: 0
 slug: the-king-of-pentacles
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

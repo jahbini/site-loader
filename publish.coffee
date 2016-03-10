@@ -5,102 +5,95 @@ Backbone = require 'backbone'
 minimist = require 'minimist'
 ymljsFrontMatter = require 'yamljs-front-matter'
 path = require 'path'
+marked = require 'marked'
+marked.setOptions({
+  renderer: new marked.Renderer(),
+  gfm: true,
+  tables: true,
+  breaks: false,
+  pedantic: false,
+  sanitize: true,
+  smartLists: true,
+  smartypants: false
+});
 
 caseMunger = require 'slug'
 caseMunger.defaults.mode = 'rfc3986'
 caseMunger.remove = /[.]/g
 
 fs = require 'fs'
-{	copyTreeSync
-	walkTreeSync
+{  copyTreeSync
+  walkTreeSync
   walkSync} = require 'walk_tree'
 
 Story = Backbone.Model.extend idAttribute: 'title'
 AllStories = Backbone.Collection.extend model: Story, comparator: 'title'
 allStories = new AllStories
 
-site = path.resolve "./site"
+sitePath = path.resolve "./site"
+publicPath = path.resolve "../brunch-with-chaplin-static/public"
+appPath = path.resolve "../brunch-with-chaplin-static/app"
+templateName = 'default'
+Template = require "./site/layouts/#{templateName}"  # body...
+template = new Template Story,AllStories,publicPath,appPath
+
 testFile = (fileName)->
-	return fileName.match /\.md$/
+  return fileName.match /\.md$/
 
 getFile = (fileName)->
-	fileContents = fs.readFileSync fileName, encoding: "utf-8"
-	stuff = ymljsFrontMatter.parse fileContents
-	stuff.path = path.relative site, fileName
-	stuff.numericId = stuff.id
-	delete stuff.id
-	stuff.handle = stuff.Handle
-	delete stuff.Handle
-	stuff.content = stuff.__content
-	delete stuff.__content
-	allStories.push stuff
-	return
+  fileContents = fs.readFileSync fileName, encoding: "utf-8"
+  stuff = ymljsFrontMatter.parse fileContents
+  stuff.path = path.relative sitePath, fileName
+  if stuff.id
+    stuff.numericId = stuff.id
+    delete stuff.id
+  if stuff.Handle
+    stuff.handle = stuff.Handle
+    delete stuff.Handle
+  stuff.content = stuff.__content
+  delete stuff.__content
+  allStories.push stuff
+  return
 
-walkTreeSync site, testFile, getFile
+walkTreeSync sitePath, testFile, getFile
 
 allStories.sort()
 newYml = allStories.toJSON()
 newYml = yamljs.stringify newYml
-fs.writeFileSync 'story_xxx.yml', newYml
-return
-
+fs.writeFileSync 'story-published.yml', newYml
 
 kinds = {}
 try
-  fs.mkdirSync "public"
+  fs.mkdirSync path.resolve publicPath
 catch
 keyWords = {}
 
 expandStory = (story)->
-  if story.get 'debug'
-    debugger
-  partials = story.get 'partials'
-  template = story.get 'template'
-  for name, value of Object
-    partial = require "site/partials/#{name}"
-    try
-      story.set partial, (partial story)
-    catch error
-      console.log "partial #{partial} failed on #{story.get 'title'}"
-  template = require "site/templates/#{templateName}"  # body...
+  dir = "#{story.get 'category'}"
+  story.set 'href', "#{dir}/#{story.get 'slug'}.html"
+  content = story.get 'content'
+  cooked = marked content
+  story.set 'cooked', cooked
+  callAgain = false
   try
-    story.set "html", ( template story )
+    callAgain = template.analyze story
   catch error
     console.log "template #{templateName} failed on #{story.get 'title'}"
-
-
-writeStory = (story)->
-  if story.get 'debug'
-    debugger
-  content = story.get 'content'
-
-  head = story.clone().attributes
-  delete head.content
-  headMatter = ymljsFrontMatter.encode head, content
-  try
-    fs.mkdirSync "site/"+head.category
-  catch
-
-  fileName = "site/"+head.category+"/"+head.slug+".static.md"
-  fs.writeFileSync(fileName,headMatter )
-  return
+  return callAgain
 
 publishStory = (story)->
-  if story.get 'debug'
-    debugger
-  content = story.get 'html'
+  content = template.formatStory story
+  dir = "../brunch-with-chaplin-static/public"
+  fileName = "#{dir}/#{story.get 'href'}"
   try
-    fs.mkdirSync "site/"+story.get 'category'
-  catch
-  fileName = "site/"+head.category+"/"+head.slug+".html"
-  fs.writeFileSync(fileName,content )
+    try
+      fs.mkdirSync dir
+    catch
+    fs.writeFileSync(fileName,content )
+  catch nasty
+    console.log "Nasty Write to public #{fileName}:",nasty
   return
-
-
-#stories = yamljs.parseFile 'story.yml'
-#allStories = new AllStories
-#allStories.push stories
-
+###
 allStories.each (story)->
     try
       massageStory story
@@ -108,9 +101,22 @@ allStories.each (story)->
     catch e
       console.log "story had problems - #{story.get "title"}"
       console.log e
+###
+repeat = true
+while repeat
+  repeat = false
+  allStories.each (story)->
+      try
+        repeat |= expandStory story
+        console.log "massage OK: #{story.get "title"}"
+      catch e
+        console.log "story had problems - #{story.get "title"}"
+        console.log e
+
+template.summarize allStories
+
 allStories.each (story)->
     try
-      expandStory story
       publishStory story
       console.log "massage OK: #{story.get "title"}"
     catch e

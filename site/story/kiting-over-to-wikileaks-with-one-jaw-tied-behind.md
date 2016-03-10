@@ -11,7 +11,7 @@ nextID: 0
 previousID: 0
 slug: kiting-over-to-wikileaks-with-one-jaw-tied-behind
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

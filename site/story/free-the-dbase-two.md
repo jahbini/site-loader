@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: free-the-dbase-two
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: catchy-slogan-sunday
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: big-doins-at-the-hooker-derby
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   wheelwho: wheelwho

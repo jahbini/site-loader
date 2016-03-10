@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: saying-goodbye-to-air-with-writers-block
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

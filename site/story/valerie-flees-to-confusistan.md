@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: valerie-flees-to-confusistan
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   svtower: svtower

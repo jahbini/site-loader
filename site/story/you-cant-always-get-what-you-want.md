@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: you-cant-always-get-what-you-want
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   'first name': 'first name'

@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: shanghai-squirrels-poisons-poses-and-the-pioneer
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

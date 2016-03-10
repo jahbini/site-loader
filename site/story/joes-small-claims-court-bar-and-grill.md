@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: joes-small-claims-court-bar-and-grill
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   'first name': 'first name'

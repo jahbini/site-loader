@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: the-gift-of-who-are-you
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

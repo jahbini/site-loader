@@ -11,7 +11,7 @@ nextID: 0
 previousID: 0
 slug: from-the-st-johns-infirmary-the-bouncer
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

@@ -11,7 +11,7 @@ nextID: 0
 previousID: 0
 slug: southwicks-deep-background-report-on-3-gunas-lp
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

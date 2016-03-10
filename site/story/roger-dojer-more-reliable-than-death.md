@@ -12,7 +12,7 @@ nextID: 0
 previousID: 0
 slug: roger-dojer-more-reliable-than-death
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   'first name': 'first name'

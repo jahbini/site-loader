@@ -11,7 +11,7 @@ nextID: 0
 previousID: 0
 slug: halloween-2011-midnight-frights
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   halloeve: halloeve

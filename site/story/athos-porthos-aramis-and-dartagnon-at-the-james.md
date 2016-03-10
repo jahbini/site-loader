@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: athos-porthos-aramis-and-dartagnon-at-the-james
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: the-mana-vampire-2
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   'first name': 'first name'

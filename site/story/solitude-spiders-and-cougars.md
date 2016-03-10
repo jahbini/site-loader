@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: solitude-spiders-and-cougars
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

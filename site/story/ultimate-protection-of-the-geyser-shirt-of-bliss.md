@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: ultimate-protection-of-the-geyser-shirt-of-bliss
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

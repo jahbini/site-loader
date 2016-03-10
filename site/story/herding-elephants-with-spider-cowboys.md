@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: herding-elephants-with-spider-cowboys
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: of-gangs-and-angels
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

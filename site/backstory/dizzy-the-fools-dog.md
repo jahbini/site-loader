@@ -12,7 +12,7 @@ nextID: 0
 previousID: 0
 slug: dizzy-the-fools-dog
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

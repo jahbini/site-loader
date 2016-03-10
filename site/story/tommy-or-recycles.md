@@ -10,7 +10,7 @@ nextID: 0
 previousID: 0
 slug: tommy-or-recycles
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets: {  }
 ---

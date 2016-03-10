@@ -11,7 +11,7 @@ nextID: 0
 previousID: 177
 slug: tommys-web-catches-steven-and-bambi
 _options:
-  layout: site/layouts/default.coffee
+  layout: default
   partials: ""
 snippets:
   'first name': 'first name'
