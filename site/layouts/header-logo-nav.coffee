@@ -8,5 +8,4 @@ _options:
  tag,footer} = require "teacup"
 module.exports = renderable (story) ->
   options = story.attributes
-  debugger
   h2 "goodstuff from header-logo-nav"

@@ -16,7 +16,6 @@ snippets:
   'first name': 'first name'
   'sms,soto': 'sms,soto'
   'sms,voce': 'sms,voce'
-  tweetid: tweetid
 ---
 Hooray! {{{First Name}}}. I have finally broken through a culture wall in Oregon! There are several sub-cultures that co-exist in St. John’s, and I want to speak to, and speak about all of St. John’s culture groups. You know, it’s that bridge thing. I would love to add St. John’s large latino population, but alas, I speak little spanish, and even less mariachi.
 
@@ -63,9 +62,6 @@ All: “Yes!”
 Pic:”We have consensus! Ok, everybody, till next time: This meeting is now declared Animaniac!”
 
 > And with that, {{{First Name}}}, Yakko, Wakko, Dot and I bid you a grand and glorious “Animaniac” 
-
-> {{{tweetID:138689733718056961}}}
-
 
 
 [0]: http://www.google.com/imgres?imgurl=http://www.karinenglish.com/wp-content/uploads/2010/02/sand-mandala.jpg&amp;imgrefurl=http://www.karinenglish.com/%3Fm%3D201002&amp;h=450&amp;w=600&amp;sz=120&amp;tbnid=o4rkmlCy0S3HjM:&amp;tbnh=101&amp;tbnw=135&amp;prev=/images%3Fq%3Dsand%2Bmandala&amp;zoom=1&amp;q=sand+mandala&amp;usg=__Wjo8SPnSP4qUa2ZkFQASIxL1YD4=&amp;sa=X&amp;ei=GHwFTcztEZPWtQOuzaCaDQ&amp;ved=0CCYQ9QEwAg

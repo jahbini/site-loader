@@ -19,7 +19,7 @@ snippets:
 ---
 > I got a huge backlog of one or two sentence introductions to this issue of the St. John’s but none with even a hope of kick-starting my new MuseCycle 900.
 
-> -Everything from [> Raindeer Drug Raids][0]> , The [> AIDS of Jesus][1]>  (Look, I couldn't even dream of that stuff!) I even over heard the phrase "I'm getting a degree 'cause I'm not no douchbag" come out of the TV! But nothing worked.
+> -Everything from [Raindeer Drug Raids][0] , The [AIDS of Jesus][1]  (Look, I couldn't even dream up that stuff!) I even over heard the phrase "I'm getting a degree 'cause I'm not no douchbag" come out of the TV! But nothing worked.
 
 > -- Help. I need Wisdom, Inspiration, Continuity, Keen Emotions, Dialog, Compassion. I need my muse, queen of the seven chakras and nine tantras: W.I.C.K.E.D. Compassion.
 
@@ -33,7 +33,7 @@ Tommy had scammed me! Can you believe it? Scammed by my own comic creation? I kn
 
 I rushed over to Tommy, OR, and knocked. Tommy was hiding in the back. He does that sometimes, in case it’s a bible salesman or old girl friend. I thought: "Tommy, you simpleton, you have no idea who you are dealing with, I’m the fucking AUTHOR!"
 
-So I unleashed my signature ninja move, the hallowed {{{roar:_Roar of the Lion}}}_: “Southwick, open the door. Now. Where’s Tommy! What’s he done to my muse! Where is Wickie?”
+So I unleashed my signature ninja move, the hallowed _{{{roar:Roar of the Lion}}}_: “Southwick, open the door. Now. Where’s Tommy! What’s he done to my muse! Where is Wickie?”
 
 Southwick opened the door, and I went out back where Tommy was painting racing stripes on a caterpillar tractor.
 

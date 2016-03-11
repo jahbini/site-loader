@@ -68,15 +68,22 @@ try
 catch
 keyWords = {}
 
-expandStory = (story)->
+
+analyzeStory = (story)->
   dir = "#{story.get 'category'}"
   story.set 'href', "#{dir}/#{story.get 'slug'}.html"
   content = story.get 'content'
   cooked = marked content
   story.set 'cooked', cooked
-  callAgain = false
   try
-    callAgain = template.analyze story
+    template.analyze story
+  catch error
+    console.log "template #{templateName} failed on #{story.get 'title'}"
+  return
+
+expandStory = (story)->
+  try
+    callAgain = template.expand story
   catch error
     console.log "template #{templateName} failed on #{story.get 'title'}"
   return callAgain
@@ -93,32 +100,32 @@ publishStory = (story)->
   catch nasty
     console.log "Nasty Write to public #{fileName}:",nasty
   return
-###
+
+  
+console.log "analyzing stories"
 allStories.each (story)->
     try
-      massageStory story
-      console.log "massage OK: #{story.get "title"}"
+      analyzeStory story
     catch e
-      console.log "story had problems - #{story.get "title"}"
+      console.log "story analysis had problems - #{story.get "title"}"
       console.log e
-###
-repeat = true
-while repeat
-  repeat = false
-  allStories.each (story)->
-      try
-        repeat |= expandStory story
-        console.log "massage OK: #{story.get "title"}"
-      catch e
-        console.log "story had problems - #{story.get "title"}"
-        console.log e
+console.log "Expanding stories"
+
+allStories.each (story)->
+    try
+      expandStory story
+    catch e
+      console.log "story expansion had problems - #{story.get "title"}"
+      console.log e
 
 template.summarize allStories
 
+console.log "Publishing stories"
 allStories.each (story)->
     try
       publishStory story
-      console.log "massage OK: #{story.get "title"}"
     catch e
-      console.log "story had problems - #{story.get "title"}"
+      console.log "publish of story had problems - #{story.get "title"}"
       console.log e
+
+console.log "Publication complete."

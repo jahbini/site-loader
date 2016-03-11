@@ -1,5 +1,6 @@
 ---
 Handle: roar
+debug: snippet
 numericId: 28
 className: Story
 created: '2010-10-16 14:49:56'
@@ -10,10 +11,6 @@ category: story
 nextID: 0
 previousID: 0
 slug: the-kung-fu-lions-roar
-_options:
-  layout: default
-  partials: ""
-snippets: {  }
 ---
 (Writers Casebook: OMG! the Roast Vegetable Bread Pudding gave my mouth incredible joy! Thank you, James John Cafe -- may no one ever find out your secret location lest you run out of food. And you put up with my outbursts of laughter as I write.)
 
