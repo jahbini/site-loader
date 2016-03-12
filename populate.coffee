@@ -56,15 +56,15 @@ upgradeStory = (story)->
     content = content.replace /style="[^"]*"/g ,''
     content = content.replace /<p\s*>[&nbsp;|\s]*<\/p>/g, ''
     story.set content: content
+    content = story.get "content"
+    noBrakets = content.replace /\[/g,'{{{'
+    noBrakets = noBrakets.replace /\]/g,'}}}'
+    story.set "content", html2markdown noBrakets
 
 keyWords = {}
 massageStory = (story)->
   # we want to canvass all the stories to get the quiklinks
   upgradeStory story
-  content = story.get "content"
-  noBrakets = content.replace /\[/g,'{{{'
-  noBrakets = noBrakets.replace /\]/g,'}}}'
-  story.set "content", html2markdown noBrakets
   content = story.get "content"
   matched = content.match /{{{[^{}]*}}}/g
   snippets = story.get 'snippets'
