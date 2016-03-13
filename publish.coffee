@@ -31,10 +31,10 @@ AllStories = Backbone.Collection.extend model: Story, comparator: 'title'
 allStories = new AllStories
 
 sitePath = path.resolve "./site"
-publicPath = path.resolve "../brunch-with-chaplin-static/public"
-appPath = path.resolve "../brunch-with-chaplin-static/app"
+publicPath = path.resolve "public"
+appPath = path.resolve "app"
 templateName = 'default'
-Template = require "./site/layouts/#{templateName}"  # body...
+Template = require "./layouts/#{templateName}"  # body...
 template = new Template Story,AllStories,publicPath,appPath
 
 testFile = (fileName)->
@@ -90,8 +90,8 @@ expandStory = (story)->
 
 publishStory = (story)->
   content = template.formatStory story
-  dir = "../brunch-with-chaplin-static/public"
-  fileName = "#{dir}/#{story.get 'href'}"
+  dir = "#{publicPath}/#{story.get 'category'}"
+  fileName = "#{publicPath}/#{story.get 'href'}"
   try
     try
       fs.mkdirSync dir
@@ -101,7 +101,7 @@ publishStory = (story)->
     console.log "Nasty Write to public #{fileName}:",nasty
   return
 
-  
+
 console.log "analyzing stories"
 allStories.each (story)->
     try

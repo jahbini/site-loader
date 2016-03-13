@@ -29,7 +29,12 @@ try
   fs.mkdirSync "site"
 catch
 
-upgradeStory = (story)->
+###
+#V1 of upgradeStory == All stories of st john's jim have been upgraded
+# and no longer need this specific processing.  It remains here as
+# a record of what needed to be done, and a tempate of how to do stuff.
+###
+upgradeStoryOld = (story)->
   if story.get 'debug'
     debugger
   oldStyle = false
@@ -60,6 +65,33 @@ upgradeStory = (story)->
     noBrakets = content.replace /\[/g,'{{{'
     noBrakets = noBrakets.replace /\]/g,'}}}'
     story.set "content", html2markdown noBrakets
+
+
+###
+# second style change.  Minimal changes to header - remove old '_options'
+# Create inclusion sets for graph-walks, menu-lists, and such
+###
+upgradeStory = (story)->
+  if story.get 'debug'
+    debugger
+  if 1 < story.get 'hVersion'
+    return
+  story.set hVersion: 0.1
+  oldStyle = story.get "_options",
+  if oldStyle
+    # upgrade the options header for the layout engines
+    story.unset "_options"
+  story.set 'memberOf' ,[]
+  content = story.get "content"
+  memberOf = story.get 'memberOf'
+  if content.match /daough|pathy|winnie/i
+    memberOf.push 'TAO'
+  if content.match /tommy|gunas|southwick|roger/i
+    memberOf.push 'GUNAS'
+  if content.match /tarot|aramis|king|pentacles|cups|swords|wands/i
+    memberOf.push 'TAROT'
+  if content.match /slim's|hope for health|james john|st john|saint john/i
+    memberOf.push 'PDX'
 
 keyWords = {}
 massageStory = (story)->
