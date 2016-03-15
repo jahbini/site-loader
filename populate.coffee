@@ -74,7 +74,13 @@ upgradeStoryOld = (story)->
 upgradeStory = (story)->
   if story.get 'debug'
     debugger
-  if 1 < story.get 'hVersion'
+  v = story.get 'hVersion'
+  if v >= 0.2
+    return
+  story.set sitePath: "stjohnsjim"
+  story.set domain: "stjohnsjim.com"
+  if v >= 0.1
+    story.set hVersion: 0.2
     return
   story.set hVersion: 0.1
   oldStyle = story.get "_options",
@@ -131,12 +137,22 @@ writeStory = (story)->
   head = story.clone().attributes
   delete head.content
   headMatter = ymljsFrontMatter.encode head, content
+  fileName = "site/#{head.sitePath}/#{head.category}/#{head.slug}.md"
   try
-    fs.mkdirSync "site/"+head.category
+    fs.mkdirSync "site"
   catch
+  try
+    fs.mkdirSync "site/#{head.sitePath}"
+  catch
+  try
+    fs.mkdirSync "site/#{head.sitePath}/#{head.category}"
+  catch
+  try
+    fs.writeFileSync(fileName,headMatter )
+  catch badDog
+    console.log badDog
+    process.exit()
 
-  fileName = "site/"+head.category+"/"+head.slug+".md"
-  fs.writeFileSync(fileName,headMatter )
   return
 
 Story = Backbone.Model.extend idAttribute: 'title'

@@ -15,6 +15,7 @@
   "license": "ISC",
   "devDependencies": {
     "minimist": "^1.2.0",
+    "pushserve": "^1.0.2",
     "slug": "^0.9.1",
     "underscore": "^1.8.3",
     "yamljs": "^0.2.6",
@@ -23,6 +24,7 @@
   "dependencies": {
     "auto-reload-brunch": ">= 1.0 < 1.8",
     "backbone": "^1.3.1",
+    "basscss": "file:basscss",
     "clean-css-brunch": ">= 1.0 < 1.8",
     "coffee-script-brunch": ">= 1.0 < 1.8",
     "css-brunch": ">= 1.0 < 1.8",

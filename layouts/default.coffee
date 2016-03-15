@@ -130,9 +130,10 @@ module.exports = class ClassLookAndFeel
     html ->
       head ->
         title options.title||"no Title"
+        meta title:"author", content:"James A. Hinds"
         meta "http-equiv": "content-type", content: "text/html; charset=utf-8"
         meta name: "description", content: "A great #{options.category}"
-        meta name: "viewport", content: "width=device-width"
+        meta name: "viewport", content: "width=device-width,initial-scale=1"
         base href: "/"
         meta name: "keywords", content: "North Portland,St. John's, st johns"
         link rel: "stylesheet", href: "stylesheets/app.css"
@@ -141,15 +142,17 @@ module.exports = class ClassLookAndFeel
         script "require('initialize');"
       body "#body.enclosing", ->
         headerLogoNav story
-        section ".app-container", "data-id":"app"
+        section ".app-container.py4", "data-id":"app"
         comment "The Main template"
-        div "#main.wrapper.style4", ->
-          div ".container", ->
-            div ".row", ->
+        div "#main.wrapper.mxn2.flex.flex-wrap", ->
+          div ".container.px2.col-12.border.rounded", ->
+            div ".clearfix", ->
               comment "Content"
-              div "#content.eight.columns", ->
+              div "#content.col.col-4.p2.justify", ->
+                raw options.cooked
+              div "#story.col.col-4.p2.border-left", ->
                 raw options.cooked
               comment "Sidebar"
-              div "#sidebar.four.columns", ->
+              div "#sidebar.col.col-4.p2.border-left", ->
                 a href:'showit', "this is contents of sidebar"
         tag 'footer', "data-id":"footer"

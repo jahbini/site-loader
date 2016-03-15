@@ -3,6 +3,10 @@ exports.config =
   files:
     javascripts:
       joinTo:
+        'stjohnsjim/app.js': /^app/
+        'stjohnsjim/vendor.js': /^(?!app)/
+        'bamboosnow/app.js': /^app/
+        'bamboosnow/vendor.js': /^(?!app)/
         'javascripts/app.js': /^app/
         'javascripts/vendor.js': /^(?!app)/
 

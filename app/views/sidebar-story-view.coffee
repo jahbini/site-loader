@@ -17,9 +17,10 @@ module.exports = class SidebarStoryView extends View
   getTemplateFunction: (info)->
     console.log('sidebar-story-view#render')
     T.renderable =>
-        @collection.each (story) ->
-          T.div ".right", ->
-            T.a ".button.goto.button-primary",
-              href: story.get 'href'
-              story.get 'title'
+        T.ul =>
+          @collection.each (story) ->
+            T.li ".b1", ->
+              T.a ".goto.h5",
+                href: story.get 'href'
+                story.get 'title'
         T.text "wow from Teacup"
