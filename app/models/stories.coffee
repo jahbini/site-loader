@@ -1,6 +1,6 @@
 Collection = require 'models/base/collection',
 Story = require 'models/story'
-allStories = require 'all-posts'
+allStories = require 'generated/all-posts'
 
 
 'use strict'
