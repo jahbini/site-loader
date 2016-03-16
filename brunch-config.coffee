@@ -3,15 +3,17 @@ exports.config =
   files:
     javascripts:
       joinTo:
-        'stjohnsjim/app.js': /^app/
-        'stjohnsjim/vendor.js': /^(?!app)/
-        'bamboosnow/app.js': /^app/
-        'bamboosnow/vendor.js': /^(?!app)/
-        'javascripts/app.js': /^app/
-        'javascripts/vendor.js': /^(?!app)/
+        'stjohnsjim/js/app.js': /^app/
+        'stjohnsjim/js/vendor.js': /^(?!app)/
+        'bamboosnow/js/app.js': /^app/
+        'bamboosnow/js/vendor.js': /^(?!app)/
 
     stylesheets:
-      joinTo: 'stylesheets/app.css'
+      joinTo:
+        'stjohnsjim/css/app.css': /^app/
+        'bamboosnow/css/app.css': /^app/
 
     templates:
-      joinTo: 'javascripts/app.js'
+      joinTo:
+        'stjohnsjim/js/app.js': /^app/
+        'bamboosnow/js/app.js': /^app/

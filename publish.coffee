@@ -90,9 +90,18 @@ expandStory = (story)->
 
 publishStory = (story)->
   content = template.formatStory story
-  dir = "#{publicPath}/#{story.get 'category'}"
-  fileName = "#{publicPath}/#{story.get 'href'}"
+  dir = "#{publicPath}/#{story.get 'sitePath'}/#{story.get 'category'}"
+  fileName = "#{publicPath}/#{story.get 'sitePath'}/#{story.get 'href'}"
   try
+    dir = "#{publicPath}"
+    try
+      fs.mkdirSync dir
+    catch
+    dir = "#{publicPath}/#{story.get 'sitePath'}"
+    try
+      fs.mkdirSync dir
+    catch
+    dir += "/#{story.get 'category'}"
     try
       fs.mkdirSync dir
     catch

@@ -7,6 +7,8 @@ ymljsFrontMatter = require 'yamljs-front-matter'
 caseMunger = require 'slug'
 path = require 'path'
 fs = require 'fs'
+sites = require './sites'
+console.log "Sites!!",sites
 
 caseMunger.defaults.mode = 'rfc3986'
 caseMunger.remove = /[.]/g
@@ -72,16 +74,17 @@ upgradeStoryOld = (story)->
 # Create inclusion sets for graph-walks, menu-lists, and such
 ###
 upgradeStory = (story)->
+  story = new Story story
   if story.get 'debug'
     debugger
   v = story.get 'hVersion'
   if v >= 0.2
-    return
+    return story
   story.set sitePath: "stjohnsjim"
   story.set domain: "stjohnsjim.com"
   if v >= 0.1
     story.set hVersion: 0.2
-    return
+    return story
   story.set hVersion: 0.1
   oldStyle = story.get "_options",
   if oldStyle
@@ -98,7 +101,8 @@ upgradeStory = (story)->
     memberOf.push 'TAROT'
   if content.match /slim's|hope for health|james john|st john|saint john/i
     memberOf.push 'PDX'
-
+  return story
+  
 keyWords = {}
 massageStory = (story)->
   # we want to canvass all the stories to get the quiklinks
@@ -155,20 +159,26 @@ writeStory = (story)->
 
   return
 
+
+parseFiles = (spec)->
+  stories = yamljs.parseFile "./#{site}.yml"
+  for story in stories
+    story = new Story story
+    try
+      story = massageStory story
+      allStories.push story
+      console.log "massage OK: #{story.get "title"}"
+    catch e
+      console.log "story had problems - #{story.get "title"}"
+      console.log e
+###
+#main program starts here
+###
 Story = Backbone.Model.extend idAttribute: 'title'
 AllStories = Backbone.Collection.extend model: Story , comparator: 'title'
 allStories = new AllStories
-
-stories = yamljs.parseFile 'story.yml'
-for story in stories
-  story = new Story story
-  try
-    massageStory story
-    console.log "massage OK: #{story.get "title"}"
-  catch e
-    console.log "story had problems - #{story.get "title"}"
-    console.log e
-  allStories.push story
+for site, params of sites
+  parseFiles site, params
 allStories.sort()
 allStories.each writeStory
 debugger

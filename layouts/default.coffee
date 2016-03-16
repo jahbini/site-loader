@@ -45,12 +45,11 @@ module.exports = class ClassLookAndFeel
         when "author"
           console.log "Author appears in #{story.get 'slug'}"
           debugger
-          cooked = cooked.replace /{{{author:.*}}}/ig, (match) ->
-            match =match.replace /{{{author:/,''
-            match =match.replace '}}}',''
+          cooked = cooked.replace /{{{author[,:\s]+([^}]*)}}}/ig, (match,more) ->
+            console.log "match contents {#{more}}"
             return render ->
               blockquote ".left.key-author", ->
-                raw match
+                raw more
           story.set cooked: cooked
           snippetHandled = true
         when "first name"
@@ -60,31 +59,19 @@ module.exports = class ClassLookAndFeel
           story.set cooked: cooked
           snippetHandled = true
         when "sms"
-          cooked = cooked.replace ///{{{#{op}[,:]#{who}.*}}}///ig, (match)->
-            match =match.replace '{{{',''
-            match =match.replace '}}}',''
-            match = match.split /:|,/
-            match.shift()
-            match.shift()
-            rest = match.join ':'
+          cooked = cooked.replace ///{{{#{op}[,:]#{who}[,:\s+]([^}]*)}}}///ig, (match,more)->
             return render ->
               blockquote ".right.key-#{op}.#{who}", ->
-                raw "#{who} says: #{rest}"
+                raw "#{who} says: #{more}"
           story.set cooked:cooked
           snippetHandled = true
           continue
 
         when "comment"
-          cooked = cooked.replace ///{{{#{op}[,:]#{who}.*}}}///ig, (match)->
-            match =match.replace '{{{',''
-            match =match.replace '}}}',''
-            match = match.split /:|,/
-            match.shift()
-            match.shift()
-            rest = match.join ':'
+          cooked = cooked.replace ///{{{#{op}[,:]#{who}[,:\s]+([^}]*)}}}///ig, (match,more)->
             return render ->
               blockquote "right.key-#{op}.#{who}", ->
-                raw "#{who} says: #{rest}"
+                raw "#{who} says: #{more}"
           story.set cooked:cooked
           snippetHandled = true
           continue
@@ -124,7 +111,7 @@ module.exports = class ClassLookAndFeel
     fs.writeFileSync @app+'/all-posts.js', "module.exports = #{JSON.stringify theSummary};"
     return false  # true means run all analyzers again
 
-  formatStory: renderable (story) ->
+  formatStory: renderable (story) =>
     options = story.attributes
     doctype 5
     html ->
@@ -136,23 +123,24 @@ module.exports = class ClassLookAndFeel
         meta name: "viewport", content: "width=device-width,initial-scale=1"
         base href: "/"
         meta name: "keywords", content: "North Portland,St. John's, st johns"
-        link rel: "stylesheet", href: "stylesheets/app.css"
-        script src: 'javascripts/vendor.js'
-        script src: 'javascripts/app.js'
+        link rel: "stylesheet", href: "css/app.css"
+        script src: 'js/vendor.js'
+        script src: 'js/app.js'
         script "require('initialize');"
+      comment "\nThe Body\n"
       body "#body.enclosing", ->
         headerLogoNav story
         section ".app-container.py4", "data-id":"app"
-        comment "The Main template"
+        comment "\nThe Main template\n"
         div "#main.wrapper.mxn2.flex.flex-wrap", ->
           div ".container.px2.col-12.border.rounded", ->
             div ".clearfix", ->
-              comment "Content"
+              comment "\nContent\n"
               div "#content.col.col-4.p2.justify", ->
                 raw options.cooked
               div "#story.col.col-4.p2.border-left", ->
                 raw options.cooked
-              comment "Sidebar"
+              comment "\nSidebar"
               div "#sidebar.col.col-4.p2.border-left", ->
                 a href:'showit', "this is contents of sidebar"
         tag 'footer', "data-id":"footer"
