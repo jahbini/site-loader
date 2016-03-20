@@ -5,9 +5,7 @@ log = require 'loglevel'
 
 module.exports =  class HomeController extends PageController
     showit: () ->
-      alert "Gaa Chua! Muk Muk!"
       return false
 
     show: () ->
-      alert 'HomeController: show!!'
       log.info 'HomeController:show'

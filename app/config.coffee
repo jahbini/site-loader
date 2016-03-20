@@ -1,3 +1,0 @@
-config =
-  dev:
-    loglevel: 'TRACE'

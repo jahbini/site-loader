@@ -20,23 +20,35 @@ module.exports = class ClassLookAndFeel
     @handleArchive = new @CollectionModel
 
   expandSnippets: (story)=>
+    console.log "in expandSnippets #{story.get 'slug'}"
+    if !story
+      console.log "no story"
+      process.exit()
+    if 'content' == story.get 'debug'
+      story.snap "in expandSnippets #{story.get 'slug'}"
+    if ! story.get 'cooked'
+      story.death 'no cooked!'
     snippets = story.get 'snippets'
     snippetHandled = true
     for snippet of snippets
       continue unless snippet
+      console.log "expandSnippets #{snippet} #{story.get 'slug'}"
+
       cooked = story.get 'cooked'
       snippetHandled = false
       handledBy = @handleArchive.find (model)->
         return snippet.toUpperCase() == (model.get 'handle').toUpperCase()
       if handledBy
+        console.log "handledBy #{handledBy.get 'slug'}"
         cooked = cooked.replace ///{{{#{snippet}:(.*)}}}///ig , (match)->
           match =match.replace '{{{',''
           match =match.replace '}}}',''
           match = match.split /:|,/
           render ->
-            a ".goto", href: (handledBy.get "href"), match[1]
+            a ".goto", href: handledBy.href(@siteHandle), match[1]
         story.set cooked:cooked
         snippetHandled = true
+        console.log "handled!"
         continue
       key = snippet.split /,|:/
       op = key.shift().toLowerCase()
@@ -44,7 +56,6 @@ module.exports = class ClassLookAndFeel
       switch op
         when "author"
           console.log "Author appears in #{story.get 'slug'}"
-          debugger
           cooked = cooked.replace /{{{author[,:\s]+([^}]*)}}}/ig, (match,more) ->
             console.log "match contents {#{more}}"
             return render ->
@@ -77,7 +88,7 @@ module.exports = class ClassLookAndFeel
           continue
 
     return if snippetHandled
-    @snippetArchive.push snippet: snippet, title: snippet, href: story.get 'href'
+    @snippetArchive.push snippet: snippet, title: snippet, href: story.href()
     console.log "snippet failure on #{snippet}"
 
   analyze: (story)=>
@@ -94,7 +105,9 @@ module.exports = class ClassLookAndFeel
     if story.get 'snippets'
       if @expandSnippets story
         #unresolved Handle type snippet.  need second pass.
+        console.log "expandSnippets #{story.get 'slug'} Unresolved!"
         return true
+    console.log "expandSnippets #{story.get 'slug'} exit"
     tmp = story.clone()
     @jSONarchive.push tmp
     return false
@@ -108,8 +121,7 @@ module.exports = class ClassLookAndFeel
       t.unset 'html'
       t.unset 'cruft'
       return t.toJSON()
-    fs.writeFileSync @app+'/all-posts.js', "module.exports = #{JSON.stringify theSummary};"
-    return false  # true means run all analyzers again
+    return theSummary
 
   formatStory: renderable (story) =>
     options = story.attributes
@@ -126,7 +138,7 @@ module.exports = class ClassLookAndFeel
         link rel: "stylesheet", href: "css/app.css"
         script src: 'js/vendor.js'
         script src: 'js/app.js'
-        script "require('initialize');"
+        script "siteHandle = '#{options.siteHandle}'; require('initialize');"
       comment "\nThe Body\n"
       body "#body.enclosing", ->
         headerLogoNav story

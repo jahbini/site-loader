@@ -1,20 +1,24 @@
 {
-  "name": "stjohnsjim",
+  "name": "siteMaster",
   "version": "1.0.0",
-  "description": "Stories from portland",
+  "description": "Manage Multiple Static sites with Brunch, Teacup and Chaplin",
   "main": "index.js",
   "scripts": {
     "start": "brunch watch --server",
     "test": "brunch test"
   },
   "keywords": [
-    "portland",
-    "stories"
+    "teacup",
+    "brunch",
+    "chaplin",
+    "single page application",
+    "static site"
   ],
   "author": "James Hinds",
   "license": "ISC",
   "devDependencies": {
     "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1",
     "pushserve": "^1.0.2",
     "slug": "^0.9.1",
     "underscore": "^1.8.3",

@@ -1,8 +1,7 @@
-View = require 'views/base/view'
 {Teacup} = require 'teacup'
 T=new Teacup
 
-module.exports = class SidebarStoryView extends View
+module.exports = class SidebarStoryView extends Chaplin.View
   #template: './templates/sidebarStory'
   #initialize: @render()
   autoRender: true
@@ -15,12 +14,14 @@ module.exports = class SidebarStoryView extends View
   getTemplateData: ()=>
     @collection
   getTemplateFunction: (info)->
-    console.log('sidebar-story-view#render')
     T.renderable =>
         T.ul =>
           @collection.each (story) ->
             T.li ".b1", ->
               T.a ".goto.h5",
-                href: story.get 'href'
+                href: if siteHandle == story.get 'siteHandle'
+                    story.href()
+                  else
+                    story.href story.get 'siteHandle'
                 story.get 'title'
         T.text "wow from Teacup"

@@ -7,6 +7,7 @@ ymljsFrontMatter = require 'yamljs-front-matter'
 caseMunger = require 'slug'
 path = require 'path'
 fs = require 'fs'
+mkdirp = require 'mkdirp'
 sites = require './sites'
 console.log "Sites!!",sites
 
@@ -28,7 +29,7 @@ transforms =
   PreviousID: "previousID"
 
 try
-  fs.mkdirSync "site"
+  fs.mkdirpSync "site"
 catch
 
 ###
@@ -75,12 +76,13 @@ upgradeStoryOld = (story)->
 ###
 upgradeStory = (story)->
   story = new Story story
+  story.death "call to Obsolete function upgradeStory"
   if story.get 'debug'
     debugger
   v = story.get 'hVersion'
   if v >= 0.2
     return story
-  story.set sitePath: "stjohnsjim"
+  story.set siteHandle: "stjohnsjim"
   story.set domain: "stjohnsjim.com"
   if v >= 0.1
     story.set hVersion: 0.2
@@ -102,11 +104,11 @@ upgradeStory = (story)->
   if content.match /slim's|hope for health|james john|st john|saint john/i
     memberOf.push 'PDX'
   return story
-  
+
 keyWords = {}
-massageStory = (story)->
+massageStory = (story,rawStory)->
   # we want to canvass all the stories to get the quiklinks
-  upgradeStory story
+  newStory = upgradeStory rawStory
   content = story.get "content"
   matched = content.match /{{{[^{}]*}}}/g
   snippets = story.get 'snippets'
@@ -131,7 +133,7 @@ massageStory = (story)->
       else
         keyWords[mpString] = 1
   story.set 'snippets', snippets
-  return
+  return story
 
 writeStory = (story)->
   if story.get 'debug'
@@ -141,15 +143,9 @@ writeStory = (story)->
   head = story.clone().attributes
   delete head.content
   headMatter = ymljsFrontMatter.encode head, content
-  fileName = "site/#{head.sitePath}/#{head.category}/#{head.slug}.md"
+  fileName = "site/#{head.siteHandle}/#{head.category}/#{head.slug}.md"
   try
-    fs.mkdirSync "site"
-  catch
-  try
-    fs.mkdirSync "site/#{head.sitePath}"
-  catch
-  try
-    fs.mkdirSync "site/#{head.sitePath}/#{head.category}"
+    mkdirp.sync "site/#{head.siteHandle}/#{head.category}"
   catch
   try
     fs.writeFileSync(fileName,headMatter )
@@ -160,16 +156,17 @@ writeStory = (story)->
   return
 
 
-parseFiles = (spec)->
+parseFiles = (site,options)->
   stories = yamljs.parseFile "./#{site}.yml"
+  console.log "opening #{site}.yml"
   for story in stories
-    story = new Story story
+    storyNew = new Story story
     try
-      story = massageStory story
+      story = massageStory storyNew, story
       allStories.push story
       console.log "massage OK: #{story.get "title"}"
     catch e
-      console.log "story had problems - #{story.get "title"}"
+      console.log "story had problems - #{storyNew.get "title"}"
       console.log e
 ###
 #main program starts here
