@@ -6,17 +6,6 @@ minimist = require 'minimist'
 ymljsFrontMatter = require 'yamljs-front-matter'
 path = require 'path'
 mkdirp = require 'mkdirp'
-marked = require 'marked'
-marked.setOptions({
-  renderer: new marked.Renderer(),
-  gfm: true,
-  tables: true,
-  breaks: false,
-  pedantic: false,
-  sanitize: true,
-  smartLists: true,
-  smartypants: false
-});
 
 caseMunger = require 'slug'
 caseMunger.defaults.mode = 'rfc3986'
@@ -31,16 +20,27 @@ sitePath = path.resolve "./site"
 publicPath = path.resolve "./public"
 appPath = path.resolve "./app"
 
-AllStories = Backbone.Collection.extend comparator: 'slug'
-allStories = new AllStories
+allStories = null # but only for a little while
 
 Sites = require './sites'
 SubSiteStory = class Story extends Backbone.Model
+  # tmp is a holder for transient and generated attrubutes
   initialize: ()->
+    @tmp = []
   idAttribute: 'slug'
   defaults:
     debug:""
 
+  #path to the url relative story asset directory
+  pathToMe: (against = false)=>
+    ref = "#{@get 'category'}/#{@get 'slug'}"
+    return ref unless against
+    return  "#{against}/#{ref}" if against.match '/'
+    siteUrl = Sites[against].lurl
+    sitePort = Sites[against].port
+    return "http://#{siteUrl}:#{sitePort}/#{ref}"
+
+  #path to the url relative story
   href: (against = false)=>
     ref = "#{@get 'category'}/#{@get 'slug'}.html"
     return ref unless against
@@ -49,10 +49,27 @@ SubSiteStory = class Story extends Backbone.Model
     sitePort = Sites[against].port
     return "http://#{siteUrl}:#{sitePort}/#{ref}"
 
+  copyAsset: (name)=>
+    assetDest ="#{publicPath}/#{@.get 'siteHandle'}/#{@pathToMe ''}"
+    sourceDir = (@.get 'sourcePath').replace /\.[\w]*$/,''
+    try
+      asset =fs.readFileSync "#{sitePath}/#{sourceDir}/#{name}"
+      mkdirp assetDest
+      fs.writeFileSync "#{assetDest}/#{name}",asset
+    catch badDog
+      console.log "copyAsset #{@.get 'slug'}Bad Doggy = #{badDog}"
+    return
+
   snap: (text,force=false)->
-    if force||(@.get 'debug').match text
+    if force ==true || (
+        if typeof force == 'string'
+          (@.get 'debug').toString().match force
+        else
+          false
+      )
       console.log "#{text} -- Story slug #{@.get 'slug'}"
       console.log "Attributes", @.attributes
+      console.log "Tmp", @.tmp
       console.log "#{text} -----"
 
   death: (why,structure=null)->
@@ -63,6 +80,8 @@ SubSiteStory = class Story extends Backbone.Model
       console.log structure
     console.log 'object attributes ----------'
     console.log @attributes
+    console.log 'object temporaries ----------'
+    console.log @tmp
     console.log 'Death----------'
     if @attributes.sourcePath
       child_process = require "child_process"
@@ -96,8 +115,6 @@ SubSiteStory = class Story extends Backbone.Model
       child_process.execSync "open #{sitePath}/#{obj.sourcePath} -a atom.app"
       process.exit()
     return obj
-
-
 
 SubSiteStories = class extends Backbone.Collection
   comparator: 'slug'
@@ -134,8 +151,51 @@ SubSiteStories = class extends Backbone.Collection
     stuff.sourcePath = path.relative sitePath, fileName
     stuff.siteHandle = @siteHandle
     theStory = new @SiteStory stuff, parse: true
+    theStory.tmp.sourceFileName = fileName
     @.push theStory
     allStories.push theStory
+
+  publish: (template)->
+    @.each (story)->
+      content = template.formatStory story
+      if !content
+        story.death "no content from formatStory"
+      if ! story.get 'siteHandle'
+        story.death "No siteHandle"
+      dir = "#{publicPath}/#{story.get 'siteHandle'}/#{story.get 'category'}"
+      fileName = "#{publicPath}/#{story.get 'siteHandle'}/#{story.href()}"
+      try
+        mkdirp.sync dir
+        fs.writeFileSync(fileName,content )
+      catch nasty
+        story.death "Nasty Write to public #{fileName}:",nasty
+    return
+
+  expand: (template)->
+    @.each (story)->
+      try
+        expansion = template.expand story
+      catch badPuppy
+        story.death "template #{templateName} failed to expand on #{story.get 'title'}", badPuppy
+    return
+
+  analyze:(template)->
+    retry = false
+    @.each (story)->
+      try
+        retry |= template.analyze story
+      catch badPuppy
+        story.death "template #{templateName} failed to analyze on #{story.get 'title'}", badPuppy
+    return retry
+
+
+  summarize: ()=>
+    theSummary = @.map (story)=>
+        t=story.clone()
+        t.unset 'content'
+        t.unset 'sourcePath'
+        return t.toJSON()
+    return theSummary
 
 StJohnsJimStory = class extends SubSiteStory
 BambooSnowStory = class extends SubSiteStory
@@ -151,12 +211,13 @@ BambooSnowStories = class extends SubSiteStories
 
 StJohnsJimStories = class extends SubSiteStories
 
+AllStories = class extends SubSiteStories
+allStories = new AllStories
+
 stJohnsJimCollection = new StJohnsJimStories 'stjohnsjim'
 bambooSnowCollection = new BambooSnowStories 'bamboosnow'
 
 siteHandlers = [stJohnsJimCollection, bambooSnowCollection]
-
-
 
 walkTreeSync sitePath, bambooSnowCollection.testFile, bambooSnowCollection.getFile
 walkTreeSync sitePath, stJohnsJimCollection.testFile, stJohnsJimCollection.getFile
@@ -185,67 +246,18 @@ catch
 templateName =  'default'
 Template = require "./layouts/#{templateName}"  # body...
 template = new Template SubSiteStories,AllStories,publicPath,appPath
-analyzeStory = (story)->
-  try
-    dir = "#{story.get 'category'}"
-    content = story.get 'content'
-    cooked = marked content
-    story.set 'cooked', cooked
-    template.analyze story
-  catch badPuppy
-    story.death "template #{templateName} failed to analyze on #{story.get 'title'}", badPuppy
-  return
-
-expandStory = (story)->
-  try
-    expansion = template.expand story
-  catch badPuppy
-    story.death "template #{templateName} failed to expand on #{story.get 'title'}", badPuppy
-  return expansion
-
-publishStory = (story)->
-  content = template.formatStory story
-  if !content
-    story.death "no content from formatStory"
-  if ! story.get 'siteHandle'
-    story.death "No siteHandle"
-  dir = "#{publicPath}/#{story.get 'siteHandle'}/#{story.get 'category'}"
-  fileName = "#{publicPath}/#{story.get 'siteHandle'}/#{story.href()}"
-  try
-    try
-      mkdirp.sync dir
-    catch
-    fs.writeFileSync(fileName,content )
-  catch nasty
-    story.death "Nasty Write to public #{fileName}:",nasty
-  return
-
 
 console.log "analyzing stories"
-allStories.each (story)->
-    try
-      analyzeStory story
-    catch e
-      console.log "story analysis had problems - #{story.get "title"}"
-      console.log e
-console.log "Expanding stories"
+if allStories.analyze(template)
+   allStories.analyze(template)
 
-allStories.each (story)->
-    try
-      expandStory story
-    catch e
-      console.log "story expansion had problems - #{story.get "title"}"
-      console.log e
+console.log "Expanding stories"
+allStories.expand(template)
 
 console.log "Publishing stories"
-allStories.each (story)->
-    try
-      publishStory story
-    catch e
-      console.log "publish of story had problems - #{story.get "title"}"
-      console.log e
+allStories.publish(template)
 
-theSummary = template.summarize allStories
+theSummary = allStories.summarize()
 fs.writeFileSync "#{appPath}/generated/all-posts.js", "module.exports = #{JSON.stringify theSummary};"
 fs.writeFileSync "#{appPath}/generated/sites.js", "module.exports = #{JSON.stringify Sites};"
 console.log "Publication complete."

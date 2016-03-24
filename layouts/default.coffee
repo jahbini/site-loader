@@ -5,95 +5,131 @@ _options:
 
 ###
 {render,doctype,html,title,meta,base,link,script,body,header,raw,section,
- comment,div,a,span,h1,h2,h3,h4,h5,h6,head,renderable,blockquote,
+ comment,div,a,span,h1,h2,h3,h4,h5,h6,head,renderable,blockquote,img,
  tag,footer} = require "teacup"
 path = require 'path'
 headerLogoNav = require(path.resolve './layouts/header-logo-nav')
 Backbone = require 'backbone'
 fs = require 'fs'
+_=require 'underscore'
+
+
+marked = require 'marked'
+renderer = new marked.Renderer()
+marked.setOptions({
+  renderer: renderer
+  gfm: true,
+  tables: true,
+  breaks: false,
+  pedantic: false,
+  sanitize: false,
+  smartLists: true,
+  smartypants: true
+});
 
 module.exports = class ClassLookAndFeel
-
+  oldRenderer = {}
   constructor: (@StoryModel,@CollectionModel,@public,@app) ->
     @jSONarchive = new @CollectionModel
     @snippetArchive = new @CollectionModel
     @handleArchive = new @CollectionModel
+    @oldRenderer = {}
+
+  setRenderer: (tag,newRenderer) ->
+    bind = (fn, me)->
+      return ()->
+        return fn.apply(me, arguments)
+    @oldRenderer[tag] = renderer[tag] unless @oldRenderer[tag]
+    oldR = @oldRenderer[tag]
+    nr = bind newRenderer, @
+    renderer[tag] = (a,b,c,d,args...) ->
+      r=bind oldR,this
+      try
+        return  nr a,b,c,d,args
+      catch badPuppy
+        if badPuppy == 'useOld'
+          console.log "using oldRenderer"
+          try
+            temp = r a,b,c,d,args
+            console.log "Rendered Contents by marked -- #{temp}"
+            return temp
+          catch nasty
+            console.log "mama mia!"
+            console.log nasty
+            process.exit()
+
+      throw badPuppy
 
   expandSnippets: (story)=>
-    console.log "in expandSnippets #{story.get 'slug'}"
     if !story
-      console.log "no story"
+      console.log "no story in expandSnippets"
       process.exit()
-    if 'content' == story.get 'debug'
-      story.snap "in expandSnippets #{story.get 'slug'}"
-    if ! story.get 'cooked'
-      story.death 'no cooked!'
+    story.snap "in expandSnippets #{story.get 'slug'}", 'content'
     snippets = story.get 'snippets'
     snippetHandled = true
+    workingCopy = story.tmp.workingCopy
     for snippet of snippets
       continue unless snippet
-      console.log "expandSnippets #{snippet} #{story.get 'slug'}"
-
-      cooked = story.get 'cooked'
       snippetHandled = false
       handledBy = @handleArchive.find (model)->
         return snippet.toUpperCase() == (model.get 'handle').toUpperCase()
       if handledBy
-        console.log "handledBy #{handledBy.get 'slug'}"
-        cooked = cooked.replace ///{{{#{snippet}:(.*)}}}///ig , (match)->
+        workingCopy = workingCopy.replace ///{{{#{snippet}:(.*)}}}///ig , (match)->
           match =match.replace '{{{',''
           match =match.replace '}}}',''
           match = match.split /:|,/
           render ->
             a ".goto", href: handledBy.href(@siteHandle), match[1]
-        story.set cooked:cooked
         snippetHandled = true
-        console.log "handled!"
         continue
+
       key = snippet.split /,|:/
       op = key.shift().toLowerCase()
       who = key.shift()
       switch op
         when "author"
           console.log "Author appears in #{story.get 'slug'}"
-          cooked = cooked.replace /{{{author[,:\s]+([^}]*)}}}/ig, (match,more) ->
+          workingCopy = workingCopy.replace /{{{author[,:\s]+([^}]*)}}}/ig, (match,more) ->
             console.log "match contents {#{more}}"
             return render ->
-              blockquote ".left.key-author", ->
+              blockquote ".right.key-author.right-align.h6.p2.bg-white.border.rounded", ->
                 raw more
-          story.set cooked: cooked
           snippetHandled = true
         when "first name"
           #first name is a simple replacement with client-side heads-up
-          cooked = cooked.replace /{{{first.name}}}/ig , render ->
+          workingCopy = workingCopy.replace /{{{first.name}}}/ig , render ->
             span ".FBname", 'Friend'
-          story.set cooked: cooked
           snippetHandled = true
         when "sms"
-          cooked = cooked.replace ///{{{#{op}[,:]#{who}[,:\s+]([^}]*)}}}///ig, (match,more)->
+          workingCopy = workingCopy.replace ///{{{#{op}[,:]#{who}[,:\s+]([^}]*)}}}///ig, (match,more)->
             return render ->
-              blockquote ".right.key-#{op}.#{who}", ->
+              blockquote ".right.key-#{op}.#{who}.right-align.h6.p2.bg-white.border.rounded", ->
                 raw "#{who} says: #{more}"
-          story.set cooked:cooked
           snippetHandled = true
           continue
 
         when "comment"
-          cooked = cooked.replace ///{{{#{op}[,:]#{who}[,:\s]+([^}]*)}}}///ig, (match,more)->
+          workingCopy = workingCopy.replace ///{{{#{op}[,:]#{who}[,:\s]+([^}]*)}}}///ig, (match,more)->
             return render ->
-              blockquote "right.key-#{op}.#{who}", ->
+              blockquote ".right.key-#{op}.#{who}.right-align.h6.p2.bg-white.border.rounded", ->
                 raw "#{who} says: #{more}"
-          story.set cooked:cooked
           snippetHandled = true
           continue
 
-    return if snippetHandled
+    story.tmp.workingCopy = workingCopy
+    return false if snippetHandled
     @snippetArchive.push snippet: snippet, title: snippet, href: story.href()
-    console.log "snippet failure on #{snippet}"
+    return true
 
   analyze: (story)=>
-    if 'snippet'== story.get 'debug'
+    story.tmp.workingCopy = story.get 'content'
+    if (story.get 'debug').toString().match 'snippet'
       debugger
+    if story.get 'snippets'
+      if @expandSnippets story
+        #unresolved Handle type snippet.  need second pass.
+        console.log "expandSnippets #{story.get 'slug'} Unresolved!"
+
     handle = story.get 'handle'
     if handle
       console.log "Handle #{handle} defined in story #{story.get 'slug'}"
@@ -101,27 +137,77 @@ module.exports = class ClassLookAndFeel
     return
 
   expand: (story)=>
+    dieLater = story.tmp.workingCopy.match /{%/
+
+    @setRenderer 'image', (href,title,text)=>
+      console.log href,title,text,story.get 'slug'
+      throw 'useOld' unless href.match '@'
+      val = _(href.split '@').map (snip)->
+        return '' unless snip
+        ourUrl = snip.replace /^([\w]*)(\W.*)$/,(match,ourword,theirword)->
+          result = "nogo!"
+          try
+            result =story[ourword]()+theirword
+          catch badPuppy
+            console.log "Bad Dog! in template expand #{story.get 'slug'} #{badPuppy}"
+            console.log "#{ourword}, and #{theirword}"
+            dieLater = true
+          return result
+      fullName =val.join ''
+      smallName = fullName.match /[^\/]*$/
+
+      story.copyAsset smallName
+      story.copyAsset smallName.toString().replace /\./,'-t.'
+
+      #handle text portion
+      altTextSplit = text.match /^([^@.#]*)?(@|#|\.)(.*)$/
+      if !altTextSplit
+        altText = text
+        classText = ''
+      else
+        altText = altTextSplit[1]
+        classText = if altTextSplit[3].match /^\.|#/
+            altTextSplit[3]
+          else
+            '.'+altTextSplit[3]
+        classText = '.'+classText unless classText.match /^\.|#/
+        classText = classText.split " "
+        classText = classText.join "."
+      thumbnailImage = val.join ""
+      thumbnailImage = thumbnailImage.replace /\.[^.]/,(match)-> "-t#{match}"
+      if classText.match "fancybox"
+        return render ->
+          div ".figure #{classText}", style: "width:;", ->
+            comment "href=#{href} title=#{title} text=#{text}"
+            a ".fancybox", href: (val.join ""), title: title, ->
+              img ".fig-img", src: thumbnailImage, alt: altText
+            span ".caption", title
+
+      return render ->
+        img classText,
+          title: title
+          alt: altText
+          src: val.join ""
+        comment "href=#{href} title=#{title} text=#{text}"
+
+
     # actions on second pass of analysis
+    if (story.get 'debug').toString().match 'snippet'
+      debugger
     if story.get 'snippets'
       if @expandSnippets story
         #unresolved Handle type snippet.  need second pass.
         console.log "expandSnippets #{story.get 'slug'} Unresolved!"
-        return true
-    console.log "expandSnippets #{story.get 'slug'} exit"
+    try
+      story.tmp.cooked = marked.parser marked.lexer story.tmp.workingCopy
+    catch badPuppy
+      story.death "Hate, hate, hate", badPuppy
+    if dieLater
+      console.log "Cooked:", story.tmp.cooked
+      story.death "fixme!!"
     tmp = story.clone()
     @jSONarchive.push tmp
     return false
-
-  summarize: (collection)=>
-    console.log JSON.stringify @snippetArchive.toJSON()
-    theSummary = @jSONarchive.map (story)=>
-      t=story.clone()
-      t.unset 'cooked'
-      t.unset 'content'
-      t.unset 'html'
-      t.unset 'cruft'
-      return t.toJSON()
-    return theSummary
 
   formatStory: renderable (story) =>
     options = story.attributes
@@ -149,9 +235,9 @@ module.exports = class ClassLookAndFeel
             div ".clearfix", ->
               comment "\nContent\n"
               div "#content.col.col-4.p2.justify", ->
-                raw options.cooked
+                raw story.tmp.cooked
               div "#story.col.col-4.p2.border-left", ->
-                raw options.cooked
+                raw story.tmp.cooked
               comment "\nSidebar"
               div "#sidebar.col.col-4.p2.border-left", ->
                 a href:'showit', "this is contents of sidebar"
