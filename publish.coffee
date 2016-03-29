@@ -50,14 +50,15 @@ SubSiteStory = class Story extends Backbone.Model
     return "http://#{siteUrl}:#{sitePort}/#{ref}"
 
   copyAsset: (name)=>
-    assetDest ="#{publicPath}/#{@.get 'siteHandle'}/#{@pathToMe ''}"
+    assetDest ="#{publicPath}-#{@.get 'siteHandle'}/#{@pathToMe ''}"
     sourceDir = (@.get 'sourcePath').replace /\.[\w]*$/,''
     try
       asset =fs.readFileSync "#{sitePath}/#{sourceDir}/#{name}"
-      mkdirp assetDest
+      mkdirp.sync assetDest
       fs.writeFileSync "#{assetDest}/#{name}",asset
     catch badDog
       console.log "copyAsset #{@.get 'slug'}Bad Doggy = #{badDog}"
+      process.exit()
     return
 
   snap: (text,force=false)->
@@ -126,7 +127,7 @@ SubSiteStories = class extends Backbone.Collection
     categories = story.get 'category'
     if !categories
       story.snap "Bad category",true
-    return "#{publicPath}/#{@siteHandle}/#{categories}"
+    return "#{publicPath}-#{@siteHandle}/#{categories}"
 
   getPublishedFileName: (story)->
     return "#{getPublishedFileDir story}/#{story.get 'slug'}.html"
@@ -162,8 +163,8 @@ SubSiteStories = class extends Backbone.Collection
         story.death "no content from formatStory"
       if ! story.get 'siteHandle'
         story.death "No siteHandle"
-      dir = "#{publicPath}/#{story.get 'siteHandle'}/#{story.get 'category'}"
-      fileName = "#{publicPath}/#{story.get 'siteHandle'}/#{story.href()}"
+      dir = "#{publicPath}-#{story.get 'siteHandle'}/#{story.get 'category'}"
+      fileName = "#{publicPath}-#{story.get 'siteHandle'}/#{story.href()}"
       try
         mkdirp.sync dir
         fs.writeFileSync(fileName,content )
@@ -197,8 +198,8 @@ SubSiteStories = class extends Backbone.Collection
         return t.toJSON()
     return theSummary
 
-StJohnsJimStory = class extends SubSiteStory
-BambooSnowStory = class extends SubSiteStory
+Sites['stjohnsjim'].Story = StJohnsJimStory = class extends SubSiteStory
+Sites['bamboosnow'].Story = BambooSnowStory = class extends SubSiteStory
   parser: (stuff)->
     if stuff.id
       stuff.numericId = stuff.id
@@ -207,15 +208,13 @@ BambooSnowStory = class extends SubSiteStory
       stuff.handle = stuff.Handle
       delete stuff.Handle
     return
-BambooSnowStories = class extends SubSiteStories
 
-StJohnsJimStories = class extends SubSiteStories
 
 AllStories = class extends SubSiteStories
 allStories = new AllStories
 
-stJohnsJimCollection = new StJohnsJimStories 'stjohnsjim'
-bambooSnowCollection = new BambooSnowStories 'bamboosnow'
+stJohnsJimCollection = new SubSiteStories 'stjohnsjim'
+bambooSnowCollection = new SubSiteStories 'bamboosnow'
 
 siteHandlers = [stJohnsJimCollection, bambooSnowCollection]
 
@@ -239,9 +238,6 @@ for storyKind, collection of {
 # analyze the stories en-mass
 # format the stories
 # write the stories
-try
-  mkdirp.sync path.resolve publicPath
-catch
 
 templateName =  'default'
 Template = require "./layouts/#{templateName}"  # body...

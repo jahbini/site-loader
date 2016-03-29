@@ -1,14 +1,7 @@
-###
-styling: "skeleton"
-_options:
-    headlogo: "site/layouts/header-logo-nav"
-
-###
 {render,doctype,html,title,meta,base,link,script,body,header,raw,section,
- comment,div,a,span,h1,h2,h3,h4,h5,h6,head,renderable,blockquote,img,
+ comment,div,a,span,h1,h2,h3,h4,h5,h6,head,renderable,blockquote,img,hr,
  tag,footer} = require "teacup"
 path = require 'path'
-headerLogoNav = require(path.resolve './layouts/header-logo-nav')
 Backbone = require 'backbone'
 fs = require 'fs'
 _=require 'underscore'
@@ -54,11 +47,8 @@ module.exports = class ClassLookAndFeel
             console.log "Rendered Contents by marked -- #{temp}"
             return temp
           catch nasty
-            console.log "mama mia!"
-            console.log nasty
-            process.exit()
-
-      throw badPuppy
+            story.death "Unable to render #{tag} via marked or internal",nasty
+      story.death "Unable to render #{tag} via internal",badPuppy
 
   expandSnippets: (story)=>
     if !story
@@ -92,8 +82,8 @@ module.exports = class ClassLookAndFeel
           workingCopy = workingCopy.replace /{{{author[,:\s]+([^}]*)}}}/ig, (match,more) ->
             console.log "match contents {#{more}}"
             return render ->
-              blockquote ".right.key-author.right-align.h6.p2.bg-white.border.rounded", ->
-                raw more
+                blockquote ".right.key-author.right-align.h6.p2.bg-white.bg-darken-1.border.rounded", ->
+                  raw more
           snippetHandled = true
         when "first name"
           #first name is a simple replacement with client-side heads-up
@@ -140,7 +130,6 @@ module.exports = class ClassLookAndFeel
     dieLater = story.tmp.workingCopy.match /{%/
 
     @setRenderer 'image', (href,title,text)=>
-      console.log href,title,text,story.get 'slug'
       throw 'useOld' unless href.match '@'
       val = _(href.split '@').map (snip)->
         return '' unless snip
@@ -151,6 +140,7 @@ module.exports = class ClassLookAndFeel
           catch badPuppy
             console.log "Bad Dog! in template expand #{story.get 'slug'} #{badPuppy}"
             console.log "#{ourword}, and #{theirword}"
+            console.log href,title,text,story.get 'slug'
             dieLater = true
           return result
       fullName =val.join ''
@@ -210,35 +200,28 @@ module.exports = class ClassLookAndFeel
     return false
 
   formatStory: renderable (story) =>
+    headMatter = require (path.resolve './layouts/head')
+    headerLogoNav = require(path.resolve './layouts/header-logo-nav')
     options = story.attributes
-    doctype 5
-    html ->
-      head ->
-        title options.title||"no Title"
-        meta title:"author", content:"James A. Hinds"
-        meta "http-equiv": "content-type", content: "text/html; charset=utf-8"
-        meta name: "description", content: "A great #{options.category}"
-        meta name: "viewport", content: "width=device-width,initial-scale=1"
-        base href: "/"
-        meta name: "keywords", content: "North Portland,St. John's, st johns"
-        link rel: "stylesheet", href: "css/app.css"
-        script src: 'js/vendor.js'
-        script src: 'js/app.js'
-        script "siteHandle = '#{options.siteHandle}'; require('initialize');"
-      comment "\nThe Body\n"
-      body "#body.enclosing", ->
-        headerLogoNav story
-        section ".app-container.py4", "data-id":"app"
-        comment "\nThe Main template\n"
-        div "#main.wrapper.mxn2.flex.flex-wrap", ->
-          div ".container.px2.col-12.border.rounded", ->
-            div ".clearfix", ->
-              comment "\nContent\n"
-              div "#content.col.col-4.p2.justify", ->
-                raw story.tmp.cooked
-              div "#story.col.col-4.p2.border-left", ->
-                raw story.tmp.cooked
-              comment "\nSidebar"
-              div "#sidebar.col.col-4.p2.border-left", ->
-                a href:'showit', "this is contents of sidebar"
-        tag 'footer', "data-id":"footer"
+    headMatter story
+    comment "\nThe Body\n"
+    body "#body.enclosing", ->
+      headerLogoNav story
+      section ".app-container.py4", "data-id":"app"
+      comment "\nThe Main template\n"
+      div "#main.wrapper.mxn2.flex.flex-wrap", "data-behavior": "1", ->
+        section ".postShorten-group.main-content-wrap.container.px2.col-12.border.rounded", ->
+          div ".clearfix", ->
+            comment "\nContent\n"
+            div "#content.col.col-4.p2.justify", ->
+              h3 options.title
+              hr
+              raw story.tmp.cooked
+            div "#storybar.col.col-4.p2.border-left", ->
+              h2 "and from around the web:"
+              div "#story"
+            comment "\nSidebar2"
+            div "#sidebar2.right.col.col-4.p2.border-left", ->
+              a href:'showit', "this is contents of sidebar"
+      tag 'footer', "data-id":"footer"
+      div "#cover", style:"background-image:url('/images/cover.jpg');"

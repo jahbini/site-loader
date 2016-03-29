@@ -2,6 +2,7 @@ MenuController = require 'controllers/menu'
 FooterController = require 'controllers/footer'
 HomeController = require 'controllers/home'
 SideBarController = require 'controllers/sidebar'
+StoryBarController = require 'controllers/storybar'
 routes = require 'routes'
 'use strict'
 
@@ -33,5 +34,6 @@ module.exports = class Application extends Chaplin.Application
   initControllers: ->
     new HomeController
     new SideBarController
+    new StoryBarController
     new MenuController
     new FooterController

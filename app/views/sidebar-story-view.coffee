@@ -6,22 +6,22 @@ module.exports = class SidebarStoryView extends Chaplin.View
   #initialize: @render()
   autoRender: true
   autoAttach: true
-  constructor: (@collection) ->
+  constructor: (@collection,@filter) ->
     super
 
-  el: "#sidebar"
+  el: "#sidebar2"
 
   getTemplateData: ()=>
-    @collection
-  getTemplateFunction: (info)->
-    T.renderable =>
+    @collection.filter @filter,@
+  getTemplateFunction: ->
+    T.renderable (stuff)=>
+        T.h4 "In Depth information:#{siteHandle}"
         T.ul =>
-          @collection.each (story) ->
+          _(stuff).each (story) ->
             T.li ".b1", ->
-              T.a ".goto.h5",
+              T.a ".goto.h3",
                 href: if siteHandle == story.get 'siteHandle'
                     story.href()
                   else
                     story.href story.get 'siteHandle'
-                story.get 'title'
-        T.text "wow from Teacup"
+                "#{story.get 'title'}"

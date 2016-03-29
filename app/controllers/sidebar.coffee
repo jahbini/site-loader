@@ -8,7 +8,8 @@ module.exports = class SideBarController extends BaseController
   initialize: ->
     super
     @stories = new StoryCollection
-    @view = new SSView @stories
+    @view = new SSView @stories, (s)->
+      (s.get 'siteHandle') == siteHandle
 
   showit: ->
     @view.render()
