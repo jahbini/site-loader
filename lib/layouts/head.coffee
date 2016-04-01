@@ -40,6 +40,7 @@ module.exports = renderable (story) ->
     base href: "/"
     link rel: "stylesheet", href: "css/app.css"
     link rel: "stylesheet", href: "css/vendor.css"
+    link rel: "stylesheet", type:'text/css', href:'https://fonts.googleapis.com/css?family=Vidaloka|Vast+Shadow'
     script src: 'js/vendor.js'
     script src: 'js/app.js'
     script "siteHandle = '#{options.siteHandle}'; require('initialize');"

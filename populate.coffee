@@ -8,7 +8,7 @@ caseMunger = require 'slug'
 path = require 'path'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
-sites = require './sites'
+sites = require './sites/_lib/sites'
 console.log "Sites!!",sites
 
 caseMunger.defaults.mode = 'rfc3986'

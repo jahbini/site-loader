@@ -3,7 +3,6 @@ html2markdown = require 'html2markdown'
 _ = require 'underscore'
 Backbone = require 'backbone'
 minimist = require 'minimist'
-ymljsFrontMatter = require 'yamljs-front-matter'
 path = require 'path'
 mkdirp = require 'mkdirp'
 
@@ -20,186 +19,19 @@ sitePath = path.resolve "./site"
 publicPath = path.resolve "./public"
 appPath = path.resolve "./app"
 
-allStories = null # but only for a little while
+{SubSiteStory,SubSiteStories,allStories} = require './lib/sub-site'
+Sites = require './site/_lib/sites'
 
-Sites = require './sites'
-SubSiteStory = class Story extends Backbone.Model
-  # tmp is a holder for transient and generated attrubutes
-  initialize: ()->
-    @tmp = []
-  idAttribute: 'slug'
-  defaults:
-    debug:""
-
-  #path to the url relative story asset directory
-  pathToMe: (against = false)=>
-    ref = "#{@get 'category'}/#{@get 'slug'}"
-    return ref unless against
-    return  "#{against}/#{ref}" if against.match '/'
-    siteUrl = Sites[against].lurl
-    sitePort = Sites[against].port
-    return "http://#{siteUrl}:#{sitePort}/#{ref}"
-
-  #path to the url relative story
-  href: (against = false)=>
-    ref = "#{@get 'category'}/#{@get 'slug'}.html"
-    return ref unless against
-    return  "#{against}/#{ref}" if against.match '/'
-    siteUrl = Sites[against].lurl
-    sitePort = Sites[against].port
-    return "http://#{siteUrl}:#{sitePort}/#{ref}"
-
-  copyAsset: (name)=>
-    assetDest ="#{publicPath}-#{@.get 'siteHandle'}/#{@pathToMe ''}"
-    sourceDir = (@.get 'sourcePath').replace /\.[\w]*$/,''
-    try
-      asset =fs.readFileSync "#{sitePath}/#{sourceDir}/#{name}"
-      mkdirp.sync assetDest
-      fs.writeFileSync "#{assetDest}/#{name}",asset
-    catch badDog
-      console.log "copyAsset #{@.get 'slug'}Bad Doggy = #{badDog}"
-      process.exit()
-    return
-
-  snap: (text,force=false)->
-    if force ==true || (
-        if typeof force == 'string'
-          (@.get 'debug').toString().match force
-        else
-          false
-      )
-      console.log "#{text} -- Story slug #{@.get 'slug'}"
-      console.log "Attributes", @.attributes
-      console.log "Tmp", @.tmp
-      console.log "#{text} -----"
-
-  death: (why,structure=null)->
-    console.log 'reason ----------'
-    console.log why
-    console.log 'failure info----------'
-    if structure
-      console.log structure
-    console.log 'object attributes ----------'
-    console.log @attributes
-    console.log 'object temporaries ----------'
-    console.log @tmp
-    console.log 'Death----------'
-    if @attributes.sourcePath
-      child_process = require "child_process"
-      child_process.execSync "open #{(sitePath)}/#{@attributes.sourcePath} -a atom.app"
-    process.exit()
-
-  parser: (obj)-> # override me
-    return obj
-
-  parse: (obj)=>
-    # Sanitize all stories
-    delete obj.numericId
-    delete obj.nextID
-    delete obj.previousID
-    delete obj._options
-    delete obj.sitePath
-    delete obj.href
-    delete obj.path
-    #our yml engine moves 'content' to '__content' -- go figure
-    if obj.debug == 'content'
-      console.log "CONTENT debug"
-      console.log obj
-    if obj.__content && !obj.content
-      obj.content = obj.__content
-    delete obj.__content
-    @parser obj
-    if !obj.category || !obj.slug
-      console.log obj
-      console.log "no category? slug?"
-      child_process = require "child_process"
-      child_process.execSync "open #{sitePath}/#{obj.sourcePath} -a atom.app"
-      process.exit()
-    return obj
-
-SubSiteStories = class extends Backbone.Collection
-  comparator: 'slug'
-  setFormatter: (@formatter)->
-
-  initialize: (@siteHandle,@SiteStory = Story)->
-
-  getPublishedFileDir: (story)->
-    categories = story.get 'category'
-    if !categories
-      story.snap "Bad category",true
-    return "#{publicPath}-#{@siteHandle}/#{categories}"
-
-  getPublishedFileName: (story)->
-    return "#{getPublishedFileDir story}/#{story.get 'slug'}.html"
-
-  testFile: (f)=>
-    result = f.match ///#{@siteHandle}.*\.md$///
-    return result
-
-  getFile: (fileName)=>
-    try
-      fileContents = fs.readFileSync fileName, encoding: "utf-8"
-    catch badPuppy
-      console.log "Trouble reading #{fileName}"
-      console.log badPuppy
-      return null
-    #assure proper headMatter
-    unless fileContents.match /^(---|###)/
-      fileContents = fileContents.replace /([^]*?)(---|###)/, (match,head,dash)->
-        return "#{dash}\n#{head}\n#{dash}"
-    stuff = ymljsFrontMatter.parse fileContents
-    throw "badly formed file #{fileName}" unless fileContents.match /^(---|###)/
-    stuff.sourcePath = path.relative sitePath, fileName
-    stuff.siteHandle = @siteHandle
-    theStory = new @SiteStory stuff, parse: true
-    theStory.tmp.sourceFileName = fileName
-    @.push theStory
-    allStories.push theStory
-
-  publish: (template)->
-    @.each (story)->
-      content = template.formatStory story
-      if !content
-        story.death "no content from formatStory"
-      if ! story.get 'siteHandle'
-        story.death "No siteHandle"
-      dir = "#{publicPath}-#{story.get 'siteHandle'}/#{story.get 'category'}"
-      fileName = "#{publicPath}-#{story.get 'siteHandle'}/#{story.href()}"
-      try
-        mkdirp.sync dir
-        fs.writeFileSync(fileName,content )
-      catch nasty
-        story.death "Nasty Write to public #{fileName}:",nasty
-    return
-
-  expand: (template)->
-    @.each (story)->
-      try
-        expansion = template.expand story
-      catch badPuppy
-        story.death "template #{templateName} failed to expand on #{story.get 'title'}", badPuppy
-    return
-
-  analyze:(template)->
-    retry = false
-    @.each (story)->
-      try
-        retry |= template.analyze story
-      catch badPuppy
-        story.death "template #{templateName} failed to analyze on #{story.get 'title'}", badPuppy
-    return retry
-
-
-  summarize: ()=>
-    theSummary = @.map (story)=>
-        t=story.clone()
-        t.unset 'content'
-        t.unset 'sourcePath'
-        return t.toJSON()
-    return theSummary
-
+template = require "./site/_lib/layouts/stjohnsjim"
+stjohnsjimTemplate = new template SubSiteStories,SubSiteStories,publicPath,appPath
+template = require "./site/_lib/layouts/bamboosnow"
+bamboosnowTemplate = new template SubSiteStories,SubSiteStories,publicPath,appPath
 Sites['stjohnsjim'].Story = StJohnsJimStory = class extends SubSiteStory
+  siteHandle: 'stjohnsjim'
+  template: stjohnsjimTemplate
 Sites['bamboosnow'].Story = BambooSnowStory = class extends SubSiteStory
+  siteHandle: 'bamboosnow'
+  template: bamboosnowTemplate
   parser: (stuff)->
     if stuff.id
       stuff.numericId = stuff.id
@@ -209,29 +41,16 @@ Sites['bamboosnow'].Story = BambooSnowStory = class extends SubSiteStory
       delete stuff.Handle
     return
 
+allStories.setSites Sites
 
-AllStories = class extends SubSiteStories
-allStories = new AllStories
+walkTreeSync sitePath, allStories.testFile, allStories.getFile
+console.log "allStories has #{allStories.length} elements"
 
-stJohnsJimCollection = new SubSiteStories 'stjohnsjim'
-bambooSnowCollection = new SubSiteStories 'bamboosnow'
-
-siteHandlers = [stJohnsJimCollection, bambooSnowCollection]
-
-walkTreeSync sitePath, bambooSnowCollection.testFile, bambooSnowCollection.getFile
-walkTreeSync sitePath, stJohnsJimCollection.testFile, stJohnsJimCollection.getFile
-console.log "AllStories has #{allStories.length} elements"
-
-for storyKind, collection of {
-    story: allStories
-    stjohnsjim: stJohnsJimCollection
-    bamboosnow: bambooSnowCollection
-    }
-  console.log storyKind
-  collection.sort()
-  yml = collection.toJSON()
-  yml = yamljs.stringify yml
-  fs.writeFileSync "#{storyKind}-pub.yml", yml
+console.log "allStories - pub yml"
+allStories.sort()
+yml = allStories.toJSON()
+yml = yamljs.stringify yml
+fs.writeFileSync "allStories-pub.yml", yml
 
 # Start the publication phases
 # create the publication root
@@ -239,19 +58,16 @@ for storyKind, collection of {
 # format the stories
 # write the stories
 
-templateName =  'default'
-Template = require "./layouts/#{templateName}"  # body...
-template = new Template SubSiteStories,AllStories,publicPath,appPath
-
 console.log "analyzing stories"
-if allStories.analyze(template)
-   allStories.analyze(template)
+if allStories.analyze()
+   allStories.analyze()
 
 console.log "Expanding stories"
-allStories.expand(template)
+allStories.expand()
 
 console.log "Publishing stories"
-allStories.publish(template)
+allStories.publish()
+allStories.writeNew('newSite')
 
 theSummary = allStories.summarize()
 fs.writeFileSync "#{appPath}/generated/all-posts.js", "module.exports = #{JSON.stringify theSummary};"

@@ -8,9 +8,9 @@ _=require 'underscore'
 
 
 marked = require 'marked'
-renderer = new marked.Renderer()
+markedRenderer = new marked.Renderer()
 marked.setOptions({
-  renderer: renderer
+  renderer: markedRenderer
   gfm: true,
   tables: true,
   breaks: false,
@@ -21,27 +21,27 @@ marked.setOptions({
 });
 
 module.exports = class ClassLookAndFeel
-  oldRenderer = {}
+  oldMarkedRenderer = {}
   constructor: (@StoryModel,@CollectionModel,@public,@app) ->
     @jSONarchive = new @CollectionModel
     @snippetArchive = new @CollectionModel
     @handleArchive = new @CollectionModel
-    @oldRenderer = {}
+    @oldMarkedRenderer = {}
 
-  setRenderer: (tag,newRenderer) ->
+  setMarkedRenderer: (tag,newMarkedRenderer) ->
     bind = (fn, me)->
       return ()->
         return fn.apply(me, arguments)
-    @oldRenderer[tag] = renderer[tag] unless @oldRenderer[tag]
-    oldR = @oldRenderer[tag]
-    nr = bind newRenderer, @
-    renderer[tag] = (a,b,c,d,args...) ->
+    @oldMarkedRenderer[tag] = markedRenderer[tag] unless @oldMarkedRenderer[tag]
+    oldR = @oldMarkedRenderer[tag]
+    nr = bind newMarkedRenderer, @
+    markedRenderer[tag] = (a,b,c,d,args...) ->
       r=bind oldR,this
       try
         return  nr a,b,c,d,args
       catch badPuppy
         if badPuppy == 'useOld'
-          console.log "using oldRenderer"
+          console.log "using oldMarkedRenderer"
           try
             temp = r a,b,c,d,args
             console.log "Rendered Contents by marked -- #{temp}"
@@ -129,7 +129,7 @@ module.exports = class ClassLookAndFeel
   expand: (story)=>
     dieLater = story.tmp.workingCopy.match /{%/
 
-    @setRenderer 'image', (href,title,text)=>
+    @setMarkedRenderer 'image', (href,title,text)=>
       throw 'useOld' unless href.match '@'
       val = _(href.split '@').map (snip)->
         return '' unless snip
@@ -144,10 +144,20 @@ module.exports = class ClassLookAndFeel
             dieLater = true
           return result
       fullName =val.join ''
+      console.log "first"
       smallName = fullName.match /[^\/]*$/
-
+      images = story.get 'images'
+      if !images
+        images = []
+      console.log "half", images
+      thumbName = smallName.toString().replace /\./,'-t.'
+      images.push smallName.toString()
+      images.push thumbName
+      console.log "3/4", images
+      story.set 'images',images
+      console.log "second"
       story.copyAsset smallName
-      story.copyAsset smallName.toString().replace /\./,'-t.'
+      story.copyAsset thumbName
 
       #handle text portion
       altTextSplit = text.match /^([^@.#]*)?(@|#|\.)(.*)$/
@@ -191,7 +201,7 @@ module.exports = class ClassLookAndFeel
     try
       story.tmp.cooked = marked.parser marked.lexer story.tmp.workingCopy
     catch badPuppy
-      story.death "Hate, hate, hate", badPuppy
+      story.death "Augmented Markdown Failure", badPuppy
     if dieLater
       console.log "Cooked:", story.tmp.cooked
       story.death "fixme!!"
@@ -200,28 +210,27 @@ module.exports = class ClassLookAndFeel
     return false
 
   formatStory: renderable (story) =>
-    headMatter = require (path.resolve './layouts/head')
-    headerLogoNav = require(path.resolve './layouts/header-logo-nav')
+    headMatter = require './head'
+    headerLogoNav = require './header-logo-nav'
     options = story.attributes
     headMatter story
     comment "\nThe Body\n"
     body "#body.enclosing", ->
-      headerLogoNav story
+      div "#{head}", ->
+        headerLogoNav story
       section ".app-container.py4", "data-id":"app"
       comment "\nThe Main template\n"
       div "#main.wrapper.mxn2.flex.flex-wrap", "data-behavior": "1", ->
         section ".postShorten-group.main-content-wrap.container.px2.col-12.border.rounded", ->
           div ".clearfix", ->
             comment "\nContent\n"
-            div "#content.col.col-4.p2.justify", ->
-              h3 options.title
+            div "#content.col.col-5.p2.justify", ->
+              h4 options.title
               hr
               raw story.tmp.cooked
-            div "#storybar.col.col-4.p2.border-left", ->
-              h2 "and from around the web:"
-              div "#story"
+            div "#story.col.col-4.p2.border-left", ->
             comment "\nSidebar2"
-            div "#sidebar2.right.col.col-4.p2.border-left", ->
+            div "#sidebar2.right.col.col-3.p2.border-left", ->
               a href:'showit', "this is contents of sidebar"
       tag 'footer', "data-id":"footer"
       div "#cover", style:"background-image:url('/images/cover.jpg');"

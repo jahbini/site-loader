@@ -21,7 +21,7 @@ exports.config =
       "assets/#{siteName}"
       ]
   modules:
-    autoRequire: ["baranquillo","backgrounds"]
+    autoRequire: ["baranquillo","backgrounds","normalize"]
     nameCleaner: (path) =>
       c=path.replace /^app\//, ''
       c=c.replace ///^assets\/#{siteName}\////, ''
@@ -35,6 +35,8 @@ exports.config =
         after:  /helpers\//
 
     stylesheets:
+      order:
+        before: 'normalize'
       joinTo:
         '/css/app.css': /^app/
         #'app/css/baranquillo.css': '_css/**/*.scss'

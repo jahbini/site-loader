@@ -1,6 +1,6 @@
 BaseController = require  'controllers/base/controller'
 StoryCollection = require 'models/stories'
-SSView = require 'views/sidebar-story-view'
+SSView = require 'views/sidebar-view'
 
 'use strict'
 
