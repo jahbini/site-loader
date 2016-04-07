@@ -21,7 +21,6 @@ module.exports = class StoryBarView extends Chaplin.View
       data.each (allCrap,category,stuff)->
         return if category =='/'
         stories = stuff[category]
-        debugger
         catPostfix = category.match /\/?[^\/]+$/
         catPrefix = category.replace /[^\/]/g,''
         catPrefix = catPrefix.replace /\//g, ' -'

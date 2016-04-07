@@ -1,4 +1,4 @@
-Sites = require './sites'
+Sites = require './site/_lib/sites'
 path = require 'path'
 siteName = process.env.SITE
 if !siteName
@@ -18,8 +18,10 @@ exports.config =
       "site/#{siteName}"
       'vendor'
       'app'
-      "assets/#{siteName}"
+      "site/layouts"
       ]
+  conventions:
+    assets: /(css.fonts|assets)[\\/]/
   modules:
     autoRequire: ["baranquillo","backgrounds","normalize"]
     nameCleaner: (path) =>
@@ -29,7 +31,7 @@ exports.config =
   files:
     javascripts:
       joinTo:
-        '/js/app.js': /^app/
+        '/js/app.js': [/^app/,///#{siteName}\/payload/// ]
         '/js/vendor.js': /^vendor|^bower_components|^node_modules/
       order:
         after:  /helpers\//
@@ -38,11 +40,8 @@ exports.config =
       order:
         before: 'normalize'
       joinTo:
-        '/css/app.css': /^app/
-        #'app/css/baranquillo.css': '_css/**/*.scss'
-        ##'app/css/baranquillo.css': '_css/**/*.scss'
+        '/css/app.css': [/^app/,///#{siteName}\/payload///]
         '/css/vendor.css': /^vendor|^bower_components|^node_modules/
-        #'app/css/all.css': 'node_modules/**/*.css'
 
     templates:
       joinTo:

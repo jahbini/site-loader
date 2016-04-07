@@ -1,0 +1,25 @@
+.with-columns {
+    -webkit-column-width: 18em; /* Chrome, Safari, Opera */
+    -moz-column-width: 18em; /* Chrome, Safari, Opera */
+    column-width: 18em; /* Chrome, Safari, Opera */
+    -webkit-column-gap: 1.5em; /* Chrome, Safari, Opera */
+    -moz-column-gap: 1.5em; /* Firefox */
+    column-gap: 1.5em;
+
+    -webkit-column-rule: 1px outset #ff00ff; /* Chrome, Safari, Opera */
+    -moz-column-rule: 1px outset #ff00ff; /* Firefox */
+    column-rule: 1px outset #ff00ff;
+}
+}
+
+.column-span-all {
+-webkit-column-span: all;
+-moz-column-span: all;
+column-span: all;
+}
+
+.column-span-2 {
+-webkit-column-span: 2;
+-moz-column-span: 2;
+column-span: 2;
+}

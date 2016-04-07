@@ -5,6 +5,7 @@ Backbone = require 'backbone'
 minimist = require 'minimist'
 path = require 'path'
 mkdirp = require 'mkdirp'
+moment = require 'moment'
 
 caseMunger = require 'slug'
 caseMunger.defaults.mode = 'rfc3986'
@@ -22,17 +23,23 @@ appPath = path.resolve "./app"
 {SubSiteStory,SubSiteStories,allStories} = require './lib/sub-site'
 Sites = require './site/_lib/sites'
 
-template = require "./site/_lib/layouts/stjohnsjim"
-stjohnsjimTemplate = new template SubSiteStories,SubSiteStories,publicPath,appPath
-template = require "./site/_lib/layouts/bamboosnow"
-bamboosnowTemplate = new template SubSiteStories,SubSiteStories,publicPath,appPath
+template = require "./site/stjohnsjim/payload-/stjohnsjim"
+stjohnsjimTemplate = new template
+template = require "./site/bamboosnow/payload-/bamboosnow"
+bamboosnowTemplate = new template
 Sites['stjohnsjim'].Story = StJohnsJimStory = class extends SubSiteStory
   siteHandle: 'stjohnsjim'
   template: stjohnsjimTemplate
+  parser: (stuff)->
+    #set a stiff embargo on everybody
+    stuff.embargo= moment().endOf('year').format() unless stuff.embargo
+    return
 Sites['bamboosnow'].Story = BambooSnowStory = class extends SubSiteStory
   siteHandle: 'bamboosnow'
   template: bamboosnowTemplate
   parser: (stuff)->
+    #set a stiff embargo on everybody
+    stuff.embargo= moment().endOf('year').format() unless stuff.embargo
     if stuff.id
       stuff.numericId = stuff.id
       delete stuff.id
@@ -63,7 +70,7 @@ if allStories.analyze()
    allStories.analyze()
 
 console.log "Expanding stories"
-allStories.expand()
+allStories.each (story) -> story.expand()
 
 console.log "Publishing stories"
 allStories.publish()

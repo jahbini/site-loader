@@ -1,28 +1,133 @@
 
 Backbone = require 'backbone'
 _ = require 'underscore'
+T=require 'teacup'
 fs = require 'fs'
 path = require 'path'
 mkdirp = require 'mkdirp'
 ymljsFrontMatter = require 'yamljs-front-matter'
+moment = require 'moment'
 sitePath = path.resolve "./site"
 publicPath = path.resolve "./public"
 appPath = path.resolve "./app"
 
+marked = require 'marked'
+markedRenderer = new marked.Renderer()
+marked.setOptions({
+  renderer: markedRenderer
+  gfm: true,
+  tables: true,
+  breaks: false,
+  pedantic: false,
+  sanitize: false,
+  smartLists: true,
+  smartypants: true
+});
+
 allStories = {} # value assigned below
-template = {} # value assigned below
-
-
-templateName =  'default'
-Template = require "./layouts/#{templateName}"  # body...
 
 SubSiteStory = class Story extends Backbone.Model
   # tmp is a holder for transient and generated attrubutes
   initialize: ()->
+    @oldMarkedRenderer = {}
     @tmp = []
+
   idAttribute: 'slug'
   defaults:
     debug:""
+
+  expandSnippets: ()=>
+    @.snap "in expandSnippets #{@.get 'slug'}", 'content'
+    snippets = @.get 'snippets'
+    snippetHandled = true
+    workingCopy = @.tmp.workingCopy
+    for snippet of snippets
+      continue unless snippet
+      snippetHandled = false
+      handledBy = handleArchive.find (model)->
+        return snippet.toUpperCase() == (model.get 'handle').toUpperCase()
+      if handledBy
+        workingCopy = workingCopy.replace ///{{{#{snippet}:(.*)}}}///ig , (match)->
+          match =match.replace '{{{',''
+          match =match.replace '}}}',''
+          match = match.split /:|,/
+          T.render ->
+            T.a ".goto", href: handledBy.href(@siteHandle), match[1]
+        snippetHandled = true
+        continue
+
+      key = snippet.split /,|:/
+      op = key.shift().toLowerCase()
+      who = key.shift()
+      switch op
+        when "author"
+          console.log "Author appears in #{@.get 'slug'}"
+          workingCopy = workingCopy.replace /{{{author[,:\s]+([^}]*)}}}/ig, (match,more) ->
+            return T.render ->
+                T.blockquote ".right.key-author.right-align.h6.p2.bg-white.bg-darken-1.border.rounded", ->
+                  T.raw more
+          snippetHandled = true
+        when "first name"
+          #first name is a simple replacement with client-side heads-up
+          workingCopy = workingCopy.replace /{{{first.name}}}/ig , T.render ->
+            T.span ".FBname", 'Friend'
+          snippetHandled = true
+        when "sms"
+          workingCopy = workingCopy.replace ///{{{#{op}[,:]#{who}[,:\s+]([^}]*)}}}///ig, (match,more)->
+            return T.render ->
+              T.blockquote ".right.key-#{op}.#{who}.right-align.h6.p2.bg-white.border.rounded", ->
+                T.raw "#{who} says: #{more}"
+          snippetHandled = true
+          continue
+
+        when "comment"
+          workingCopy = workingCopy.replace ///{{{#{op}[,:]#{who}[,:\s]+([^}]*)}}}///ig, (match,more)->
+            return T.render ->
+              T.blockquote ".right.key-#{op}.#{who}.right-align.h6.p2.bg-white.border.rounded", ->
+                T.raw "#{who} says: #{more}"
+          snippetHandled = true
+          continue
+
+    @.tmp.workingCopy = workingCopy
+    return false if snippetHandled
+    return true
+
+  analyze: ()=>
+    @.tmp.workingCopy = @.get 'content'
+    if (@.get 'debug').toString().match 'snippet'
+      debugger
+    if @get 'snippets'
+      if @expandSnippets @
+        #unresolved Handle type snippet.  need second pass.
+        console.log "expandSnippets #{@.get 'slug'} Unresolved!"
+
+    handle = @.get 'handle'
+    if handle
+      console.log "Handle #{handle} defined in story #{@.get 'slug'}"
+      handleArchive.push @
+    return
+
+  setMarkedRenderer: (tag,newMarkedRenderer) =>
+    bind = (fn, me)->
+      return ()->
+        return fn.apply(me, arguments)
+    @oldMarkedRenderer[tag] = markedRenderer[tag] unless @oldMarkedRenderer[tag]
+    oldR = @oldMarkedRenderer[tag]
+    nr = bind newMarkedRenderer, @
+    markedRenderer[tag] = (a,b,c,d,args...) ->
+      r=bind oldR,this
+      try
+        return  nr a,b,c,d,args
+      catch badPuppy
+        if badPuppy == 'useOld'
+          try
+            temp = r a,b,c,d,args
+            return temp
+          catch nasty
+            console.log "Unable to render #{tag} via marked or internal",nasty
+            @death "Unable to render #{tag} via marked or internal",nasty
+      console.log "Unable to render #{tag} via internal",badPuppy
+      @death "Unable to render #{tag} via internal",badPuppy
 
   #path to the url relative story asset directory
   pathToMe: (against = false)=>
@@ -110,6 +215,86 @@ SubSiteStory = class Story extends Backbone.Model
       process.exit()
     return obj
 
+
+  expand: ()=>
+    dieLater = @.tmp.workingCopy.match /{%/
+
+    @setMarkedRenderer 'image', (href,title,text)->
+      throw 'useOld' unless href.match '@'
+      val = _(href.split '@').map (snip)=>
+        return '' unless snip
+        ourUrl = snip.replace /^([\w]*)(\W.*)$/,(match,ourword,theirword)=>
+          result = "nogo!"
+          try
+            result =@[ourword]()+theirword
+          catch badPuppy
+            console.log "Bad Dog! in template expand #{@.get 'slug'} #{badPuppy}"
+            console.log "#{ourword}, and #{theirword}"
+            console.log href,title,text,@.get 'slug'
+            dieLater = true
+          return result
+      fullName =val.join ''
+      smallName = fullName.match /[^\/]*$/
+      images = @.get 'images'
+      if !images
+        images = []
+      thumbName = smallName.toString().replace /\./,'-t.'
+      images.push smallName.toString()
+      images.push thumbName
+      @.set 'images',images
+      @.copyAsset smallName
+      @.copyAsset thumbName
+
+      #handle text portion
+      altTextSplit = text.match /^([^@.#]*)?(@|#|\.)(.*)$/
+      if !altTextSplit
+        altText = text
+        classText = ''
+      else
+        altText = altTextSplit[1]
+        classText = if altTextSplit[3].match /^\.|#/
+            altTextSplit[3]
+          else
+            '.'+altTextSplit[3]
+        classText = '.'+classText unless classText.match /^\.|#/
+        classText = classText.split " "
+        classText = classText.join "."
+      thumbnailImage = val.join ""
+      thumbnailImage = thumbnailImage.replace /\.[^.]/,(match)-> "-t#{match}"
+      if classText.match "fancybox"
+        return T.render ->
+          T.div ".figure #{classText}", style: "width:;", ->
+            T.comment "href=#{href} title=#{title} text=#{text}"
+            T.a ".fancybox", href: (val.join ""), title: title, ->
+              T.img ".fig-img", src: thumbnailImage, alt: altText
+            T.span ".caption", title
+
+      return T.render ->
+        T.img classText,
+          title: title
+          alt: altText
+          src: val.join ""
+        T.comment "href=#{href} title=#{title} text=#{text}"
+
+
+    # actions on second pass of analysis
+    if (@.get 'debug').toString().match 'snippet'
+      debugger
+    if @.get 'snippets'
+      if @expandSnippets @
+        #unresolved Handle type snippet.  need second pass.
+        console.log "expandSnippets #{@.get 'slug'} Unresolved!"
+    try
+      @.tmp.cooked = marked.parser marked.lexer @.tmp.workingCopy
+    catch badPuppy
+      @.death "Augmented Markdown Failure", badPuppy
+    if dieLater
+      console.log "Cooked:", @.tmp.cooked
+      @.death "fixme!!"
+    tmp = @.clone()
+    jSONarchive.push tmp
+    return false
+
 SubSiteStories = class extends Backbone.Collection
   comparator: 'slug'
 
@@ -121,8 +306,6 @@ SubSiteStories = class extends Backbone.Collection
       allKeys.push keys
     @matcher = ///(#{allKeys.join '|'}).*\.(md|coffee)$///
 
-
-
   getPublishedFileDir: (story)->
     categories = story.get 'category'
     if !categories
@@ -133,6 +316,7 @@ SubSiteStories = class extends Backbone.Collection
     return "#{getPublishedFileDir story}/#{story.get 'slug'}.html"
 
   testFile: (f)=>
+    return false if f.match /-\./  #disallow 'template-.files'
     result = f.match @matcher
     return result
 
@@ -183,11 +367,16 @@ SubSiteStories = class extends Backbone.Collection
       _.each images, (image)->
         console.log "copy #{image} to #{newSite}"
         story.copyAsset image,"#{newSite}/"
-
       return
+
   publish: ()->
+    bind = (fn, me)->
+      return ()->
+        return fn.apply(me, arguments)
     @.each (story)->
-      content = story.template.formatStory story
+      return unless moment() > moment(story.get 'embargo')
+      template = bind story.template.formatStory,story.template
+      content = template story
       if !content
         story.death "no content from formatStory"
       if ! story.get 'siteHandle'
@@ -213,19 +402,23 @@ SubSiteStories = class extends Backbone.Collection
     retry = false
     @.each (story)->
       try
-        retry |= story.template.analyze story
+        retry |= story.analyze story
       catch badPuppy
         story.death "template #{story.siteHandle} failed to analyze on #{story.get 'title'}", badPuppy
     return retry
 
-
   summarize: ()=>
-    theSummary = @.map (story)=>
+    theSummary = @.filter (story)=>
+        return moment() > moment(story.get 'embargo')
+    theSummary = theSummary.map (story)=>
         t=story.clone()
         t.unset 'content'
         t.unset 'sourcePath'
         return t.toJSON()
     return theSummary
+
+jSONarchive = new SubSiteStories
+handleArchive = new SubSiteStories
 
 allStories = new SubSiteStories
 

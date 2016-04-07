@@ -13,11 +13,13 @@ module.exports = class SidebarStoryView extends Chaplin.View
 
   getTemplateData: ()=>
     @collection.filter @filter,@
-  getTemplateFunction: ->
+
+  getTemplateFunction: =>
     T.renderable (stuff)=>
         T.h4 "From Around the Web"
         T.ul =>
           _(stuff).each (story) ->
+            debugger
             headlines = story.get 'headlines'
             return unless headlines
             return if 'category' == story.get 'className'
