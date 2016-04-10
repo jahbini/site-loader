@@ -52,7 +52,9 @@ exports.config =
     globals:
       loglevel: "loglevel"
       teacup: "teacup"
-    styles: "basscss-background-colors":[ "css/background-colors.css"]
+    styles:
+      "basscss-background-colors":[ "css/background-colors.css"]
+      "basscss":["css/basscss.min.css"]
 
   plugins:
     scss:

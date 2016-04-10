@@ -9,7 +9,7 @@ module.exports = class StoryBarView extends Chaplin.View
   constructor: (@collection,@filter= ->true ) ->
     super
 
-  el: "#sidebar2"
+  el: "#rightbar"
 
   getTemplateData: ()=>
     intermediate = @collection.filter @filter,@

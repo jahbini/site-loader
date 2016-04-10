@@ -1,4 +1,6 @@
-
+{doctype,html,title,meta,base,link,script,body,header,raw,section,
+ comment,div,a,span,h1,h2,h3,h4,h5,h6,head,renderable,
+ tag,footer} = require "teacup"
 Backbone = require 'backbone'
 _ = require 'underscore'
 T=require 'teacup'
@@ -10,6 +12,7 @@ moment = require 'moment'
 sitePath = path.resolve "./site"
 publicPath = path.resolve "./public"
 appPath = path.resolve "./app"
+Sites = require "../site/_lib/sites"
 
 marked = require 'marked'
 markedRenderer = new marked.Renderer()
@@ -316,28 +319,31 @@ SubSiteStories = class extends Backbone.Collection
     return "#{getPublishedFileDir story}/#{story.get 'slug'}.html"
 
   testFile: (f)=>
-    return false if f.match /-\./  #disallow 'template-.files'
+    return false if f.match /-\//  #disallow 'template-.files'
     result = f.match @matcher
     return result
 
   getFile: (fileName)=>
     kinds = fileName.match @matcher
-    if kinds[2] == 'coffee'
-      console.log "Skipping Coffee Files"
-      return
-    SiteStory = @Sites[kinds[1]].Story
-    try
-      fileContents = fs.readFileSync fileName, encoding: "utf-8"
-    catch badPuppy
-      console.log "Trouble reading #{fileName}"
-      console.log badPuppy
-      return null
-    #assure proper headMatter
-    unless fileContents.match /^(---|###)/
-      fileContents = fileContents.replace /([^]*?)(---|###)/, (match,head,dash)->
-        return "#{dash}\n#{head}\n#{dash}"
-    stuff = ymljsFrontMatter.parse fileContents
-    throw "badly formed file #{fileName}" unless fileContents.match /^(---|###)/
+    switch kinds[2]
+      when 'coffee'
+        stuff = require fileName
+        SiteStory = @Sites[kinds[1]].Story
+        console.log "Funny Coffee?? #{fileName}"
+      else
+        SiteStory = @Sites[kinds[1]].Story
+        try
+          fileContents = fs.readFileSync fileName, encoding: "utf-8"
+        catch badPuppy
+          console.log "Trouble reading #{fileName}"
+          console.log badPuppy
+          return null
+        #assure proper headMatter
+        unless fileContents.match /^(---|###)/
+          fileContents = fileContents.replace /([^]*?)(---|###)/, (match,head,dash)->
+            return "#{dash}\n#{head}\n#{dash}"
+        stuff = ymljsFrontMatter.parse fileContents
+        throw "badly formed file #{fileName}" unless fileContents.match /^(---|###)/
     stuff.sourcePath = path.relative sitePath, fileName
     stuff.siteHandle = stuff.sourcePath.split('/')[0]
     theStory = new SiteStory stuff, parse: true
@@ -369,10 +375,58 @@ SubSiteStories = class extends Backbone.Collection
         story.copyAsset image,"#{newSite}/"
       return
 
+  doingOG = false
+  doingTwitter = false
+  doingFaceBook = false
+  doingXML = false
+
+  headMatter: renderable (story) ->
+    options = story.attributes
+    siteHandle = options.siteHandle
+    thisSite = Sites[siteHandle]
+    meta "http-equiv":"Content-Type", content:"text/html", charset:"UTF-8"
+    meta name:"viewport", content:"width=device-width, initial-scale=1"
+    meta name:"generator", content: options.slug
+    title options.title
+    meta name:"author", content: thisSite.author #JAH use site based params
+    meta name: "description", content: thisSite.description
+    meta name:"keywords", content:thisSite.keywords
+    if doingXML
+      link rel:"alternate", type:"application/atom+xml", title:"RSS", href:"/atom.xml"
+    if doingOG
+      meta property:"og:type", content:"news"
+      meta property:"og:title", content:"Bamboo Snow"
+      meta property:"og:url", content:"http://bamboosnow.com/index.html"
+      meta property:"og:site_name", content:"Bamboo Snow"
+      meta property:"og:description", content:"Information regarding the economic impact of bamboo snow"
+    if doingTwitter
+      meta name:"twitter:card", content:"summary"
+      meta name:"twitter:title", content:"Bamboo Snow"
+      meta name:"twitter:description", content:"Information regarding the economic impact of bamboo snow"
+      meta name:"twitter:creator", content:"@BabaBambooJim"
+    if doingFaceBook
+      meta property:"fb:app_id", content:"271501872999476"
+    base href: "/"
+    link rel: "stylesheet", href: "css/app.css"
+    link rel: "stylesheet", href: "css/vendor.css"
+    link rel: "stylesheet", type:'text/css', href:'https://fonts.googleapis.com/css?family=Vidaloka|Vast+Shadow'
+    script src: 'js/vendor.js'
+    script src: 'js/app.js'
+    script "siteHandle = '#{options.siteHandle}'; require('initialize');"
+
+  formAll: renderable (story,content)->
+    doctype html
+    html =>
+      head =>
+        raw @headMatter story
+      body ->
+        raw content
+
   publish: ()->
     bind = (fn, me)->
       return ()->
         return fn.apply(me, arguments)
+    formAll = bind @.formAll,@
     @.each (story)->
       return unless moment() > moment(story.get 'embargo')
       template = bind story.template.formatStory,story.template
@@ -381,8 +435,12 @@ SubSiteStories = class extends Backbone.Collection
         story.death "no content from formatStory"
       if ! story.get 'siteHandle'
         story.death "No siteHandle"
+      if ! story.get 'headlines'
+        story.death "No Headlines!!"
+
       dir = "#{publicPath}-#{story.get 'siteHandle'}/#{story.get 'category'}"
       fileName = "#{publicPath}-#{story.get 'siteHandle'}/#{story.href()}"
+      content = formAll story,content
       try
         mkdirp.sync dir
         fs.writeFileSync(fileName,content )

@@ -56,7 +56,7 @@ console.log "allStories has #{allStories.length} elements"
 console.log "allStories - pub yml"
 allStories.sort()
 yml = allStories.toJSON()
-yml = yamljs.stringify yml
+#yml = yamljs.stringify yml
 fs.writeFileSync "allStories-pub.yml", yml
 
 # Start the publication phases

@@ -28,7 +28,7 @@
   "dependencies": {
     "auto-reload-brunch": ">= 1.0 < 1.8",
     "backbone": "^1.3.1",
-    "basscss": "file:basscss",
+    "basscss": "^8.0.1",
     "basscss-background-colors": "^2.1.0",
     "brunch": "^2.5.3",
     "clean-css-brunch": ">= 1.0 < 1.8",
