@@ -13,6 +13,18 @@ sitePath = path.resolve "./site"
 publicPath = path.resolve "./public"
 appPath = path.resolve "./app"
 Sites = require "../site/_lib/sites"
+CoffeeScript = require 'coffee-script'
+
+try
+  allPosts = require "generated/all-posts"
+catch once
+  try
+    allPosts = require "#{appPath}/generated/all-posts"
+  catch badBoy
+    console.log "Cant find allPosts!",once
+    console.log "in subsite",badBoy
+    process.exit(1)
+
 
 marked = require 'marked'
 markedRenderer = new marked.Renderer()
@@ -287,10 +299,21 @@ SubSiteStory = class Story extends Backbone.Model
       if @expandSnippets @
         #unresolved Handle type snippet.  need second pass.
         console.log "expandSnippets #{@.get 'slug'} Unresolved!"
-    try
-      @.tmp.cooked = marked.parser marked.lexer @.tmp.workingCopy
-    catch badPuppy
-      @.death "Augmented Markdown Failure", badPuppy
+    if @.tmp.sourceFileName.match /tmd$/
+      debugger
+      codeBody = @tmp.workingCopy.replace /```/g,''
+      coffeeCode = "T=require 'teacup'\n#{codeBody}"
+      try
+        result = CoffeeScript.compile coffeeCode
+        @.tmp.cooked = eval result
+      catch badDog
+        console.log "Coffescript Article Conversion Error - #{badDog}"
+        story.death badDog
+    else
+      try
+        @.tmp.cooked = marked.parser marked.lexer @.tmp.workingCopy
+      catch badPuppy
+        @.death "Augmented Markdown Failure", badPuppy
     if dieLater
       console.log "Cooked:", @.tmp.cooked
       @.death "fixme!!"
@@ -307,7 +330,7 @@ SubSiteStories = class extends Backbone.Collection
     allKeys = []
     for keys of @Sites
       allKeys.push keys
-    @matcher = ///(#{allKeys.join '|'}).*\.(md|coffee)$///
+    @matcher = ///(#{allKeys.join '|'}).*\.(t?md)$///
 
   getPublishedFileDir: (story)->
     categories = story.get 'category'
@@ -325,25 +348,19 @@ SubSiteStories = class extends Backbone.Collection
 
   getFile: (fileName)=>
     kinds = fileName.match @matcher
-    switch kinds[2]
-      when 'coffee'
-        stuff = require fileName
-        SiteStory = @Sites[kinds[1]].Story
-        console.log "Funny Coffee?? #{fileName}"
-      else
-        SiteStory = @Sites[kinds[1]].Story
-        try
-          fileContents = fs.readFileSync fileName, encoding: "utf-8"
-        catch badPuppy
-          console.log "Trouble reading #{fileName}"
-          console.log badPuppy
-          return null
-        #assure proper headMatter
-        unless fileContents.match /^(---|###)/
-          fileContents = fileContents.replace /([^]*?)(---|###)/, (match,head,dash)->
-            return "#{dash}\n#{head}\n#{dash}"
-        stuff = ymljsFrontMatter.parse fileContents
-        throw "badly formed file #{fileName}" unless fileContents.match /^(---|###)/
+    SiteStory = @Sites[kinds[1]].Story
+    try
+      fileContents = fs.readFileSync fileName, encoding: "utf-8"
+    catch badPuppy
+      console.log "Trouble reading #{fileName}"
+      console.log badPuppy
+      return null
+    #assure proper headMatter
+    unless fileContents.match /^(---|###)/
+      fileContents = fileContents.replace /([^]*?)(---|###)/, (match,head,dash)->
+        return "#{dash}\n#{head}\n#{dash}"
+    stuff = ymljsFrontMatter.parse fileContents
+
     stuff.sourcePath = path.relative sitePath, fileName
     stuff.siteHandle = stuff.sourcePath.split('/')[0]
     theStory = new SiteStory stuff, parse: true
@@ -409,7 +426,6 @@ SubSiteStories = class extends Backbone.Collection
     base href: "/"
     link rel: "stylesheet", href: "css/app.css"
     link rel: "stylesheet", href: "css/vendor.css"
-    link rel: "stylesheet", type:'text/css', href:'https://fonts.googleapis.com/css?family=Vidaloka|Vast+Shadow'
     script src: 'js/vendor.js'
     script src: 'js/app.js'
     script "siteHandle = '#{options.siteHandle}'; require('initialize');"
@@ -429,8 +445,12 @@ SubSiteStories = class extends Backbone.Collection
     formAll = bind @.formAll,@
     @.each (story)->
       return unless moment() > moment(story.get 'embargo')
-      template = bind story.template.formatStory,story.template
-      content = template story
+      try
+        debugger
+        template = bind story.template.formatStory,story.template
+        content = template story
+      catch badDog
+        story.death "Error in template ", badDog
       if !content
         story.death "no content from formatStory"
       if ! story.get 'siteHandle'
