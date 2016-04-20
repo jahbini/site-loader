@@ -1,6 +1,7 @@
 T = require 'teacup'
+B = require 'backbone'
 
-Template = require "#{siteHandle}"
+Template = require "#{siteHandle}/brunch-payload-/#{siteHandle}"
 template = new Template
 
 module.exports = class StoryBarView extends Chaplin.View

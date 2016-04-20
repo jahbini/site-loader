@@ -9,21 +9,11 @@ path = require 'path'
 mkdirp = require 'mkdirp'
 ymljsFrontMatter = require 'yamljs-front-matter'
 moment = require 'moment'
-sitePath = path.resolve "./site"
+sitePath = path.resolve "./node_modules"
 publicPath = path.resolve "./public"
 appPath = path.resolve "./app"
-Sites = require "../site/_lib/sites"
+Sites = require "../sites"
 CoffeeScript = require 'coffee-script'
-
-try
-  allPosts = require "generated/all-posts"
-catch once
-  try
-    allPosts = require "#{appPath}/generated/all-posts"
-  catch badBoy
-    console.log "Cant find allPosts!",once
-    console.log "in subsite",badBoy
-    process.exit(1)
 
 
 marked = require 'marked'
@@ -347,6 +337,7 @@ SubSiteStories = class extends Backbone.Collection
     return result
 
   getFile: (fileName)=>
+    filename = path.resolve '/',fileName
     kinds = fileName.match @matcher
     SiteStory = @Sites[kinds[1]].Story
     try
@@ -362,7 +353,6 @@ SubSiteStories = class extends Backbone.Collection
     stuff = ymljsFrontMatter.parse fileContents
 
     stuff.sourcePath = path.relative sitePath, fileName
-    stuff.siteHandle = stuff.sourcePath.split('/')[0]
     theStory = new SiteStory stuff, parse: true
     theStory.tmp.sourceFileName = fileName
     @.push theStory

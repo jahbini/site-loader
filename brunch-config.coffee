@@ -1,4 +1,8 @@
-Sites = require './site/_lib/sites'
+
+console.log "here"
+Sites = require './sites'
+
+console.log "there"
 path = require 'path'
 siteName = process.env.SITE
 if !siteName
@@ -10,13 +14,12 @@ theSite =  Sites[siteName]
 if !theSite
   console.log "invalid site #{siteName} -- Not in sites.coffee"
   process.exit()
-exports.config =
+theResult =
   # See http://brunch.io/#documentation for docs.
   paths:
     public: "public-#{siteName}"
     watched:[
-      "site/#{siteName}/payload-"
-      "site/_lib"
+      "node_modules/#{siteName}/brunch-payload-"
       'vendor'
       'app'
       ]
@@ -25,6 +28,8 @@ exports.config =
   modules:
     autoRequire: [
       "baranquillo"
+      siteName
+      "#{siteName}/brunch-payload-/#{siteName}"
       "basscss"
       "basscss-darken"
       "normalize"
@@ -32,13 +37,16 @@ exports.config =
     nameCleaner: (path) =>
       c=path.replace /^app\//, ''
       c=c.replace ///^assets\/#{siteName}\////, ''
-      c=c.replace ///^site\/#{siteName}\/payload-\////, ''
+      c=c.replace ///^node_modules\////, ''
+      c=c.replace ///#{siteName}[\\/]brunch-payload[\\/]#{siteName}///,siteName
+      #console.log "path Cleaner: #{path} - #{c}"
       return c
   files:
     javascripts:
       joinTo:
-        '/js/app.js': [/^app/,///#{siteName}\/payload/// ]
-        '/js/vendor.js': /^vendor|^bower_components|^node_modules/
+        '/js/app.js': [/^app/,///#{siteName}\/brunch-payload-/// ]
+        '/js/vendor.js': ///^vendor|^bower_components|^node_modules(?!#{siteName})///
+
       order:
         after:  /helpers\//
 
@@ -46,13 +54,15 @@ exports.config =
       order:
         before: 'normalize'
       joinTo:
-        '/css/app.css': [/^app/,///#{siteName}\/payload///]
-        '/css/vendor.css': /^vendor|^bower_components|^node_modules/
+        '/css/app.css': [/^app/,///#{siteName}\/brunch-payload-///]
+        '/css/vendor.css': ///^vendor|^bower_components|^node_modules(?!#{siteName})///
 
     templates:
       joinTo:
         '/js/app.js': /^app/
-
+  conventions:
+    vendor:
+      ///(^bower_components|node_modules(?![\\/]#{siteName})|vendor)[\\/]///
   npm:
     enabled: true
     globals:
@@ -60,6 +70,7 @@ exports.config =
       teacup: "teacup"
     static: ["basscss-darken"]
     styles: {
+      "#{siteName}": [ "brunch-payload-/#{siteName}.css"]
       "basscss-darken": [ "css/darken.css"]
       "basscss-background-colors":[ "css/background-colors.css"]
       "basscss":["css/basscss.min.css"]
@@ -84,3 +95,6 @@ exports.config =
     hostname: theSite.lurl
     noPushState: true
     stripSlashes: true
+
+console.log theResult
+exports.config = theResult

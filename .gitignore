@@ -2,4 +2,8 @@ site/
 public/
 *.swp
 app/published
+logs/
+*.tgz
+public-*/
+newSite/
 

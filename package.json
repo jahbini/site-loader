@@ -17,10 +17,12 @@
   "author": "James Hinds",
   "license": "ISC",
   "devDependencies": {
+    "bamboosnow": "file:///Users/jim/static-site-development/bamboosnow",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "pushserve": "^1.0.2",
     "slug": "^0.9.1",
+    "stjohnsjim": "file:///Users/jim/static-site-development/stjohnsjim",
     "underscore": "^1.8.3",
     "yamljs": "^0.2.6",
     "yamljs-front-matter": "git+https://github.com/chrisprice/yamljs-front-matter.git"

@@ -16,41 +16,27 @@ fs = require 'fs'
   walkTreeSync
   walkSync} = require 'walk_tree'
 
-sitePath = path.resolve "./site"
-publicPath = path.resolve "./public"
 appPath = path.resolve "./app"
 
-{SubSiteStory,SubSiteStories,allStories} = require './lib/sub-site'
-Sites = require './site/_lib/sites'
+{SubSiteStory,SubSiteStories,allStories} = require './sub-site'
+Sites = require '../sites'
+for subSite, contents of Sites
+  _(contents).extend  (require "#{subSite}")[subSite]
+  contents.template = require "#{subSite}/brunch-payload-/#{subSite}"
+  contents.template = new contents.template
 
-template = require "./site/stjohnsjim/payload-/stjohnsjim"
-stjohnsjimTemplate = new template
-template = require "./site/bamboosnow/payload-/bamboosnow"
-bamboosnowTemplate = new template
-Sites['stjohnsjim'].Story = StJohnsJimStory = class extends SubSiteStory
-  siteHandle: 'stjohnsjim'
-  template: stjohnsjimTemplate
-  parser: (stuff)->
-    #set a stiff embargo on everybody
-    stuff.embargo= moment().endOf('year').format() unless stuff.embargo
-    return
-Sites['bamboosnow'].Story = BambooSnowStory = class extends SubSiteStory
-  siteHandle: 'bamboosnow'
-  template: bamboosnowTemplate
-  parser: (stuff)->
-    #set a stiff embargo on everybody
-    stuff.embargo= moment().endOf('year').format() unless stuff.embargo
-    if stuff.id
-      stuff.numericId = stuff.id
-      delete stuff.id
-    if stuff.Handle
-      stuff.handle = stuff.Handle
-      delete stuff.Handle
-    return
+  contents.Story = class extends SubSiteStory
+    siteHandle: subSite
+    template: contents.template
+    parser: (stuff)->
+      #set a stiff embargo on everybody
+      stuff.embargo= moment().endOf('year').format() unless stuff.embargo
+      return
+
 
 allStories.setSites Sites
-
-walkTreeSync sitePath, allStories.testFile, allStories.getFile
+for subSite, contents of Sites
+  walkTreeSync "./node_modules/#{subSite}/contents", allStories.testFile, allStories.getFile
 console.log "allStories has #{allStories.length} elements"
 
 console.log "allStories - pub yml"

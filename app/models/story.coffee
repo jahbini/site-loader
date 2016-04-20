@@ -12,6 +12,8 @@
       return  "#{against}/#{ref}" if against.match '/'
       siteUrl = Sites[against].lurl
       sitePort = Sites[against].port
+      if !sitePort
+        return "http://#{siteUrl}/#{ref}"
       return "http://#{siteUrl}:#{sitePort}/#{ref}"
     initialize: () ->
       super
