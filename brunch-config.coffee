@@ -35,11 +35,13 @@ theResult =
       "normalize"
     ]
     nameCleaner: (path) =>
+      if path.match "header-logo-nav"
+        debugger
       c=path.replace /^app\//, ''
-      c=c.replace ///^assets\/#{siteName}\////, ''
+      c=c.replace ///^assets/#{siteName}///, ''
       c=c.replace ///^node_modules\////, ''
-      c=c.replace ///#{siteName}[\\/]brunch-payload[\\/]#{siteName}///,siteName
-      #console.log "path Cleaner: #{path} - #{c}"
+      c=c.replace ///#{siteName}[\/]brunch-payload-///,'payload-'
+      console.log "path Cleaner: #{path} - #{c}"
       return c
   files:
     javascripts:
@@ -62,7 +64,7 @@ theResult =
         '/js/app.js': /^app/
   conventions:
     vendor:
-      ///(^bower_components|node_modules(?![\\/]#{siteName})|vendor)[\\/]///
+      ///(^bower_components|node_modules(?![\/]#{siteName})|vendor)[\/]///
   npm:
     enabled: true
     globals:
