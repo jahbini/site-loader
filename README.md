@@ -13,3 +13,5 @@ The module contins a directory named contents. This is where all the source text
 
 Two sites that are generated with this methodology are http://stjohnsjim.com/ (some stories - try one, you might laugh) and
 http://bamboosnow.com/  (about an amazing and useful substance I discovered on the tropic island of Saipan)
+
+An example of a page written extended markdown where code fences are used to execute embedded coffeeScript in the source file:  http://stjohnsjim.com/announcement/new-look.html 
