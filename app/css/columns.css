@@ -26,16 +26,3 @@ column-span: all;
 -moz-column-span: 2;
 column-span: 2;
 }
-
-@font-face {
-  font-family: 'Vast Shadow';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Vast Shadow Regular'), local('VastShadow-Regular'), url(../fonts/vastshadow.woff) format('woff');
-}
-@font-face {
-  font-family: 'Vidaloka';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Vidaloka '), local('Vidaloka-Regular'), url(../fonts/vidaloka.woff) format('woff');
-}

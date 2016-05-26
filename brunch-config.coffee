@@ -1,8 +1,7 @@
-
-console.log "here"
+# Brunch-config.coffee meta file
+#
 Sites = require './sites'
 
-console.log "there"
 path = require 'path'
 siteName = process.env.SITE
 if !siteName
@@ -35,19 +34,23 @@ theResult =
       "normalize"
     ]
     nameCleaner: (path) =>
-      if path.match "header-logo-nav"
-        debugger
       c=path.replace /^app\//, ''
       c=c.replace ///^assets/#{siteName}///, ''
       c=c.replace ///^node_modules\////, ''
       c=c.replace ///#{siteName}[\/]brunch-payload-///,'payload-'
-      console.log "path Cleaner: #{path} - #{c}"
+      #console.log "path Cleaner: #{path} - #{c}"
       return c
   files:
     javascripts:
       joinTo:
         '/js/app.js': [/^app/,///#{siteName}\/brunch-payload-/// ]
-        '/js/vendor.js': ///^vendor|^bower_components|^node_modules(?!#{siteName})///
+        '/js/vendor.js': (f)->
+          pattern= ///vendor|bower_components|node_modules(?![\/]#{siteName})///
+          #console.log pattern
+          result = f.match pattern
+          #console.log "matching #{f}: #{result}"
+          return result
+
 
       order:
         after:  /helpers\//
@@ -57,7 +60,7 @@ theResult =
         before: 'normalize'
       joinTo:
         '/css/app.css': [/^app/,///#{siteName}\/brunch-payload-///]
-        '/css/vendor.css': ///^vendor|^bower_components|^node_modules(?!#{siteName})///
+        '/css/vendor.css': ///^vendor|^bower_components|^node_modules(?![\/]#{siteName})///
 
     templates:
       joinTo:
@@ -70,6 +73,8 @@ theResult =
     globals:
       loglevel: "loglevel"
       teacup: "teacup"
+      fontFaceObserver: 'font-face-observer'
+
     static: ["basscss-darken"]
     styles: {
       "#{siteName}": [ "brunch-payload-/#{siteName}.css"]
@@ -92,11 +97,13 @@ theResult =
   plugins:
     scss:
       mode: 'ruby' # set to 'native' to force libsass
+###
   server:
     port: theSite.port
     hostname: theSite.lurl
     noPushState: true
     stripSlashes: true
+###
 
-console.log theResult
+#console.log theResult
 exports.config = theResult

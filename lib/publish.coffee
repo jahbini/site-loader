@@ -4,7 +4,6 @@ _ = require 'underscore'
 Backbone = require 'backbone'
 minimist = require 'minimist'
 path = require 'path'
-mkdirp = require 'mkdirp'
 moment = require 'moment'
 CommandLineOptions = require('commander')
 
@@ -63,10 +62,11 @@ for subSite, contents of Sites
 
 allStories.setSites Sites
 for subSite, contents of Sites
+  console.log "Walking ./node_modules/#{subSite}/contents"
   walkTreeSync "./node_modules/#{subSite}/contents", allStories.testFile, allStories.getFile
 console.log "allStories has #{allStories.length} elements"
 
-console.log "allStories - pub yml"
+console.log "allStories - sorting"
 allStories.sort()
 
 if (CommandLineOptions.yml)
@@ -99,3 +99,5 @@ if CommandLineOptions.generateJson
   fs.writeFileSync "#{appPath}/generated/all-posts.js", "module.exports = #{JSON.stringify theSummary};"
   fs.writeFileSync "#{appPath}/generated/sites.js", "module.exports = #{JSON.stringify Sites};"
 console.log "Publication complete."
+
+module.exports = Sites

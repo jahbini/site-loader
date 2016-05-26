@@ -1,7 +1,7 @@
 T = require 'teacup'
 B = require 'backbone'
 
-Template = require "#{siteHandle}/brunch-payload-/#{siteHandle}"
+Template = require "payload-/#{siteHandle}"
 template = new Template
 
 module.exports = class StoryBarView extends Chaplin.View
@@ -12,7 +12,7 @@ module.exports = class StoryBarView extends Chaplin.View
   constructor: (@collection,@filter= ->true ) ->
     super
 
-  el: "#rightbar"
+  el: "#sidebar"
 
   getTemplateData: ()=>
     intermediate = @collection.filter @filter,@
@@ -20,7 +20,7 @@ module.exports = class StoryBarView extends Chaplin.View
     return stuff
   getTemplateFunction: ()=>
     T.renderable (data)->
-      template.widgetWrap  title: "Stories", ->
+      template.widgetWrap  title: "Contents", ->
         data.each (allCrap,category,stuff)->
           return if category =='/'
           stories = stuff[category]
@@ -32,16 +32,16 @@ module.exports = class StoryBarView extends Chaplin.View
             #find index for this category
             return 'category' == story.get 'className'
           if headliner
-            T.h4 ->
+            T.h3 ".category",->
               T.text "#{category}: "
               T.em ".h4", _.sample headliner.get 'headlines'
           else
-            T.h5 "#{catPrefix} #{catPostfix}"
-          T.ul =>
+            T.h3 ".category","#{catPrefix} #{catPostfix}"
+          T.ul ".category.pr1", =>
             _(stuff[category]).each (story) ->
               return if 'category' == story.get 'className'
-              T.li ".b1", ->
-                T.a ".goto.h5",
+              T.li ".category.b1", ->
+                T.a ".goto.h3.category",
                   href: if siteHandle == story.get 'siteHandle'
                       story.href()
                     else

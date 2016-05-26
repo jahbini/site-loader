@@ -16,9 +16,7 @@ module.exports = class SidebarStoryView extends Chaplin.View
 
   getTemplateFunction:  ()->
     return (data)=>
-      debugger
       return (a,b,c) =>
-        debugger
         story = null
         until story
           story = data.pop()
@@ -35,5 +33,5 @@ module.exports = class SidebarStoryView extends Chaplin.View
                 story.href story.get 'siteHandle'
               }, =>
                 T.div ".b1.bg-silver.bg-darken-3.mb1.ml2.border.rounded.p1", =>
-                  T.h5 "From around the Web:"
-                  T.h6 "#{story.get 'title'}: #{_.sample story.get 'headlines'}"
+                  T.h4 ".adv-head","From around the Web:"
+                  T.h6 ".adv-text","#{story.get 'title'}: #{_.sample story.get 'headlines'}"

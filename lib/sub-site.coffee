@@ -16,6 +16,7 @@ Sites = require "../sites"
 CoffeeScript = require 'coffee-script'
 
 
+
 marked = require 'marked'
 markedRenderer = new marked.Renderer()
 marked.setOptions({
@@ -268,11 +269,11 @@ SubSiteStory = class Story extends Backbone.Model
       thumbnailImage = thumbnailImage.replace /\.[^.]/,(match)-> "-t#{match}"
       if classText.match "fancybox"
         return T.render ->
-          T.div ".figure #{classText}", style: "width:;", ->
+          T.div ".clearfix.mb2.border-bottom.fit #{classText}", ->
             T.comment "href=#{href} title=#{title} text=#{text}"
-            T.a ".fancybox", href: (val.join ""), title: title, ->
+            T.a ".block.mx-auto", href: (val.join ""), title: title, ->
               T.img ".fig-img", src: thumbnailImage, alt: altText
-            T.span ".caption", title
+            T.p ".caption", title
 
       return T.render ->
         T.img classText,
@@ -290,7 +291,6 @@ SubSiteStory = class Story extends Backbone.Model
         #unresolved Handle type snippet.  need second pass.
         console.log "expandSnippets #{@.get 'slug'} Unresolved!"
     if @.tmp.sourceFileName.match /tmd$/
-      debugger
       codeBody = @tmp.workingCopy.replace /```/g,''
       coffeeCode = "T=require 'teacup'\n#{codeBody}"
       try
@@ -332,11 +332,14 @@ SubSiteStories = class extends Backbone.Collection
     return "#{getPublishedFileDir story}/#{story.get 'slug'}.html"
 
   testFile: (f)=>
+    console.log "TestFile: #{f} - #{result}"
     return false if f.match /-\//  #disallow 'template-.files'
     result = f.match @matcher
+    console.log "TestFile: #{f} - #{result}"
     return result
 
   getFile: (fileName)=>
+    console.log fileName
     filename = path.resolve '/',fileName
     kinds = fileName.match @matcher
     SiteStory = @Sites[kinds[1]].Story
@@ -418,6 +421,17 @@ SubSiteStories = class extends Backbone.Collection
     link rel: "stylesheet", href: "css/vendor.css"
     script src: 'js/vendor.js'
     script src: 'js/app.js'
+    script """
+    var cb = function() {
+    var l = document.createElement('link'); l.rel = 'stylesheet';
+    l.href = 'css/app.css';
+    var h = document.getElementsByTagName('head')[0];
+      h.parentNode.insertBefore(l, h); };
+    var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+              webkitRequestAnimationFrame || msRequestAnimationFrame;
+    if (raf) raf(cb);
+    else window.addEventListener('load', cb);
+    """
     script "siteHandle = '#{options.siteHandle}'; require('initialize');"
 
   formAll: renderable (story,content)->
@@ -425,8 +439,7 @@ SubSiteStories = class extends Backbone.Collection
     html =>
       head =>
         raw @headMatter story
-      body ->
-        raw content
+      raw content
 
   publish: ()->
     bind = (fn, me)->
@@ -436,7 +449,6 @@ SubSiteStories = class extends Backbone.Collection
     @.each (story)->
       return unless moment() > moment(story.get 'embargo')
       try
-        debugger
         template = bind story.template.formatStory,story.template
         content = template story
       catch badDog
@@ -454,6 +466,7 @@ SubSiteStories = class extends Backbone.Collection
       try
         mkdirp.sync dir
         fs.writeFileSync(fileName,content )
+        console.log "published: #{fileName}"
       catch nasty
         story.death "Nasty Write to public #{fileName}:",nasty
     return
