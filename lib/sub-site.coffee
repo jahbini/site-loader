@@ -221,10 +221,50 @@ SubSiteStory = class Story extends Backbone.Model
       process.exit()
     return obj
 
+  unescapeAll= (html)->
+    return html
+      .replace /&lt;/g, '<'
+      .replace /&gt;/g, '>'
+      .replace /&quot;/g, '"'
+      .replace /&amp;/g, '&'
+      .replace /&([#\w]+);/g, (_, n)->
+        n = n.toLowerCase()
+        return ':' if n == 'colon'
+        return '' unless (n.charAt(0) == '#')
+        return String.fromCharCode(+n.substring(1)) unless n.charAt(1) == 'x'
+        return String.fromCharCode(parseInt(n.substring(2), 16))
+
 
   expand: ()=>
     dieLater = @.tmp.workingCopy.match /{%/
+    @setMarkedRenderer 'codespan', (codeBody) ->
+      console.log arguments
+      console.log codeBody
+      console.log unescapeAll codeBody
 
+      coffeeCode = "T=require 'teacup'\n#{ unescapeAll codeBody}"
+      try
+        result = CoffeeScript.compile coffeeCode
+        return  eval result
+      catch badDog
+        console.log "Coffescript Article Conversion Error - #{badDog}"
+        console.log result
+        dieLater = true
+
+    @setMarkedRenderer 'code', (codeBody) ->
+      console.log arguments
+      console.log codeBody
+      console.log unescapeAll codeBody
+
+      coffeeCode = "T=require 'teacup'\n#{ unescapeAll codeBody}"
+      try
+        result = CoffeeScript.compile coffeeCode
+        return  eval result
+      catch badDog
+        console.log "Coffescript Article Conversion Error - #{badDog}"
+        console.log result
+        dieLater = true
+        
     @setMarkedRenderer 'image', (href,title,text)->
       throw 'useOld' unless href.match '@'
       val = _(href.split '@').map (snip)=>
@@ -290,20 +330,11 @@ SubSiteStory = class Story extends Backbone.Model
       if @expandSnippets @
         #unresolved Handle type snippet.  need second pass.
         console.log "expandSnippets #{@.get 'slug'} Unresolved!"
-    if @.tmp.sourceFileName.match /tmd$/
-      codeBody = @tmp.workingCopy.replace /```/g,''
-      coffeeCode = "T=require 'teacup'\n#{codeBody}"
-      try
-        result = CoffeeScript.compile coffeeCode
-        @.tmp.cooked = eval result
-      catch badDog
-        console.log "Coffescript Article Conversion Error - #{badDog}"
         story.death badDog
-    else
-      try
-        @.tmp.cooked = marked.parser marked.lexer @.tmp.workingCopy
-      catch badPuppy
-        @.death "Augmented Markdown Failure", badPuppy
+    try
+      @.tmp.cooked = marked.parser marked.lexer @.tmp.workingCopy
+    catch badPuppy
+      @.death "Augmented Markdown Failure", badPuppy
     if dieLater
       console.log "Cooked:", @.tmp.cooked
       @.death "fixme!!"
