@@ -40,7 +40,7 @@ module.exports = class StoryBarView extends Chaplin.View
           T.ul ".category.pr1", =>
             _(stuff[category]).each (story) ->
               return if 'category' == story.get 'className'
-              T.li ".category.b1", ->
+              T.li ".category.b1.mb1", ->
                 T.a ".goto.h3.category",
                   href: if siteHandle == story.get 'siteHandle'
                       story.href()

@@ -179,14 +179,13 @@ SubSiteStory = class Story extends Backbone.Model
 
   death: (why,structure=null)->
     console.log 'failure info----------'
+    console.log 'reason ---------- ', why
     if structure
       console.log structure
     console.log 'object attributes ----------'
     console.log @attributes
     console.log 'object temporaries ----------'
     console.log @tmp
-    console.log 'reason ----------'
-    console.log why
     console.log 'Death----------'
     if @attributes.sourcePath
       child_process = require "child_process"
@@ -264,7 +263,7 @@ SubSiteStory = class Story extends Backbone.Model
         console.log "Coffescript Article Conversion Error - #{badDog}"
         console.log result
         dieLater = true
-        
+
     @setMarkedRenderer 'image', (href,title,text)->
       throw 'useOld' unless href.match '@'
       val = _(href.split '@').map (snip)=>
