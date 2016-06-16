@@ -2,6 +2,7 @@ site/
 public/
 *.swp
 app/published
+app/generated/
 logs/
 *.tgz
 public-*/

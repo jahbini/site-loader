@@ -1,0 +1,92 @@
+#cakefile
+spawn = require('child_process').spawn
+exec = require('child_process').exec
+chokidar=require 'chokidar'
+fs = require 'fs'
+
+Sites =
+  stjohnsjim:3334
+  bamboosnow:3335
+siteArray = (key for key of Sites)
+
+
+publishAll = () ->
+    pubLog = "publish.log"
+    pubStdOut = fs.createWriteStream pubLog
+    stdoutMsgs=0
+    console.log "starting publish of ",siteArray
+    try
+      publisher = spawn "coffee", [].concat './index.coffee', siteArray
+    catch badHoodoo
+      console.log "Bad Publish -",badHoodoo
+      process.exit()
+
+    publisher.on 'error',(badHoodoo)->
+      console.log badHoodoo
+      console.log "Death from Publish!"
+      process.exit()
+
+    publisher.stdout.on 'data', (data) ->
+        stdoutMsgs++
+        pubStdOut.write data
+
+    publisher.stderr.on 'data', (data) ->
+        console.log "PUBLISH ERROR::#{data}"
+
+    publisher.on 'exit', (code) ->
+        pubStdOut.close()
+        console.log "Publisher:: exit with code: #{code}"
+
+    return publisher
+
+brunchify = (theSite,thePort,options) ->
+    try
+      console.log "starting #{theSite}"
+      opts=process.env
+      opts["SITE"] = theSite
+      brunch = spawn "brunch", ['watch', '-s', "-P", thePort],{
+        env:opts
+      }
+    catch badHoodoo
+      console.log badHoodoo
+      process.exit()
+
+    brunch.on 'error',(badHoodoo)->
+      console.log badHoodoo
+      console.log "Death from #{theSite}"
+      process.exit()
+
+    brunch.stdout.on 'data', (data) ->
+        console.log "#{theSite}::#{data}"
+
+    brunch.stderr.on 'data', (data) ->
+        console.log "#{theSite}::#{data}"
+
+    brunch.on 'exit', (code) ->
+        console.log "#{theSite}:: exit with code: #{code}"
+
+    return brunch
+
+publishSites = (paths)->
+  unready=true
+  x=chokidar.watch paths,
+    persistent:true
+    cwd: process.cwd()
+  x.on 'ready',()->
+    publishAll paths
+    unready=false
+  x.on 'all',()->
+    return if unready
+    publishAll paths
+    console.log "Change!!",arguments
+
+
+Processes = {}
+task 'go','start up the siteMaster build on sites', ()->
+  console.log "start"
+  s = ['./lib']
+  for theSite, thePort of Sites
+    Processes[theSite] = brunchify theSite,thePort
+    s.push "node_modules/#{theSite}"
+  publishSites s
+  console.log "started"
