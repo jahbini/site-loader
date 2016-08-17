@@ -1,10 +1,11 @@
 {
   "name": "siteMaster",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Manage Multiple Static sites with Brunch, Teacup and Chaplin",
   "main": "index.js",
   "scripts": {
-    "start": "./index.js stjohnsjim bamboosnow",
+    "start": "cake go",
+    "upload": "cake upload",
     "test": "brunch test"
   },
   "keywords": [
