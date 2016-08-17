@@ -263,7 +263,7 @@ SubSiteStory = class Story extends Backbone.Model
         console.log "Coffescript Article Conversion Error - #{badDog}"
         console.log result
         dieLater = true
-
+# image tag -- render as html with option for fancybox attributes 
     @setMarkedRenderer 'image', (href,title,text)->
       throw 'useOld' unless href.match '@'
       val = _(href.split '@').map (snip)=>

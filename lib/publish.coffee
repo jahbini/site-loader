@@ -62,8 +62,8 @@ for subSite, contents of Sites
 
 allStories.setSites Sites
 for subSite, contents of Sites
-  console.log "Walking ./node_modules/#{subSite}/contents"
-  walkTreeSync "./node_modules/#{subSite}/contents", allStories.testFile, allStories.getFile
+  console.log "Walking ./domains/#{subSite}/contents"
+  walkTreeSync "./domains/#{subSite}/contents", allStories.testFile, allStories.getFile
 console.log "allStories has #{allStories.length} elements"
 
 console.log "allStories - sorting"

@@ -18,7 +18,7 @@ theResult =
   paths:
     public: "public-#{siteName}"
     watched:[
-      "node_modules/#{siteName}/brunch-payload-"
+      "domains/#{siteName}/brunch-payload-"
       'vendor'
       'app'
       ]
@@ -29,6 +29,7 @@ theResult =
       "baranquillo"
       siteName
       "#{siteName}/brunch-payload-/#{siteName}"
+      "payload-/#{siteName}"
       "basscss"
       "basscss-darken"
       "normalize"
@@ -36,16 +37,16 @@ theResult =
     nameCleaner: (path) =>
       c=path.replace /^app\//, ''
       c=c.replace ///^assets/#{siteName}///, ''
-      c=c.replace ///^node_modules\////, ''
+      c=c.replace ///^domains\////, ''
       c=c.replace ///#{siteName}[\/]brunch-payload-///,'payload-'
-      #console.log "path Cleaner: #{path} - #{c}"
+      #console.log "path Cleaner: #{path} - #{c}" if path.match "payload"
       return c
   files:
     javascripts:
       joinTo:
-        '/js/app.js': [/^app/,///#{siteName}\/brunch-payload-/// ]
+        '/js/app.js': [/^app/,///domains/#{siteName}\/brunch-payload-/// ]
         '/js/vendor.js': (f)->
-          pattern= ///vendor|bower_components|node_modules(?![\/]#{siteName})///
+          pattern= ///vendor|bower_components|node_modules///
           #console.log pattern
           result = f.match pattern
           #console.log "matching #{f}: #{result}"
@@ -59,15 +60,15 @@ theResult =
       order:
         before: 'normalize'
       joinTo:
-        '/css/app.css': [/^app/,///#{siteName}\/brunch-payload-///]
-        '/css/vendor.css': ///^vendor|^bower_components|^node_modules(?![\/]#{siteName})///
+        '/css/app.css': [/^app/,///domains\/#{siteName}\/brunch-payload-///]
+        '/css/vendor.css': ///^vendor|^bower_components|^node_modules///
 
     templates:
       joinTo:
         '/js/app.js': /^app/
   conventions:
     vendor:
-      ///(^bower_components|node_modules(?![\/]#{siteName})|vendor)[\/]///
+      ///(^bower_components|node_modules|vendor)[\/]///
   npm:
     enabled: true
     globals:
@@ -77,7 +78,6 @@ theResult =
 
     static: ["basscss-darken"]
     styles: {
-      "#{siteName}": [ "brunch-payload-/#{siteName}.css"]
       "basscss-darken": [ "css/darken.css"]
       "basscss-background-colors":[ "css/background-colors.css"]
       "basscss":["css/basscss.min.css"]

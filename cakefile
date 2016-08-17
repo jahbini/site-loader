@@ -41,7 +41,7 @@ publishAll = () ->
 
 brunchify = (theSite,thePort,options) ->
     try
-      console.log "starting #{theSite}"
+      console.log "Creating App for #{theSite}"
       opts=process.env
       opts["SITE"] = theSite
       brunch = spawn "brunch", ['watch', '-s', "-P", thePort],{
@@ -68,25 +68,54 @@ brunchify = (theSite,thePort,options) ->
     return brunch
 
 publishSites = (paths)->
+  console.log "Generating new content for sites", paths
   unready=true
   x=chokidar.watch paths,
     persistent:true
     cwd: process.cwd()
+  x.on 'error', (error)-> log("Watcher error: #{error}")
   x.on 'ready',()->
+    console.log "Initial publication of sites"
     publishAll paths
     unready=false
-  x.on 'all',()->
+  x.on 'all',(wha)->
     return if unready
     publishAll paths
-    console.log "Change!!",arguments
+    console.log "Incremental publication of sites"
+  console.log "Chokidar enabled"
+  console.log x
 
+
+task 'upload',"Rsync all Sites to the Cloud.", ()->
+  Rsync = require('rsync');
+  for domain in fs.readdirSync 'domains'
+    subSite = (require domain)[domain]
+    console.log "Starting Rsync on site #{domain} -- #{subSite.title}"
+    # Build the command
+    rsync = new Rsync()
+      .shell 'ssh'
+      .flags 'vraz'
+      .delete()
+      .exclude '.git'
+      .exclude '.DS_Store'
+      .source "./public-#{domain}/"
+      .destination subSite.rsyncDestination
+
+    #Execute the command
+    rsync.execute (error, code, cmd)->
+      #we're done
+      console.log "Error (#{error}) on rsync for #{subSite}" if error
+      console.log "rsync exit code #{code}"
+      console.log "rsync on #{subSite}:", cmd
 
 Processes = {}
 task 'go','start up the siteMaster build on sites', ()->
   console.log "start"
   s = ['./lib']
   for theSite, thePort of Sites
+    console.log "brunchify - #{theSite} - advertise on local port #{thePort}"
     Processes[theSite] = brunchify theSite,thePort
     s.push "node_modules/#{theSite}"
+  console.log "starting Publisher on sites ",s
   publishSites s
   console.log "started"

@@ -25,22 +25,3 @@ CommandLineOptions = Cli
 
 #console.log result
 Sites = require('./lib/publish');
-
-Rsync = require('rsync');
-
-if CommandLineOptions.upload
-  for subSite, O of Sites
-    # Build the command
-    rsync = new Rsync()
-      .shell 'ssh'
-      .flags 'vraz'
-      .delete()
-      .exclude '.git'
-      .exclude '.DS_Store'
-      .source "./public-#{subSite}/"
-      .destination O.rsyncDestination
-
-    #Execute the command
-    rsync.execute (error, code, cmd)->
-      #we're done
-      console.log "rsync on #{subSite}:" ,error, code, cmd
