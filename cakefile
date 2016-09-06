@@ -113,7 +113,7 @@ task 'go','start up the siteMaster build on sites', ()->
   console.log "start"
   s = ['./lib']
   for theSite, thePort of Sites
-    console.log "brunchify - #{theSite} - advertise on local port #{thePort}"
+    console.log "brunchify - #{theSite} - http://localhost:#{thePort}/"
     Processes[theSite] = brunchify theSite,thePort
     s.push "node_modules/#{theSite}"
   console.log "starting Publisher on sites ",s
