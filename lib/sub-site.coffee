@@ -15,26 +15,25 @@ appPath = path.resolve "./app"
 Sites = require "../sites"
 CoffeeScript = require 'coffee-script'
 
-
-
 marked = require 'marked'
-markedRenderer = new marked.Renderer()
-marked.setOptions({
-  renderer: markedRenderer
-  gfm: true,
-  tables: true,
-  breaks: false,
-  pedantic: false,
-  sanitize: false,
-  smartLists: true,
-  smartypants: true
-});
-
 allStories = {} # value assigned below
 
 SubSiteStory = class Story extends Backbone.Model
   # tmp is a holder for transient and generated attrubutes
+
+  markedRenderer = new marked.Renderer()
   initialize: ()->
+    marked.setOptions({
+      renderer: markedRenderer
+      gfm: true,
+      tables: true,
+      breaks: false,
+      pedantic: false,
+      sanitize: false,
+      smartLists: true,
+      smartypants: true
+    });
+
     @oldMarkedRenderer = {}
     @tmp = []
 
@@ -236,18 +235,23 @@ SubSiteStory = class Story extends Backbone.Model
 
   expand: ()=>
     dieLater = @.tmp.workingCopy.match /{%/
+    storyObject = @
     @setMarkedRenderer 'codespan', (codeBody) ->
       console.log arguments
       console.log codeBody
       console.log unescapeAll codeBody
 
       coffeeCode = "T=require 'teacup'\n#{ unescapeAll codeBody}"
+      coffeeCode = "(binder)->{T=require 'teacup'\n #{ unescapeAll codeBody}}"
       try
-        result = CoffeeScript.compile coffeeCode
-        return  eval result
+        result = CoffeeScript.compile coffeeCode, bare: true
+        debugger
+        fnx= eval result
+        rval = fnx @
+        return rval
       catch badDog
         console.log "Coffescript Article Conversion Error - #{badDog}"
-        console.log result
+        console.log coffeeCode
         dieLater = true
 
     @setMarkedRenderer 'code', (codeBody) ->
@@ -255,15 +259,18 @@ SubSiteStory = class Story extends Backbone.Model
       console.log codeBody
       console.log unescapeAll codeBody
 
-      coffeeCode = "T=require 'teacup'\n#{ unescapeAll codeBody}"
+      coffeeCode = "(binder)->\n  T=require 'teacup'\n#{ unescapeAll codeBody}"
       try
-        result = CoffeeScript.compile coffeeCode
-        return  eval result
+        result = CoffeeScript.compile coffeeCode, bare:true
+        debugger
+        fnx= eval result
+        rval = fnx @
+        return rval
       catch badDog
         console.log "Coffescript Article Conversion Error - #{badDog}"
-        console.log result
+        console.log coffeeCode
         dieLater = true
-# image tag -- render as html with option for fancybox attributes 
+# image tag -- render as html with option for fancybox attributes
     @setMarkedRenderer 'image', (href,title,text)->
       throw 'useOld' unless href.match '@'
       val = _(href.split '@').map (snip)=>
@@ -362,10 +369,8 @@ SubSiteStories = class extends Backbone.Collection
     return "#{getPublishedFileDir story}/#{story.get 'slug'}.html"
 
   testFile: (f)=>
-    console.log "TestFile: #{f} - #{result}"
     return false if f.match /-\//  #disallow 'template-.files'
     result = f.match @matcher
-    console.log "TestFile: #{f} - #{result}"
     return result
 
   getFile: (fileName)=>

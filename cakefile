@@ -31,7 +31,7 @@ publishAll = () ->
         pubStdOut.write data
 
     publisher.stderr.on 'data', (data) ->
-        console.log "PUBLISH ERROR::#{data}"
+        console.log "PUBLISH ERROR::", data
 
     publisher.on 'exit', (code) ->
         pubStdOut.close()
@@ -72,13 +72,19 @@ publishSites = (paths)->
   unready=true
   x=chokidar.watch paths,
     persistent:true
+    ignoreInitial: true
+    #useFsEvents: false
+    #usePolling: true
     cwd: process.cwd()
   x.on 'error', (error)-> log("Watcher error: #{error}")
-  x.on 'ready',()->
-    console.log "Initial publication of sites"
-    publishAll paths
-    unready=false
-  x.on 'all',(wha)->
+  x.on 'ready',(argu)->
+    console.log "publishSite triggered on ready"
+    if unready
+      console.log "Initial publication of sites - #{argu}"
+      unready=false
+      publishAll paths
+  x.on 'all',(wha,path)->
+    console.log "publishSite triggered on all - #{wha}, path=#{path}"
     return if unready
     publishAll paths
     console.log "Incremental publication of sites"
@@ -115,7 +121,7 @@ task 'go','start up the siteMaster build on sites', ()->
   for theSite, thePort of Sites
     console.log "brunchify - #{theSite} - http://localhost:#{thePort}/"
     Processes[theSite] = brunchify theSite,thePort
-    s.push "node_modules/#{theSite}"
+    s.push "domains/#{theSite}"
   console.log "starting Publisher on sites ",s
   publishSites s
   console.log "started"
