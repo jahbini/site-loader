@@ -31,7 +31,9 @@ publishAll = () ->
         pubStdOut.write data
 
     publisher.stderr.on 'data', (data) ->
-        console.log "PUBLISH ERROR::", data
+        console.log "PUBLISH ERROR::"
+        pubStdOut.write data
+        console.log "PUBLISH ERROR::"
 
     publisher.on 'exit', (code) ->
         pubStdOut.close()
@@ -44,7 +46,8 @@ brunchify = (theSite,thePort,options) ->
       console.log "Creating App for #{theSite}"
       opts=process.env
       opts["SITE"] = theSite
-      brunch = spawn "brunch", ['watch', '-s', "-P", thePort],{
+      #brunch = spawn "brunch", ['watch', '-s', "-P", thePort],{
+      brunch = spawn "brunch", ['watch'],{
         env:opts
       }
     catch badHoodoo
@@ -121,6 +124,15 @@ task 'go','start up the siteMaster build on sites', ()->
   for theSite, thePort of Sites
     console.log "brunchify - #{theSite} - http://localhost:#{thePort}/"
     Processes[theSite] = brunchify theSite,thePort
+    s.push "domains/#{theSite}"
+  console.log "starting Publisher on sites ",s
+  publishSites s
+  console.log "started"
+
+task 'gotest','publish the sites from domains to public', ()->
+  console.log "publish only start"
+  s = ['./lib']
+  for theSite, thePort of Sites
     s.push "domains/#{theSite}"
   console.log "starting Publisher on sites ",s
   publishSites s

@@ -1,5 +1,7 @@
+nohup.out
 domains/
 public/
+tmp.*
 *.swp
 app/published
 app/generated/
@@ -7,4 +9,6 @@ logs/
 *.tgz
 public-*/
 newSite/
-
+.c9/
+*.log
+.DS_Store

@@ -27,7 +27,7 @@ catch badPort
   process.exit(1)
 
 for subSite in siteArray
-  Sites[subSite] = (require "#{subSite}")[subSite]
+  Sites[subSite] = (require "../domains/#{subSite}")[subSite]
   if localPort
     console.log "Site #{subSite} served on 0.0.0.0:#{localPort}"
     Sites[subSite].lurl = "0.0.0.0:#{localPort}"
@@ -43,12 +43,12 @@ fs = require 'fs'
   walkTreeSync
   walkSync} = require 'walk_tree'
 
-appPath = path.resolve "./app"
+appPath = path.resolve "../app"
 
 {SubSiteStory,SubSiteStories,allStories} = require './sub-site'
 
 for subSite, contents of Sites
-  contents.template = require "#{subSite}/brunch-payload-/#{subSite}"
+  contents.template = require "../domains/#{subSite}/brunch-payload-/#{subSite}"
   contents.template = new contents.template
 
   contents.Story = class extends SubSiteStory

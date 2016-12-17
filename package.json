@@ -53,6 +53,7 @@
     "font-face-observer": "^1.0.0",
     "fs-extra": "^0.28.0",
     "handlebars-brunch": ">= 1.0 < 1.8",
+    "handlebars": "latest",
     "html2markdown": "1.1.0",
     "javascript-brunch": ">= 1.0 < 1.8",
     "loglevel": "^1.4.0",

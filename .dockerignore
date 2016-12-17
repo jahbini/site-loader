@@ -1,0 +1,13 @@
+.DS_Store
+*.swp
+*.tgz
+*.log
+node_modules/*
+.c9/*
+domains/
+public/
+newSite/
+app/published
+app/generated/*
+logs/
+public-*/

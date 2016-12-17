@@ -16,7 +16,7 @@ if !theSite
 theResult =
   # See http://brunch.io/#documentation for docs.
   paths:
-    public: "public-#{siteName}"
+    public: "/site-master/public/#{siteName}"
     watched:[
       "domains/#{siteName}/brunch-payload-"
       'vendor'
@@ -25,15 +25,17 @@ theResult =
   conventions:
     assets: /(css.fonts|assets)[\\/]/
   modules:
-    autoRequire: [
-      "baranquillo"
-      siteName
-      "#{siteName}/brunch-payload-/#{siteName}"
-      "payload-/#{siteName}"
-      "basscss"
-      "basscss-darken"
-      "normalize"
-    ]
+    autoRequire:
+      'javascripts/`app.js': [
+        "baranquillo"
+        "underscore"
+        siteName
+        "#{siteName}/brunch-payload-/#{siteName}"
+        "payload-/#{siteName}"
+        "basscss"
+        "basscss-darken"
+        "normalize"
+      ]
     nameCleaner: (path) =>
       c=path.replace /^app\//, ''
       c=c.replace ///^assets/#{siteName}///, ''

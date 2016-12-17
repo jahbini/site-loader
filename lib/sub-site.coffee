@@ -152,7 +152,7 @@ SubSiteStory = class Story extends Backbone.Model
     sitePort = Sites[against].port
     return "http://#{siteUrl}:#{sitePort}/#{ref}"
 
-  copyAsset: (name,newPath = "#{publicPath}-")=>
+  copyAsset: (name,newPath = "#{publicPath}/")=>
     assetDest ="#{newPath}#{@.get 'siteHandle'}/#{@pathToMe ''}"
     sourceDir = (@.get 'sourcePath').replace /\.[\w]*$/,''
     try
@@ -363,7 +363,7 @@ SubSiteStories = class extends Backbone.Collection
     categories = story.get 'category'
     if !categories
       story.snap "Bad category",true
-    return "#{publicPath}-#{@siteHandle}/#{categories}"
+    return "#{publicPath}/#{@siteHandle}/#{categories}"
 
   getPublishedFileName: (story)->
     return "#{getPublishedFileDir story}/#{story.get 'slug'}.html"
@@ -495,8 +495,8 @@ SubSiteStories = class extends Backbone.Collection
       if ! story.get 'headlines'
         story.death "No Headlines!!"
 
-      dir = "#{publicPath}-#{story.get 'siteHandle'}/#{story.get 'category'}"
-      fileName = "#{publicPath}-#{story.get 'siteHandle'}/#{story.href()}"
+      dir = "#{publicPath}/#{story.get 'siteHandle'}/#{story.get 'category'}"
+      fileName = "#{publicPath}/#{story.get 'siteHandle'}/#{story.href()}"
       content = formAll story,content
       try
         mkdirp.sync dir
