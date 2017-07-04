@@ -1,11 +1,11 @@
 Collection = require 'models/base/collection',
 Story = require 'models/story'
-allStories = require 'generated/all-posts'
+allStories = require '../generated/all-posts'
 
 
 'use strict'
 
-module.exports = class Stories extends Collection
+class Stories extends Collection
 
   # Stories are local,, so no need to Mix in a SyncMachine
   #_.extend @prototype, Chaplin.SyncMachine
@@ -24,3 +24,5 @@ module.exports = class Stories extends Collection
   fetch: =>
     console.debug 'stories#fetch'
     @push allStories
+
+module.exports = new Stories

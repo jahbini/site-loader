@@ -1,6 +1,6 @@
 
   Model = require 'models/base/model'
-  Sites = require 'generated/sites'
+  Sites = require '../generated/sites'
 
   'use strict'
 

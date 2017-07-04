@@ -25,11 +25,10 @@ theResult =
   conventions:
     assets: /(css.fonts|assets)[\\/]/
   modules:
-    autoRequire: [
-      "baranquillo"
-      siteName
-      "#{siteName}/brunch-payload-/#{siteName}"
+    autoRequire: "js/app.js":[
       "payload-/#{siteName}"
+    ],
+    "css/vendor.css": [
       "basscss"
       "basscss-darken"
       "normalize"
@@ -95,6 +94,9 @@ theResult =
     }
 
   plugins:
+    babel:
+      presets: [ 'latest', 'react']
+      
     scss:
       mode: 'ruby' # set to 'native' to force libsass
 ###
