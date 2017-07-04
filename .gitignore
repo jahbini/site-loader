@@ -7,4 +7,5 @@ logs/
 *.tgz
 public-*/
 newSite/
+.c9/*
 
