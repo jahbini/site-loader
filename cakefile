@@ -4,9 +4,7 @@ exec = require('child_process').exec
 chokidar=require 'chokidar'
 fs = require 'fs'
 
-Sites =
-  stjohnsjim:3334
-  bamboosnow:3335
+Sites = require 'sites'
 siteArray = (key for key of Sites)
 
 
@@ -31,7 +29,7 @@ publishAll = () ->
         pubStdOut.write data
 
     publisher.stderr.on 'data', (data) ->
-        console.log "PUBLISH ERROR::", data
+        console.log "PUBLISH ERROR::", data.toString()
 
     publisher.on 'exit', (code) ->
         pubStdOut.close()

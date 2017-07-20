@@ -6,7 +6,10 @@ minimist = require 'minimist'
 path = require 'path'
 moment = require 'moment'
 CommandLineOptions = require('commander')
-
+if global
+  global.Sites = require '../sites'
+else
+  window.Sites = require '../sites'
 console.log("Publishing #{CommandLineOptions.args.join(", ")} with:")
 if (CommandLineOptions.yml)
   console.log('  - YML summaries of all sites')
@@ -84,6 +87,11 @@ if (CommandLineOptions.yml)
 console.log "analyzing stories"
 if allStories.analyze()
    allStories.analyze()
+
+console.log "Keystoning the stories"
+allStories.each (story) ->
+  story.toKeystone()
+console.log "Bob-done-it"
 
 console.log "Expanding stories"
 allStories.each (story) -> story.expand()

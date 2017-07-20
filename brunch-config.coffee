@@ -23,10 +23,10 @@ theResult =
       'app'
       ]
   conventions:
+    ignored: (path) -> /\.c9|\.git/.test path
     assets: /(css.fonts|assets)[\\/]/
   modules:
-    autoRequire: [
-      "baranquillo"
+    autoRequire: css: [
       siteName
       "#{siteName}/brunch-payload-/#{siteName}"
       "payload-/#{siteName}"
@@ -44,8 +44,8 @@ theResult =
   files:
     javascripts:
       joinTo:
-        '/js/app.js': [/^app/,///domains/#{siteName}\/brunch-payload-/// ]
-        '/js/vendor.js': (f)->
+        'assets/js/app.js': [/^app/,///domains/#{siteName}\/brunch-payload-/// ]
+        'assets/js/vendor.js': (f)->
           pattern= ///vendor|bower_components|node_modules///
           #console.log pattern
           result = f.match pattern
@@ -60,12 +60,12 @@ theResult =
       order:
         before: 'normalize'
       joinTo:
-        '/css/app.css': [/^app/,///domains\/#{siteName}\/brunch-payload-///]
-        '/css/vendor.css': ///^vendor|^bower_components|^node_modules///
+        'assets/css/app.css': [/^app/,///domains\/#{siteName}\/brunch-payload-///]
+        'assets/css/vendor.css': ///^vendor|^bower_components|^node_modules///
 
     templates:
       joinTo:
-        '/js/app.js': /^app/
+        'assets/js/app.js': /^app/
   conventions:
     vendor:
       ///(^bower_components|node_modules|vendor)[\/]///
@@ -97,13 +97,9 @@ theResult =
   plugins:
     scss:
       mode: 'ruby' # set to 'native' to force libsass
-###
   server:
-    port: theSite.port
-    hostname: theSite.lurl
     noPushState: true
     stripSlashes: true
-###
 
 #console.log theResult
 exports.config = theResult

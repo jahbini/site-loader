@@ -14,6 +14,7 @@ publicPath = path.resolve "./public"
 appPath = path.resolve "./app"
 Sites = require "../sites"
 CoffeeScript = require 'coffee-script'
+http = require 'http'
 
 marked = require 'marked'
 allStories = {} # value assigned below
@@ -40,6 +41,33 @@ SubSiteStory = class Story extends Backbone.Model
   idAttribute: 'slug'
   defaults:
     debug:""
+    
+  toKeystone: (path= "http://localhost:3030/Story")->
+    body =  @.toJSON()
+    body.site = body.siteHandle
+    delete body['siteHandle']
+    options = 
+      host: 'localhost'
+      port: 3030
+      path: "/Story"
+      headers:
+        'content-type': "application/json"
+      method: "POST"
+      
+    request = http.request options, (res)->
+      response=''
+      res.on "data", (d)->
+        response += d
+        return
+      res.on "end", (x)->
+        if x
+          console.log x
+        console.log response
+        return
+    request.write  JSON.stringify body
+    request.end()
+    return
+
 
   expandSnippets: ()=>
     @.snap "in expandSnippets #{@.get 'slug'}", 'content'
@@ -452,21 +480,10 @@ SubSiteStories = class extends Backbone.Collection
     if doingFaceBook
       meta property:"fb:app_id", content:"271501872999476"
     base href: "/"
-    link rel: "stylesheet", href: "css/app.css"
-    link rel: "stylesheet", href: "css/vendor.css"
-    script src: 'js/vendor.js'
-    script src: 'js/app.js'
-    script """
-    var cb = function() {
-    var l = document.createElement('link'); l.rel = 'stylesheet';
-    l.href = 'css/app.css';
-    var h = document.getElementsByTagName('head')[0];
-      h.parentNode.insertBefore(l, h); };
-    var raf = requestAnimationFrame || mozRequestAnimationFrame ||
-              webkitRequestAnimationFrame || msRequestAnimationFrame;
-    if (raf) raf(cb);
-    else window.addEventListener('load', cb);
-    """
+    link rel: "stylesheet", href: "assets/css/app.css"
+    link rel: "stylesheet", href: "assets/css/vendor.css"
+    script src: 'assets/js/vendor.js'
+    script src: 'assets/js/app.js'
     script "siteHandle = '#{options.siteHandle}'; require('initialize');"
 
   formAll: renderable (story,content)->
@@ -505,7 +522,6 @@ SubSiteStories = class extends Backbone.Collection
       catch nasty
         story.death "Nasty Write to public #{fileName}:",nasty
     return
-
   expand: ()->
     @.each (story)->
       try
