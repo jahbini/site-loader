@@ -11,6 +11,5 @@ RUN npm install
 
 ADD . /site-master
 #RUN curl -LOu jahbini:Tqbfj0tlD https://github.com/jahbini/snowserv/archive/master.zip && unzip master.zip && rm master.zip
-VOLUME /site-master/public
 VOLUME /site-master/domains
-CMD exit(0)
+CMD sleep 500

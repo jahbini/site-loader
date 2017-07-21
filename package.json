@@ -62,7 +62,7 @@
     "path": "^0.12.7",
     "request": "^2.72.0",
     "rsync": "^0.4.0",
-    "site-master-story": "file:///Users/jim/snow/snowsite/site-master-story",
+    "site-master-story": "https://github.com/jahbini/site-master-story.git",
     "teacup": "^2.0.0",
     "uglify-js-brunch": ">= 1.0 < 1.8",
     "underscore": "^1.8.3",
