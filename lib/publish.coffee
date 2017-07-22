@@ -6,7 +6,10 @@ minimist = require 'minimist'
 path = require 'path'
 moment = require 'moment'
 CommandLineOptions = require('commander')
-
+if global
+  global.Sites = require '../sites'
+else
+  window.Sites = require '../sites'
 console.log("Publishing #{CommandLineOptions.args.join(", ")} with:")
 if (CommandLineOptions.yml)
   console.log('  - YML summaries of all sites')
@@ -27,7 +30,7 @@ catch badPort
   process.exit(1)
 
 for subSite in siteArray
-  Sites[subSite] = (require "#{subSite}")[subSite]
+  Sites[subSite] = (require "../domains/#{subSite}")[subSite]
   if localPort
     console.log "Site #{subSite} served on 0.0.0.0:#{localPort}"
     Sites[subSite].lurl = "0.0.0.0:#{localPort}"
@@ -48,7 +51,7 @@ appPath = path.resolve "./app"
 {SubSiteStory,SubSiteStories,allStories} = require './sub-site'
 
 for subSite, contents of Sites
-  contents.template = require "#{subSite}/brunch-payload-/#{subSite}"
+  contents.template = require "../domains/#{subSite}/brunch-payload-/#{subSite}"
   contents.template = new contents.template
 
   contents.Story = class extends SubSiteStory
@@ -84,6 +87,11 @@ if (CommandLineOptions.yml)
 console.log "analyzing stories"
 if allStories.analyze()
    allStories.analyze()
+
+console.log "Keystoning the stories"
+allStories.each (story) ->
+  story.toKeystone()
+console.log "Bob-done-it"
 
 console.log "Expanding stories"
 allStories.each (story) -> story.expand()
