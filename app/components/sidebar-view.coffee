@@ -5,7 +5,7 @@ T = require 'teact'
 B = require 'backbone'
 RD= require 'react-dom'
 
-Template = require "#{siteHandle}"
+Template = require "payload-/#{siteHandle}.coffee"
 template = new Template T
 
 module.exports = SideBarView = (props) ->
