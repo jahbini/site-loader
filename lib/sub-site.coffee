@@ -42,13 +42,13 @@ SubSiteStory = class Story extends Backbone.Model
   defaults:
     debug:""
     
-  toKeystone: (path= "http://localhost:3030/Story")->
+  toKeystone: (path= "http://bamboosnow.tell140.com/Story")->
     body =  @.toJSON()
     body.site = body.siteHandle
     delete body['siteHandle']
     options = 
-      host: 'localhost'
-      port: 3030
+      host: "#{body.site}.tell140.com"
+      port: 80
       path: "/Story"
       headers:
         'content-type': "application/json"
