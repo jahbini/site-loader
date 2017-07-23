@@ -25,4 +25,4 @@ class Stories extends Collection
     console.debug 'stories#fetch'
     @push allStories
 
-module.exports = new Stories
+module.exports = Stories

@@ -1,7 +1,7 @@
 MenuController = require 'controllers/menu'
 FooterController = require 'controllers/footer'
 HomeController = require 'controllers/home'
-SideBar = require 'components/sidebar-view.coffee'
+SideBarController = require 'components/sidebar-view.coffee'
 StoryBarController = require 'controllers/storybar'
 React = require 'react'
 jsonp = require 'jsonp'
@@ -10,7 +10,7 @@ T= require 'teact'
 { Flex, Box } = require 'reflexbox'
 Flex = T.bless Flex
 Box = T.bless Box
-SideBar = T.bless SideBar
+SideBarController = T.bless SideBarController
 
 
 config = require 'config'
@@ -28,14 +28,8 @@ configurations =
   #pink: require 'configurations/pink.js'
 
 'use strict'
-###
-HomeController = T.bless HomeController
-SideBarController  = T.bless SideBarController 
-StoryBarController  = T.bless StoryBarController 
-MenuController  = T.bless MenuController 
-FooterController = T.bless FooterController
 
-module.exports = class Application extends Chaplin.Application
+App = class Application extends Chaplin.Application
 
   initialize: ->
     window.APP = @
@@ -43,10 +37,14 @@ module.exports = class Application extends Chaplin.Application
     @initLayout()
     @initComposer()
     @initMediator()
-    @initControllers()
+    @HomeController = new HomeController
+    @StoryBarController = new StoryBarController 
+    @MenuController  = new MenuController 
+    @FooterController = new FooterController
+    @SideBarController  = new SideBarController 
 
     # Register all routes and start routing
-    @initRouter routes, {root: '/', pushState: false}
+    #@initRouter routes, {root: '/', pushState: false}
 
     @start()
 
@@ -58,13 +56,7 @@ module.exports = class Application extends Chaplin.Application
     Chaplin.mediator.controllerAction = ""
     Chaplin.mediator.actionParams = {}
 
-  initControllers: ->
-    new HomeController
-    new SideBarController
-    new StoryBarController
-    new MenuController
-    new FooterController
-
+###
 import {
   config,
   Banner,
@@ -101,7 +93,6 @@ import Comments from './Comments'
 import MegaFooter from './MegaFooter'
 import ConfigForm from './ConfigForm'
 import Modal from './Modal'
-###
 
 class App extends React.Component 
   constructor:()->
@@ -186,7 +177,6 @@ class App extends React.Component
       MenuController
       FooterController
  
- ### 
       <div style={{
           fontFamily,
           fontWeight,
