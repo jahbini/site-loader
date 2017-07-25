@@ -1,8 +1,6 @@
 MenuController = require 'controllers/menu'
 FooterController = require 'controllers/footer'
 HomeController = require 'controllers/home'
-SideBarController = require 'components/sidebar-view.coffee'
-StoryBarController = require 'controllers/storybar'
 React = require 'react'
 jsonp = require 'jsonp'
 assign = require 'object-assign'
@@ -10,7 +8,6 @@ T= require 'teact'
 { Flex, Box } = require 'reflexbox'
 Flex = T.bless Flex
 Box = T.bless Box
-SideBarController = T.bless SideBarController
 
 
 config = require 'config'
@@ -37,11 +34,6 @@ App = class Application extends Chaplin.Application
     @initLayout()
     @initComposer()
     @initMediator()
-    @HomeController = new HomeController
-    @StoryBarController = new StoryBarController 
-    @MenuController  = new MenuController 
-    @FooterController = new FooterController
-    @SideBarController  = new SideBarController 
 
     # Register all routes and start routing
     #@initRouter routes, {root: '/', pushState: false}

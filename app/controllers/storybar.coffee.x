@@ -1,5 +1,5 @@
 BaseController = require  'controllers/base/controller'
-StoryCollection = require 'models/stories'
+{allStories} = require 'models/stories'
 StorybarView = require 'views/storybar-view'
 
 'use strict'
@@ -7,9 +7,8 @@ StorybarView = require 'views/storybar-view'
 module.exports = class StoryBarController extends BaseController
   initialize: ->
     super
-    @stories = new StoryCollection
-    @view = new StorybarView @stories, (s)->
-      (s.get 'siteHandle') != siteHandle
+    # filter is trivial now since allStories only points to neighbors in site graph
+    @view = new StorybarView allStories, (s)->true
 
   showit: ->
     @view.render ()->

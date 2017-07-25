@@ -5,23 +5,34 @@ FontFaceObserver = require 'font-face-observer'
 React = require 'react'
 ReactDOM = require 'react-dom'
 sidebarView = require './components/sidebar-view'
+storybarView = require './components/storybar-view'
 routes = require './routes'
 Rebass = require 'rebass'
-StoryCollection = require 'models/stories'
-# data = require '../package.json'
+{myStories,allStories} = require 'models/stories'
+
+config = require 'config'
+configurations = 
+  basic: require 'configurations/basic.js'
+  biblio: require 'configurations/biblio.js'
+  # data = require '../package.json'
 data = {
-  default: "hello"
+  default: "basic"
 }
 
 # Initialize the application on DOM ready event.
 $ ->
-  data.components = Object.keys(Rebass).length
+  #data.components = Object.keys(Rebass).length
   
-  data = {
-    collection: new StoryCollection
-    filter: (story)->
-      return siteHandle == story.get 'siteHandle'
-  }
+  mine =
+    collection: myStories
+    filter: (story)->true
+  theirs =
+    collection: allStories
+    filter: (story)->true
     
   div = document.getElementById('sidebar')
-  ReactDOM.render React.createElement(sidebarView, data) , div
+  ReactDOM.render React.createElement(sidebarView, mine) , div
+
+  divs= $('.siteInvitation')
+  divs.each (key,div)->
+    ReactDOM.render React.createElement(storybarView, theirs) , div

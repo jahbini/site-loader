@@ -1,7 +1,6 @@
 Collection = require 'models/base/collection',
 Story = require 'models/story'
-allStories = require '../generated/all-posts'
-
+#allStories is global, as is myStories
 
 'use strict'
 
@@ -12,17 +11,17 @@ class Stories extends Collection
 
   model: Story
 
-  initialize: ->
+  initialize: (@someStories)->
     super
 
     #@subscribeEvent 'login', @fetch
     #@subscribeEvent 'logout', @logout
     @fetch()
 
-  # Custom fetch function since the Facebook graph is not
-  # a REST/JSON API which might be accessed using Ajax
   fetch: =>
     console.debug 'stories#fetch'
-    @push allStories
-
-module.exports = Stories
+    @push @someStories
+module.exports =
+  allStories: new Stories allStories
+  myStories: new Stories myStories
+  Class: Stories

@@ -159,12 +159,16 @@ SubSiteStory = class Story extends Backbone.Model
           catch nasty
             console.log "Unable to render #{tag} via marked or internal",nasty
             @death "Unable to render #{tag} via marked or internal",nasty
+            return false
       console.log "Unable to render #{tag} via internal",badPuppy
       @death "Unable to render #{tag} via internal",badPuppy
+      return false
 
   #path to the url relative story asset directory
   pathToMe: (against = false)=>
-    ref = "#{@get 'category'}/#{@get 'slug'}"
+    #new category/cubcategory is now category-cubcategory .  no dashes in a category (maybe)
+    category =(@get 'category').split(/\//).join '-'
+    ref = "#{category}/#{@get 'slug'}"
     return ref unless against
     return  "#{against}/#{ref}" if against.match '/'
     siteUrl = Sites[against].lurl
@@ -214,11 +218,9 @@ SubSiteStory = class Story extends Backbone.Model
     console.log 'object temporaries ----------'
     console.log @tmp
     console.log 'Death----------'
-    if @attributes.sourcePath
-      child_process = require "child_process"
-      child_process.execSync "open #{sitePath}/#{@attributes.sourcePath} -a atom.app"
-    process.exit()
-
+    
+    return null
+    
   parser: (obj)-> # override me
     return obj
 
@@ -242,9 +244,6 @@ SubSiteStory = class Story extends Backbone.Model
     if !obj.category || !obj.slug
       console.log obj
       console.log "no category? slug?"
-      child_process = require "child_process"
-      child_process.execSync "open #{sitePath}/#{obj.sourcePath} -a atom.app"
-      process.exit()
     return obj
 
   unescapeAll= (html)->
@@ -365,13 +364,16 @@ SubSiteStory = class Story extends Backbone.Model
         #unresolved Handle type snippet.  need second pass.
         console.log "expandSnippets #{@.get 'slug'} Unresolved!"
         story.death badDog
+        return false
     try
       @.tmp.cooked = marked.parser marked.lexer @.tmp.workingCopy
     catch badPuppy
       @.death "Augmented Markdown Failure", badPuppy
+      return false
     if dieLater
       console.log "Cooked:", @.tmp.cooked
       @.death "fixme!!"
+      return false
     tmp = @.clone()
     jSONarchive.push tmp
     return false
@@ -505,12 +507,16 @@ SubSiteStories = class extends Backbone.Collection
         content = template story
       catch badDog
         story.death "Error in template ", badDog
+        return false
       if !content
         story.death "no content from formatStory"
+        return false
       if ! story.get 'siteHandle'
         story.death "No siteHandle"
+        return false
       if ! story.get 'headlines'
         story.death "No Headlines!!"
+        return false
 
       dir = "#{publicPath}-#{story.get 'siteHandle'}/#{story.get 'category'}"
       fileName = "#{publicPath}-#{story.get 'siteHandle'}/#{story.href()}"
@@ -521,6 +527,7 @@ SubSiteStories = class extends Backbone.Collection
         console.log "published: #{fileName}"
       catch nasty
         story.death "Nasty Write to public #{fileName}:",nasty
+        return false
     return
   expand: ()->
     @.each (story)->
@@ -528,6 +535,7 @@ SubSiteStories = class extends Backbone.Collection
         expansion = story.template.expand story
       catch badPuppy
         story.death "template #{story.siteHandle} failed to expand on #{story.get 'title'}", badPuppy
+        return false
     return
 
   analyze:()->
@@ -537,6 +545,7 @@ SubSiteStories = class extends Backbone.Collection
         retry |= story.analyze story
       catch badPuppy
         story.death "template #{story.siteHandle} failed to analyze on #{story.get 'title'}", badPuppy
+        return false
     return retry
 
   summarize: ()=>
