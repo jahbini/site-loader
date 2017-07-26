@@ -51,8 +51,11 @@ appPath = path.resolve "./app"
 {SubSiteStory,SubSiteStories,allStories} = require './sub-site'
 
 for subSite, contents of Sites
-  contents.template = require "../domains/#{subSite}/brunch-payload-/#{subSite}"
-  contents.template = new contents.template
+  try 
+    contents.template = require "../domains/#{subSite}/brunch-payload-/#{subSite}"
+    contents.template = new contents.template
+  catch
+    contents.template = null
 
   contents.Story = class extends SubSiteStory
     siteHandle: subSite
@@ -72,6 +75,13 @@ console.log "allStories has #{allStories.length} elements"
 console.log "allStories - sorting"
 allStories.sort()
 
+
+if CommandLineOptions.keystone
+  console.log "Keystoning the stories"
+  allStories.each (story) ->
+    story.toKeystone()
+  console.log "Bob-done-it"
+
 if (CommandLineOptions.yml)
   yml = allStories.toJSON()
   yml = yamljs.stringify yml
@@ -88,10 +98,6 @@ console.log "analyzing stories"
 if allStories.analyze()
    allStories.analyze()
 
-console.log "Keystoning the stories"
-allStories.each (story) ->
-  story.toKeystone()
-console.log "Bob-done-it"
 
 console.log "Expanding stories"
 allStories.each (story) -> story.expand()

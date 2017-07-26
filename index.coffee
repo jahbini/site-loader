@@ -12,6 +12,7 @@ register = require('coffee-script/register')
 CommandLineOptions = Cli
   .allowUnknownOption(false)
   .version('0.0.1')
+  .option('-K, --keystone', 'One time conversion from files to site-master')
   .option('-y, --yml', 'Create Yml from Sites')
   .option('-P, --no-publish', 'do NOT populate public-"site"')
   .option '-l, --local-service <port,increment>',
