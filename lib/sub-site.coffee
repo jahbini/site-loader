@@ -15,7 +15,7 @@ appPath = path.resolve "./app"
 Sites = require "../sites"
 CoffeeScript = require 'coffee-script'
 http = require 'http'
-
+caseMunger = require 'slug'
 marked = require 'marked'
 allStories = {} # value assigned below
 
@@ -44,7 +44,7 @@ SubSiteStory = class Story extends Backbone.Model
     
   toKeystone: (path= "http://bamboosnow.tell140.com/Story")->
     body =  @.toJSON()
-    body.site = body.siteHandle
+    body.site = @siteHandle
     delete body['siteHandle']
     options = 
       host: "#{body.site}.tell140.com"
@@ -167,7 +167,9 @@ SubSiteStory = class Story extends Backbone.Model
   #path to the url relative story asset directory
   pathToMe: (against = false)=>
     #new category/cubcategory is now category-cubcategory .  no dashes in a category (maybe)
-    category =(@get 'category').split(/\//).join '-'
+    category =(@get 'category').split(/\//).join '_'
+    if !category
+      category = 'draft'
     ref = "#{category}/#{@get 'slug'}"
     return ref unless against
     return  "#{against}/#{ref}" if against.match '/'
@@ -233,6 +235,14 @@ SubSiteStory = class Story extends Backbone.Model
     delete obj.sitePath
     delete obj.href
     delete obj.path
+    if ! obj.slug
+      if !obj.title
+        console.log obj
+        console.log "no Title"
+        process.exit 22
+      obj.slug= caseMunger (obj.title), remove: /[.]/g
+    if !obj.category
+      obj.category="draft"
     #our yml engine moves 'content' to '__content' -- go figure
     if obj.debug == 'content'
       console.log "CONTENT debug"
@@ -261,7 +271,7 @@ SubSiteStory = class Story extends Backbone.Model
 
 
   expand: ()=>
-    dieLater = @.tmp.workingCopy.match /{%/
+    dieLater = if @tmp.workingCopy?.match then @.tmp.workingCopy.match /{%/ else false
     storyObject = @
     @setMarkedRenderer 'codespan', (codeBody) ->
       console.log arguments
@@ -290,7 +300,7 @@ SubSiteStory = class Story extends Backbone.Model
       try
         result = CoffeeScript.compile coffeeCode, bare:true
         debugger
-        fnx= eval result
+        fnx= eval result/
         rval = fnx @
         return rval
       catch badDog
@@ -418,13 +428,16 @@ SubSiteStories = class extends Backbone.Collection
     unless fileContents.match /^(---|###)/
       fileContents = fileContents.replace /([^]*?)(---|###)/, (match,head,dash)->
         return "#{dash}\n#{head}\n#{dash}"
-    stuff = ymljsFrontMatter.parse fileContents
 
-    stuff.sourcePath = path.relative sitePath, fileName
-    theStory = new SiteStory stuff, parse: true
-    theStory.tmp.sourceFileName = fileName
-    @.push theStory
-    allStories.push theStory
+    try
+      stuff = ymljsFrontMatter.parse fileContents
+      stuff.sourcePath = path.relative sitePath, fileName
+      theStory = new SiteStory stuff, parse: true
+      theStory.tmp.sourceFileName = fileName
+      @.push theStory
+      allStories.push theStory
+    catch badDog
+      console.log "error at routine getFile exit", badDog
 
   writeNew: (newSite)->
     @.each (story)->
@@ -506,7 +519,8 @@ SubSiteStories = class extends Backbone.Collection
         template = bind story.template.formatStory,story.template
         content = template story
       catch badDog
-        story.death "Error in template ", badDog
+        story.death "Error in template ", badDog unless !story.template
+        console.log "no template for this site.  Upload only"
         return false
       if !content
         story.death "no content from formatStory"
