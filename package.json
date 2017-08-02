@@ -56,8 +56,6 @@
     "css-brunch": ">= 1.0 < 1.8",
     "font-face-observer": "^1.0.0",
     "fs-extra": "^0.28.0",
-    "handlebars": "latest",
-    "handlebars-brunch": "latest",
     "html2markdown": "1.1.0",
     "javascript-brunch": ">= 1.0 < 1.8",
     "jsonp": "^0.2.1",
