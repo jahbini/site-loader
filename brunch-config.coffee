@@ -41,7 +41,7 @@ theResult =
       c=c.replace ///^assets/#{siteName}///, ''
       c=c.replace ///^domains\////, ''
       c=c.replace ///#{siteName}[\/]brunch-payload-///,'payload-'
-      #console.log "path Cleaner: #{path} - #{c}" if path.match "payload"
+      console.log "path Cleaner: #{path} - #{c}" if path.match "minify"
       return c
   files:
     javascripts:
@@ -97,9 +97,19 @@ theResult =
     }
 
   plugins:
+    gzip:
+      paths:
+        javascript: 'assets/js'
+        stylesheet: 'assets/css'
+      removeOriginalFiles: false
+      renameGzipFilesToOriginalFiles: false
+      
     babel:
       presets: [ 'latest', 'react']
-      
+      plugins:  [
+#        ["babel-plugin-root-import",  rootPathPrefix: "" ]
+        ["minify-dead-code-elimination"]
+      ] 
     scss:
       mode: 'ruby' # set to 'native' to force libsass
   server:
