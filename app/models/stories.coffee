@@ -12,7 +12,7 @@ class Stories extends Collection
   model: Story
 
   initialize: (@someStories)->
-    super
+    super()
 
     #@subscribeEvent 'login', @fetch
     #@subscribeEvent 'logout', @logout

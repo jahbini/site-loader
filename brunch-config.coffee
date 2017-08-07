@@ -76,6 +76,8 @@ theResult =
     globals:
       loglevel: "loglevel"
       teacup: "teacup"
+      #_: "underscore"
+      jQuery: "jquery"
       fontFaceObserver: 'font-face-observer'
 
     static: ["basscss-darken"]
@@ -97,7 +99,9 @@ theResult =
     }
 
   plugins:
+    order: [ 'coffeescript', 'babel' ]
     gzip:
+      optimize: "optimize"
       paths:
         javascript: 'assets/js'
         stylesheet: 'assets/css'
@@ -108,7 +112,7 @@ theResult =
       presets: [ 'latest', 'react']
       plugins:  [
 #        ["babel-plugin-root-import",  rootPathPrefix: "" ]
-        ["minify-dead-code-elimination"]
+#        ["minify-dead-code-elimination"]
       ] 
     scss:
       mode: 'ruby' # set to 'native' to force libsass

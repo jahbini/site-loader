@@ -16,5 +16,5 @@
         return "http://#{siteUrl}/#{ref}"
       return "http://#{siteUrl}:#{sitePort}/#{ref}"
     initialize: () ->
-      super
+      super()
       console.debug 'Story#initialize'
