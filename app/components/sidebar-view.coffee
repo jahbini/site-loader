@@ -8,12 +8,15 @@ React = require 'react'
   Subhead,PanelFooter,Link } = require 'rebass'
 Subhead = T.bless Subhead
 Panel = T.bless R.Panel
+Link = T.bless Link
+PanelHeader = T.bless PanelHeader
+
 
 Template = require "payload-/#{siteHandle}.coffee"
 template = new Template T
 
 module.exports =   class Sidebar extends React.Component
-  displayName: 'SideBar'
+  displayName: 'Sidebar'
   
   render: ()=>
     collection = this.props.collection
@@ -32,18 +35,21 @@ module.exports =   class Sidebar extends React.Component
         catPostfix = catPostfix.toString().replace /\//g, '- '
         headliner = _(stories).find (story)->
         #find index for this category
-          Panel backgroundColor: "#22222222", ->
+          Panel ->
+            debugger
             if headliner
-              Subhead ".category",->
+              PanelHeader ->
                 T.text "#{category}: "
                 T.em ".h4", _.sample headliner.get 'headlines'
             else
-              Subhead ".category","#{catPrefix} #{catPostfix}"
-            T.ul ".category.pr1", =>
+              PanelHeader ".category","#{catPrefix} #{catPostfix}"
+            T.ul ".pr1", =>
               _(stuff[category]).each (story) ->
                 return if 'category' == story.get 'className'
-                T.li ".category.b1.mb1", ->
-                  T.a ".goto.h3.category",
+                T.li ".b1.mb1", ->
+                  Link ".Link",
+                    'color': 'yellow4'
+                    #bg: 'gray3'
                     href: if siteHandle == story.get 'siteHandle'
                       story.href()
                     else
