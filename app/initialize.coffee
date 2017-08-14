@@ -14,9 +14,9 @@ Palx = require 'palx'
 
 Provider = T.bless Rebass.Provider
 
-newColors = Palx '#30c'
+newColors = Palx '#03c'
 newColors.black= '#000'
-newColors.white= '#fdd'
+newColors.white= '#fff'
 
 # gather the global JSONs into Backbone collections 
 {myStories,allStories} = require 'models/stories'
@@ -47,11 +47,11 @@ $ ->
     
   try
     realNode = document.getElementById('sidebar')
-    sidebarContents = Provider  theme: colors: newColors, Sidebar mine
+    sidebarContents = T.Provider  theme: colors: newColors, Sidebar mine
     ReactDOM.render sidebarContents, realNode
   catch badDog
     console.log badDog
-
+  
   divs= $('.siteInvitation')
   divs.each (key,div)->
     ReactDOM.render (Provider theme: colors: newColors, Storybar theirs) , div

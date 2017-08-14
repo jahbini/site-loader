@@ -77,7 +77,7 @@
     "request": "^2.72.0",
     "rsync": "^0.4.0",
     "site-master-story": "https://github.com/jahbini/site-master-story.git",
-    "teact": "https://github.com/jahbini/teact#esBless",
+    "teact": "git+https://github.com/jahbini/teact.git#jah",
     "teacup": "^2.0.0",
     "underscore": "^1.8.3",
     "walk_tree": "git://github.com/fbeshears/walk_tree.git",

@@ -35,6 +35,6 @@ module.exports = class Storybar extends React.Component
     V=Link ".goto",{
       href: story.href 'http://'+siteBase.join '.'
       }, =>
-        Badge bg: 'gray7', =>
+        Badge bg: 'gray.7', =>
           Subhead "From around the Web:"
           Text ".Text","#{story.get 'title'}: #{_.sample story.get 'headlines'}"

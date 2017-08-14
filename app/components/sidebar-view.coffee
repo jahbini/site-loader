@@ -36,7 +36,6 @@ module.exports =   class Sidebar extends React.Component
         headliner = _(stories).find (story)->
         #find index for this category
           Panel ->
-            debugger
             if headliner
               PanelHeader ->
                 T.text "#{category}: "
@@ -48,8 +47,8 @@ module.exports =   class Sidebar extends React.Component
                 return if 'category' == story.get 'className'
                 T.li ".b1.mb1", ->
                   Link ".Link",
-                    'color': 'yellow4'
-                    #bg: 'gray3'
+                    'color': 'white'
+                    #bg: 'gray.8'
                     href: if siteHandle == story.get 'siteHandle'
                       story.href()
                     else
