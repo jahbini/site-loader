@@ -1,4 +1,4 @@
-#
+ #
 #routes = require 'routes'
 window.$= jQuery
 window._ = require 'lodash'

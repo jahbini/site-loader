@@ -100,6 +100,8 @@ theResult =
 
   plugins:
     order: [ 'coffeescript', 'babel' ]
+    uglify:
+      ignored: /app.js/
     gzip:
       optimize: "optimize"
       paths:
