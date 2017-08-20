@@ -14,9 +14,9 @@ Palx = require 'palx'
 
 Provider = T.bless Rebass.Provider
 
-newColors = Palx '#03c'
-newColors.black= '#000'
-newColors.white= '#fff'
+newColors = Palx document.styling.palx
+newColors.black= document.styling.black
+newColors.white= document.styling.white
 
 # gather the global JSONs into Backbone collections 
 {myStories,allStories} = require 'models/stories'
