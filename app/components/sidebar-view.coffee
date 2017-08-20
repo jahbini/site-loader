@@ -1,11 +1,11 @@
-R = require 'rebass'
-R=R.default
-T = require 'teact'
+R = Pylon.Rebass
+T = Pylon.Teact
 B = require 'backbone'
-RD= require 'react-dom'
-React = require 'react'
+RD= Pylon.ReactDOM
+React = Pylon.React
 { Card, Box, BackgroundImage, Subhead, Small, Panel, PanelHeader,
-  Subhead,PanelFooter,Link } = require 'rebass'
+  Subhead,PanelFooter,Link } = Pylon.Rebass
+  
 Subhead = T.bless Subhead
 Panel = T.bless R.Panel
 Link = T.bless Link

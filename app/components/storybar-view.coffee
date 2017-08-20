@@ -1,9 +1,11 @@
-R = require 'rebass'
-R=R.default
-T = require 'teact'
+# put outbound links into story
+
+R = Pylon.Rebass
+T = Pylon.Teact
 B = require 'backbone'
-RD= require 'react-dom'
-React = require 'react/dist/react.min'
+RD= Pylon.ReactDOM
+React = Pylon.React
+
 Box = T.bless R.Box
 Badge = T.bless R.Badge
 Subhead = T.bless R.Subhead
