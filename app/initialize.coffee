@@ -6,8 +6,10 @@ Backbone = require 'backbone'
 
 PylonTemplate = Backbone.Model.extend
 #  state: (require './models/state.coffee').state
+    #React: require 'react'
     React: require 'react/dist/react.min.js'
-    ReactDOM: require 'react-dom/dist/react-dom.min.js'
+    ReactDOM: require 'react-dom'
+    #ReactDOM: require 'react-dom/dist/react-dom.min.js'
     Rebass: require 'rebass'
     Teact: require 'teact'
     Palx: require 'palx'
