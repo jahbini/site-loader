@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-for i in stjohnsjim bamboosnow celarien;
+for i in ${1:-stjohnsjim bamboosnow celarien};
  do 
    SITE=$i brunch b
    (cd ../public-$i ;
