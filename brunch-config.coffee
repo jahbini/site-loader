@@ -32,8 +32,8 @@ theResult =
       "payload-/#{siteName}"
     ],
     "css/vendor.css": [
-      "basscss"
-      "basscss-darken"
+      "ace-css"
+      "basscss-grid"
       "normalize"
     ]
     nameCleaner: (path) =>
@@ -80,22 +80,9 @@ theResult =
       jQuery: "jquery"
       fontFaceObserver: 'font-face-observer'
 
-    static: ["basscss-darken"]
     styles: {
-      "basscss-darken": [ "css/darken.css"]
-      "basscss-background-colors":[ "css/background-colors.css"]
-      "basscss":["css/basscss.min.css"]
-      "basscss-background-images": [ "css/background-images.css" ]
-      "basscss-btn": [ "css/btn.css" ]
-      "basscss-btn-outline": [ "css/btn-outline.css" ]
-      "basscss-btn-primary": [ "css/btn-primary.css" ]
-      "basscss-btn-sizes": [ "css/btn-sizes.css" ]
-      "basscss-colors": [ "css/colors.css" ]
-      "basscss-forms": [ "css/forms.css" ]
-      "basscss-lighten": [ "css/lighten.css" ]
-      "basscss-media-object": [ "css/media-object.css" ]
-      "basscss-responsive-margin": [ "css/responsive-margin.css" ]
-      "basscss-responsive-padding": [ "css/responsive-padding.css" ]
+      "basscss-grid": [ "css/grid.css" ]
+      "ace-css": [ "css/ace.css" ]
     }
 
   plugins:
