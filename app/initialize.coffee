@@ -13,6 +13,7 @@ PylonTemplate = Backbone.Model.extend
     Rebass: require 'rebass'
     Teact: require 'teact'
     Palx: require 'palx'
+    Utils: require './lib/utils'
     
 window.Pylon = Pylon = new PylonTemplate
 Pylon.on 'all', (event,rest...)->
@@ -33,7 +34,6 @@ Storybar = T.bless require './components/storybar-view'
 routes = require './routes'
 Rebass = Pylon.Rebass
 Palx = Pylon.Palx
-
 Provider = T.bless Rebass.Provider
 
 newColors = Palx document.styling.palx

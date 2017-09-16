@@ -1,17 +1,10 @@
-
-  ' use strict'
-
-  # Application-specific utilities
-  # ------------------------------
-
-  # Shortcut to the mediator
-  mediator = Chaplin.mediator
-
-  # Delegate to Chaplin’s utils module
-  utils = Chaplin.utils.beget Chaplin.utils
+#
+# utilities
+#
+Pylon=window.Pylon
 
   # Add additional application-specific properties and methods
-  _(utils).extend
+module.exports = new class Utility
 
     # String helpers
     # --------------
@@ -416,4 +409,3 @@ not found"
 
       "https://graph.facebook.com/#{fbId}/picture?#{$.param(params)}"
 
-  module.exports = utils

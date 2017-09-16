@@ -32,9 +32,9 @@ theResult =
       "payload-/#{siteName}"
     ],
     "css/vendor.css": [
+      "normalize"
       "ace-css"
       "basscss-grid"
-      "normalize"
     ]
     nameCleaner: (path) =>
       c=path.replace /^app\//, ''
@@ -60,7 +60,7 @@ theResult =
 
     stylesheets:
       order:
-        before: 'normalize'
+        before: ['normalize', "ace-css", "basscss-grid"]
       joinTo:
         'assets/css/app.css': [/^app/,///domains\/#{siteName}\/brunch-payload-///]
         'assets/css/vendor.css': ///^vendor|^bower_components|^node_modules///
