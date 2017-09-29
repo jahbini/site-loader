@@ -7,10 +7,10 @@ Backbone = require 'backbone'
 PylonTemplate = Backbone.Model.extend
 #  state: (require './models/state.coffee').state
     #React: require 'react'
-    React: require 'react/dist/react.min.js'
-    ReactDOM: require 'react-dom'
-    #ReactDOM: require 'react-dom/dist/react-dom.min.js'
-    Rebass: require 'rebass'
+    #Mithril: require 'react/dist/react.min.js'
+    Mithril: require 'mithril'
+    Mui: require 'mui'
+    Mss: require 'mss-js'
     Teact: require 'teact'
     Palx: require 'palx'
     Utils: require './lib/utils'
@@ -26,15 +26,12 @@ Pylon.on 'all', (event,rest...)->
 
 
 FontFaceObserver = require 'font-face-observer'
-React = Pylon.React
 T = Pylon.Teact
-ReactDOM = Pylon.ReactDOM
+Mithril = Pylon.Mithril
 Sidebar = T.bless require './components/sidebar-view'
 Storybar = T.bless require './components/storybar-view'
 routes = require './routes'
-Rebass = Pylon.Rebass
 Palx = Pylon.Palx
-Provider = T.bless Rebass.Provider
 
 newColors = Palx document.styling.palx
 newColors.black= document.styling.black
@@ -43,6 +40,8 @@ newColors.white= document.styling.white
 # gather the global JSONs into Backbone collections 
 {myStories,allStories} = require 'models/stories'
 
+# suppress react styling
+###
 styled= require   'styled-components'
 { injectGlobal, keyframes } = styled
 styled = styled.default
@@ -54,7 +53,7 @@ injectGlobal"""
     font-family: sans-serif;
   }
 """
-
+###
 
 # Initialize the application on DOM ready event.
 $ ->
@@ -69,12 +68,13 @@ $ ->
     
   try
     realNode = document.getElementById('sidebar')
-    sidebarContents = T.Provider  theme: colors: newColors, Sidebar mine
-    ReactDOM.render sidebarContents, realNode
+    #sidebarContents = T.Provider  theme: colors: newColors, Sidebar mine
+    sidebarContents = Sidebar mine
+    Mithril.render realNode, sidebarContents
   catch badDog
     console.log badDog
   
   divs= $('.siteInvitation')
   divs.each (key,div)->
-    ReactDOM.render (Provider theme: colors: newColors, Storybar theirs) , div
+    Mithril.render div, Storybar theirs
   

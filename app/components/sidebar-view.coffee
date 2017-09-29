@@ -1,26 +1,24 @@
-R = Pylon.Rebass
 T = Pylon.Teact
 B = require 'backbone'
-RD= Pylon.ReactDOM
-React = Pylon.React
-{ Card, Box, BackgroundImage, Subhead, Small, Panel, PanelHeader,
-  Subhead,PanelFooter,Link } = Pylon.Rebass
+#{  Panel, PanelHeader, Link } = Pylon.Rebass
   
-Subhead = T.bless Subhead
-Panel = T.bless R.Panel
-Link = T.bless Link
-PanelHeader = T.bless PanelHeader
+#Panel = T.bless Panel
+#Link = T.bless Link
+#PanelHeader = T.bless PanelHeader
 
 
 Template = require "payload-/#{siteHandle}.coffee"
 template = new Template T
 
-module.exports =   class Sidebar extends React.Component
+module.exports =   class Sidebar extends B.Model
   displayName: 'Sidebar'
+  constructor: (@vnode)->
+    console.log @vnode
+    @
   
-  render: ()=>
-    collection = this.props.collection
-    filter = this.props.filter || ()->true
+  view: ()=>
+    collection = @vnode.attrs.collection
+    filter = @vnode.attrs.filter || ()->true
     intermediate = collection.filter filter,@
     data = _(intermediate).sortBy( (s)->
       s.get 'category').groupBy (s) -> s.get 'category'
@@ -35,18 +33,18 @@ module.exports =   class Sidebar extends React.Component
         catPostfix = catPostfix.toString().replace /\//g, '- '
         headliner = _(stories).find (story)->
         #find index for this category
-          Panel ->
+          T.div '.Panel', ->
             if headliner
-              PanelHeader ->
+              T.div '.PanelHeader', ->
                 T.text "#{category}: "
                 T.em ".h4", _.sample headliner.get 'headlines'
             else
-              PanelHeader ".category","#{catPrefix} #{catPostfix}"
+              T.div '.PanelHeader.category',"#{catPrefix} #{catPostfix}"
             T.ul ".pr1", =>
               _(stuff[category]).each (story) ->
                 return if 'category' == story.get 'className'
                 T.li ".b1.mb1", ->
-                  Link ".Link",
+                  T.a ".Link",
                     'color': 'white'
                     #bg: 'gray.8'
                     href: if siteHandle == story.get 'siteHandle'

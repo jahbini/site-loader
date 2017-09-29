@@ -1,26 +1,25 @@
 # put outbound links into story
 
-R = Pylon.Rebass
 T = Pylon.Teact
 B = require 'backbone'
-RD= Pylon.ReactDOM
-React = Pylon.React
 
-Box = T.bless R.Box
-Badge = T.bless R.Badge
-Subhead = T.bless R.Subhead
-Text = T.bless R.Text
-Link = T.bless R.Link
+#Badge = T.bless R.Badge
+#Subhead = T.bless R.Subhead
+#Text = T.bless R.Text
+#Link = T.bless R.Link
 
 siteBase = topDomain.split '.'
 z=siteBase.shift()
 
-module.exports = class Storybar extends React.Component
+module.exports = class Storybar 
   displayName: 'Storybar'
+  constructor: (@vnode)->
+    console.log @vnode
+    @
   
-  render: ()=>
-    collection = @props.collection
-    filter = @props.filter || ()->true
+  view: ()=>
+    collection = @vnode.attrs.collection
+    filter = @vnode.attrs.filter || ()->true
     intermediate = collection.filter filter,@
     story = null
     until story
@@ -34,9 +33,9 @@ module.exports = class Storybar extends React.Component
     siteBase.shift()
     siteBase.unshift storyFrom
   
-    V=Link ".goto",{
+    V=T.crel 'Link', ".goto",{
       href: story.href 'http://'+siteBase.join '.'
       }, =>
-        Badge bg: 'gray.7', =>
-          Subhead "From around the Web:"
-          Text ".Text","#{story.get 'title'}: #{_.sample story.get 'headlines'}"
+        T.crel 'Badge', bg: 'gray.7', =>
+          T.crel 'Subhead', "From around the Web:"
+          T.crel 'Text', ".Text","#{story.get 'title'}: #{_.sample story.get 'headlines'}"

@@ -75,7 +75,8 @@ theResult =
     enabled: true
     globals:
       loglevel: "loglevel"
-      teacup: "teacup"
+      teact: "teact"
+      mui: "mui"
       #_: "underscore"
       jQuery: "jquery"
       fontFaceObserver: 'font-face-observer'
