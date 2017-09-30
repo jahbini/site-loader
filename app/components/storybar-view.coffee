@@ -28,14 +28,18 @@ module.exports = class Storybar
       badClass = 'category' == story.get 'className'
       badHeadline = !(story.get 'headlines')
       story = null if badClass || badHeadline
-    storyFrom = story.get('site').name
+    try
+      storyFrom = story.get('site').name
+    catch error
+      console.log "Ailing Story",story
+      return null
     siteBase = topDomain.split '.'
     siteBase.shift()
     siteBase.unshift storyFrom
   
-    V=T.crel 'Link', ".goto",{
+    V=T.crel 'Link', ".goto.border.p2.inline-block",{
       href: story.href 'http://'+siteBase.join '.'
       }, =>
         T.crel 'Badge', bg: 'gray.7', =>
-          T.crel 'Subhead', "From around the Web:"
-          T.crel 'Text', ".Text","#{story.get 'title'}: #{_.sample story.get 'headlines'}"
+          T.crel 'Subhead','.h5', "From around the Web:"
+          T.crel 'Text', ".Text.h4","#{story.get 'title'}: #{_.sample story.get 'headlines'}"
