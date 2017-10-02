@@ -1,7 +1,7 @@
 {
   "name": "siteMaster",
   "version": "2.0.0",
-  "description": "Manage Multiple Static sites with Brunch, Teacup and Chaplin",
+  "description": "Manage Multiple Static sites with Brunch, Teacup and Mithril",
   "main": "index.js",
   "scripts": {
     "start": "cake go",
@@ -11,9 +11,8 @@
   "keywords": [
     "teacup",
     "brunch",
-    "chaplin",
     "single page application",
-    "static site"
+    "mithril"
   ],
   "author": "James Hinds",
   "license": "ISC",

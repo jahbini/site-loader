@@ -76,7 +76,7 @@ theResult =
     globals:
       loglevel: "loglevel"
       teact: "teact"
-      mui: "mui"
+      #mui: "mui"
       #_: "underscore"
       jQuery: "jquery"
       fontFaceObserver: 'font-face-observer'
