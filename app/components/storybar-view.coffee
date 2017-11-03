@@ -1,6 +1,6 @@
 # put outbound links into story
 
-T = Pylon.Teact
+T = Pylon.Halvalla
 B = require 'backbone'
 
 #Badge = T.bless R.Badge
@@ -11,15 +11,12 @@ B = require 'backbone'
 siteBase = topDomain.split '.'
 z=siteBase.shift()
 
-module.exports = class Storybar 
+module.exports = T.bless class Storybar 
   displayName: 'Storybar'
-  constructor: (@vnode)->
-    console.log @vnode
-    @
   
-  view: ()=>
-    collection = @vnode.attrs.collection
-    filter = @vnode.attrs.filter || ()->true
+  view: (vnode)=>
+    collection = vnode.attrs.collection
+    filter = vnode.attrs.filter || ()->true
     intermediate = collection.filter filter,@
     story = null
     until story
@@ -37,9 +34,9 @@ module.exports = class Storybar
     siteBase.shift()
     siteBase.unshift storyFrom
   
-    V=T.crel 'Link', ".goto.border.p2.inline-block",{
+    V=T.tag 'Link', ".goto.border.p2.inline-block",{
       href: story.href 'http://'+siteBase.join '.'
       }, =>
-        T.crel 'Badge', bg: 'gray.7', =>
-          T.crel 'Subhead','.h5', "From around the Web:"
-          T.crel 'Text', ".Text.h4","#{story.get 'title'}: #{_.sample story.get 'headlines'}"
+        T.tag 'Badge', bg: 'gray.7', =>
+          T.tag 'Subhead','.h5', "From around the Web:"
+          T.tag 'Text', ".Text.h4","#{story.get 'title'}: #{_.sample story.get 'headlines'}"

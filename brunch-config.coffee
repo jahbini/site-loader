@@ -75,7 +75,6 @@ theResult =
     enabled: true
     globals:
       loglevel: "loglevel"
-      teact: "teact"
       #mui: "mui"
       #_: "underscore"
       jQuery: "jquery"

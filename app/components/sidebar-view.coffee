@@ -1,4 +1,4 @@
-T = Pylon.Teact
+T = Pylon.Halvalla
 B = require 'backbone'
 #{  Panel, PanelHeader, Link } = Pylon.Rebass
   
@@ -10,15 +10,12 @@ B = require 'backbone'
 Template = require "payload-/#{siteHandle}.coffee"
 template = new Template T
 
-module.exports =   class Sidebar extends B.Model
+module.exports =  T.bless class Sidebar extends B.Model
   displayName: 'Sidebar'
-  constructor: (@vnode)->
-    console.log @vnode
-    @
   
-  view: ()=>
-    collection = @vnode.attrs.collection
-    filter = @vnode.attrs.filter || ()->true
+  view: (vnode)=>
+    collection = vnode.attrs.collection
+    filter = vnode.attrs.filter || ()->true
     intermediate = collection.filter filter,@
     data = _(intermediate).sortBy( (s)->
       s.get 'category').groupBy (s) -> s.get 'category'

@@ -6,14 +6,13 @@ Backbone = require 'backbone'
 
 PylonTemplate = Backbone.Model.extend
 #  state: (require './models/state.coffee').state
-    #React: require 'react'
-    #Mithril: require 'react/dist/react.min.js'
     Mithril: require 'mithril'
     Mui: require 'mui'
     Mss: require 'mss-js'
-    Teact: require 'teact'
+    Halvalla: require 'halvalla/lib/halvalla-mithril'
     Palx: require 'palx'
     Utils: require './lib/utils'
+    Underscore: require 'underscore'
     
 window.Pylon = Pylon = new PylonTemplate
 Pylon.on 'all', (event,rest...)->
@@ -26,10 +25,10 @@ Pylon.on 'all', (event,rest...)->
 
 
 FontFaceObserver = require 'font-face-observer'
-T = Pylon.Teact
+T = Pylon.Halvalla
 Mithril = Pylon.Mithril
-Sidebar = T.bless require './components/sidebar-view'
-Storybar = T.bless require './components/storybar-view'
+Sidebar = require './components/sidebar-view'
+Storybar = require './components/storybar-view'
 routes = require './routes'
 Palx = Pylon.Palx
 
