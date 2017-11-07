@@ -7,7 +7,7 @@ Backbone = require 'backbone'
 PylonTemplate = Backbone.Model.extend
 #  state: (require './models/state.coffee').state
     Mithril: require 'mithril'
-    Mui: require 'mui'
+    #Mui: require 'mui'
     Mss: require 'mss-js'
     Halvalla: require 'halvalla/lib/halvalla-mithril'
     Palx: require 'palx'
