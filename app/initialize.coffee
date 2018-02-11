@@ -29,6 +29,7 @@ T = Pylon.Halvalla
 Mithril = Pylon.Mithril
 Sidebar = require './components/sidebar-view'
 Storybar = require './components/storybar-view'
+Fibonacci = require './components/fibonacci'
 routes = require './routes'
 Palx = Pylon.Palx
 
@@ -76,4 +77,6 @@ $ ->
   divs= $('.siteInvitation')
   divs.each (key,div)->
     Mithril.render div, Storybar theirs
+  bloviation = document.getElementById 'fibonacci'
+  Mithril.render bloviation, Fibonacci 1,2,3,4,5,6 if bloviation
   
