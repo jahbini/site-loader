@@ -4,7 +4,7 @@ exec = require('child_process').exec
 chokidar=require 'chokidar'
 fs = require 'fs'
 
-Sites = require 'sites'
+Sites = require './sites.coffee'
 siteArray = (key for key of Sites)
 
 
