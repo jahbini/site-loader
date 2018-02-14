@@ -1,9 +1,9 @@
 {doctype,html,title,meta,base,link,script,body,header,raw,section,
  comment,div,a,span,h1,h2,h3,h4,h5,h6,head,renderable,
- tag,footer} = require "teacup"
+ tag,footer} = require "halvalla"
 Backbone = require 'backbone'
 _ = require 'underscore'
-T=require 'teacup'
+T=require 'halvalla'
 fs = require 'fs'
 path = require 'path'
 mkdirp = require 'mkdirp'
@@ -278,8 +278,8 @@ SubSiteStory = class Story extends Backbone.Model
       console.log codeBody
       console.log unescapeAll codeBody
 
-      coffeeCode = "T=require 'teacup'\n#{ unescapeAll codeBody}"
-      coffeeCode = "(binder)->{T=require 'teacup'\n #{ unescapeAll codeBody}}"
+      coffeeCode = "T=require 'halvalla'\n#{ unescapeAll codeBody}"
+      coffeeCode = "(binder)->{T=require 'halvalla'\n #{ unescapeAll codeBody}}"
       try
         result = CoffeeScript.compile coffeeCode, bare: true
         debugger
@@ -296,7 +296,7 @@ SubSiteStory = class Story extends Backbone.Model
       console.log codeBody
       console.log unescapeAll codeBody
 
-      coffeeCode = "(binder)->\n  T=require 'teacup'\n#{ unescapeAll codeBody}"
+      coffeeCode = "(binder)->\n  T=require 'halvalla'\n#{ unescapeAll codeBody}"
       try
         result = CoffeeScript.compile coffeeCode, bare:true
         debugger
