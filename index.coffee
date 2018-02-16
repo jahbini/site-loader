@@ -1,28 +1,52 @@
-#!/usr/bin/env coffee
 #
+B=require 'backbone'
+_=require 'underscore'
 
-###
- execute Publish with command-line options
- * Module dependencies.
-###
-Cli = require('commander');
-Coffee = require('coffee-script')
-register = require('coffee-script/register')
+FS=require 'fs'
+{execSync} = require 'child_process'
 
-CommandLineOptions = Cli
-  .allowUnknownOption(false)
-  .version('0.0.1')
-  .option('-K, --keystone', 'One time conversion from files to site-master')
-  .option('-y, --yml', 'Create Yml from Sites')
-  .option('-P, --no-publish', 'do NOT populate public-"site"')
-  .option '-l, --local-service <port,increment>',
-    'Port for local service.'
-    (val)->
-      val.split ','
-  .option('-n, --new-site', 'Create ./newSite with reorganized contents')
-  .option('-G, --no-generate-json', 'do NOT create app/generated JSON')
-  .option('-u, --upload', 'rsync to server')
-  .parse(process.argv);
+rawStories = FS.readFileSync 'stories245.json'
+cookedStories = (JSON.parse rawStories).results
 
-#console.log result
-Sites = require('./lib/publish');
+rawSites = FS.readFileSync 'sites.json'
+cookedSites = (JSON.parse rawSites).results
+allSites = {}
+
+#_(cookedStories).map (m)->
+#  console.log m.name
+#  console.log "different!", m if m.name != m.fields.title
+
+_(cookedSites).map (m)->
+  allSites[m.id] = m.fields
+#  console.log m.id
+
+#console.log allSites
+
+oldSiteName = ''
+_(cookedStories).sortBy('site').map (m)->
+  return if !m
+  site = m.fields.site
+  if !site
+    console.log "bad story:",m
+    return
+  {slug,category} = m.fields
+  cleanSlug = slug
+  cleanSlug = '_'+ slug if slug.match /^\d/
+  category = category.replace /\ /g,'%20'
+  siteName = allSites[site].name
+  path = "#{siteName}/#{category}/#{slug}"
+  console.log path
+  #execSync "mkdir -p html/#{siteName}/#{category}"
+  #execSync "mkdir -p templates/#{siteName}/#{category}"
+  #execSync "curl http://#{siteName}.com/#{category}/#{slug}.html >html/#{path}.html"
+  #if oldSiteName != siteName
+  #  execSync "html2coffeekup --export=#{siteName}template --prefix='T.' html/#{path}.html >templates/#{siteName}template.coffee"
+  #oldSiteName = siteName
+  try
+  #  execSync "html2coffeekup --export=#{cleanSlug.replace /-/g, "_"} --extends=#{siteName}template --prefix='T.' html/#{path}.html >templates/#{path}.coffee"
+    execSync "mkdir -p ../public-#{siteName}/#{category}"
+    execSync "cat domains/#{siteName}/templates/#{siteName}template.coffee domains/#{siteName}/templates/#{category}/#{slug}.coffee | coffee --stdio >../public-#{siteName}/#{category}/#{slug}.html"
+  catch badDog
+    console.error "BARK! BaRK!",badDog
+  
+  return
