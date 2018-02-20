@@ -1,6 +1,13 @@
 # Brunch-config.coffee meta file
 #
 Sites = require './sites'
+console.log 'sites',Sites
+S={}
+for aSite in Sites.results
+  aSite.fields.siteId = aSite.id
+  S[aSite.name] = aSite.fields
+Sites = S
+console.log S,S
 
 path = require 'path'
 siteName = process.env.SITE
