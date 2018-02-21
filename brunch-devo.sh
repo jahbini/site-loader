@@ -1,5 +1,7 @@
 #! /bin/bash
 #
+# generate all the html from the stories 
+# coffee index.coffee
 for i in ${1:-stjohnsjim bamboosnow celarien};
  do 
    SITE=$i brunch b

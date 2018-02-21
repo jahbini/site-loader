@@ -23,7 +23,7 @@ _(cookedSites).map (m)->
 #console.log allSites
 
 oldSiteName = ''
-_(cookedStories).sortBy('site').map (m)->
+_(cookedStories).sortBy((m)->m.fields.site).map (m)->
   return if !m
   site = m.fields.site
   if !site
@@ -48,5 +48,7 @@ _(cookedStories).sortBy('site').map (m)->
     execSync "cat domains/#{siteName}/templates/#{siteName}template.coffee domains/#{siteName}/templates/#{category}/#{slug}.coffee | coffee --stdio >../public-#{siteName}/#{category}/#{slug}.html"
   catch badDog
     console.error "BARK! BaRK!",badDog
+    console.log "cat domains/#{siteName}/templates/#{siteName}template.coffee domains/#{siteName}/templates/#{category}/#{slug}.coffee | coffee --stdio >../public-#{siteName}/#{category}/#{slug}.html"
+    process.exit 0
   
   return

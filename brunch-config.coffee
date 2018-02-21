@@ -40,6 +40,7 @@ theResult =
       "normalize"
       "ace-css"
       "basscss-grid"
+      "blaze"
     ]
     nameCleaner: (path) =>
       c=path.replace /^app\//, ''
@@ -65,7 +66,7 @@ theResult =
 
     stylesheets:
       order:
-        before: ['normalize', "ace-css", "basscss-grid"]
+        before: ['normalize', "ace-css", "basscss-grid","blaze"]
       joinTo:
         'assets/css/app.css': [/^app/,///domains\/#{siteName}\/brunch-payload-///]
         'assets/css/vendor.css': ///^vendor|^bower_components|^node_modules///
@@ -86,6 +87,7 @@ theResult =
       fontFaceObserver: 'font-face-observer'
 
     styles: {
+      "blaze": ["scss/dist/blaze.min.css"]
       "basscss-grid": [ "css/grid.css" ]
       "ace-css": [ "css/ace.css" ]
     }
