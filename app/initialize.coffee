@@ -60,11 +60,11 @@ $ ->
   
   mine =
     collection: myStories
-    filter: (story)->true
+    filter: (story)-> 'draft' != story.get 'category'
     
   theirs =
     collection: allStories
-    filter: (story)->true
+    filter: (story)-> 'draft' != story.get 'category'
     
   try
     realNode = document.getElementById('sidebar')

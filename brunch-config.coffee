@@ -1,6 +1,6 @@
 # Brunch-config.coffee meta file
 #
-Sites = require './sites'
+Sites = require './sitedef.json'
 S={}
 for aSite in Sites.results
   aSite.fields.siteId = aSite.id
