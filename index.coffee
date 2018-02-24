@@ -8,7 +8,7 @@ FS=require 'fs'
 rawStories = FS.readFileSync 'stories245.json'
 cookedStories = (JSON.parse rawStories).results
 
-rawSites = FS.readFileSync 'sites.json'
+rawSites = FS.readFileSync 'sitedef.json'
 cookedSites = (JSON.parse rawSites).results
 allSites = {}
 
