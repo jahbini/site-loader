@@ -98,7 +98,8 @@ publishAll = () ->
     execSync "mkdir -p ./domains/#{siteName}/unpublished"
     console.log 'embargo', story.get 'embargo'
     console.log 'decision',  moment(story.get 'embargo') < moment()
-    storySrcPath = "./domains/#{siteName}/templates/#{category}/#{slug}.coffee"
+    storySrcDir = "./domains/#{siteName}/templates/#{category}/#{slug}"
+    storySrcPath = storySrcDir + ".coffee"
     # remove bogus category of '-' for index files
     category = '.' if category == '-'
     if story.get('accepted') && moment(story.get 'embargo') < moment()
@@ -107,6 +108,7 @@ publishAll = () ->
       sitesStories[siteName].add story
       activeStories.add story
       console.log "publishing to #{destPre}#{siteName}/#{category}/#{slug}.html"
+      execSync "cp -rf #{storySrcDir} #{destPre}#{siteName}/#{category} || true"
       execSync "cat domains/#{siteName}/templates/#{siteName}template.coffee #{storySrcPath} | coffee --stdio >#{destPre}#{siteName}/#{category}/#{slug}.html"
     else
       story.set 'accepted',false
