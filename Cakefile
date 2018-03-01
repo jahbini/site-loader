@@ -15,7 +15,7 @@ sites = buildSites SitesJSON
 
 #process.exit 0
 StoriesJSON = require './stories244.json'
-{Story,Stories,buildStories} = require './lib/story-stories.coffee'
+{Story,Stories,buildStories,makeStory} = require './lib/story-stories.coffee'
 stories = buildStories StoriesJSON
 
 sitesStories = {}
@@ -30,42 +30,6 @@ analyzeRawStories = ()->
     console.log fieldsOf if fieldsOf != allFields
     allFields = fieldsOf
 
-massageOne = (story)->
-  destPre = './public-'
-  theSite = sites.get story.get 'site'
-  siteName = theSite.get 'name'
-  category = story.get 'category'
-  category = category.replace /\ /g,'_'
-  slug = story.get 'slug'
-  
-  siteTemplateFile ="./domains/#{siteName}/templates/#{siteName}template.coffee"
-  storySrcDir = "./domains/#{siteName}/templates/#{category}/#{slug}"
-  storySourcePath = "./#{storySrcDir}.coffee"
-  htmlDest = "#{destPre}#{siteName}/#{category}/#{slug}.html"
-  storySource = fs.readFileSync storySourcePath, "utf-8"
-  
-  storyParts = storySource.split '\nclass '
-  glue ="""
-#-------- class start
-class  
-"""
-  storySource = storyParts.join glue
-  storyParts = storySource.split 'console.log'
-  storySource = storyParts.join 'rendered = '
-  storyParts = storySource.split 'page = new'
-  storySource = storyParts.join """
-  #-------- class end
-  page = new
-  """
-  fs.writeFileSync storySourcePath, storySource + """
-# ------- db start
-db = {} unless db
-db[id="#{story.get 'id'}"] =
-  #{story.fieldsOf 0}
-#
-  """
-  return null
-  
 taskHelper = (cli,next,work=null)->
   if !work
     work=next
@@ -140,66 +104,31 @@ db[id="#{story.get 'id'}"] =
   CoffeeScript.run fs.readFileSync('./lib/split-run-publish.coffee').toString()
   taskHelper cli, dbHelper, doStory
   
-task 'split','split a story',(cli)->
-  #taskHelper cli,massageOne
-  stories.each (story)->  massageOne story
-  
-publishAll = () ->
-  activeStories = new Stories
-  destPre = './public-'
-  execSync 'rm -f ./domains/*/unpublished/*'
-  stories.each (story)->
-    theSite = sites.get story.get 'site'
-    siteName = theSite.get 'name'
-    category = story.get 'category'
-    category = category.replace /\ /g,'_'
-    slug = story.get 'slug'
-    
-    execSync "mkdir -p #{destPre}#{siteName}/#{category}"
-    execSync "mkdir -p ./domains/#{siteName}/unpublished"
-    console.log 'embargo', story.get 'embargo'
-    console.log 'decision',  moment(story.get 'embargo') < moment()
-    storySrcDir = "./domains/#{siteName}/templates/#{category}/#{slug}"
-    storySrcPath = storySrcDir + ".coffee"
-    # remove bogus category of '-' for index files
-    category = '.' if category == '-'
-    if story.canPublish()
-      if !sitesStories[siteName]
-        sitesStories[siteName] = new Sites
-      sitesStories[siteName].add story
-      activeStories.add story
-      console.log "publishing to #{destPre}#{siteName}/#{category}/#{slug}.html"
-      execSync "cp -rf #{storySrcDir} #{destPre}#{siteName}/#{category} || true"
-      execSync "echo console.log rendered | cat domains/#{siteName}/templates/#{siteName}template.coffee #{storySrcPath} - | coffee --stdio >#{destPre}#{siteName}/#{category}/#{slug}.html"
-    else
-      story.set 'accepted',false
-      story.set 'embargo',moment year: 2030
-      console.log "removing #{destPre}#{siteName}/#{category}/#{slug}.html"
-      execSync "rm -f #{destPre}#{siteName}/#{category}/#{slug}.html"
-      fs.linkSync storySrcPath,"./domains/#{siteName}/unpublished/#{story.get 'id'}"
-  #allFields is a sorted list of the keys of the story
-  for siteName,collection of sitesStories
-    fs.writeFileSync "#{destPre}#{siteName}/allstories.json","allStories="+JSON.stringify activeStories.toJSON()
-    fs.writeFileSync "#{destPre}#{siteName}/mystories.json","myStories="+JSON.stringify collection.toJSON()
-  fs.writeFileSync './nowstories.json', JSON.stringify stories.toWriteable()
-
-task 'publish','start up the siteMaster build on sites', ()->
-  publishAll()
-    
-task 'show','list fields of story',(cliArgs)->
-  [myname,ids...] = cliArgs.arguments
-  breakVal = false
-  for id in ids
-    s = stories.get id
-    continue if !s
-    console.log '-----------' if breakVal
-    breakVal = true
-    for k,v of s.attributes
-      console.log k, ':', v
-      
+task 'new','create new site,category, slug',(cli)->
+  [myName,siteName,category,slug] = cli.arguments
+  site = sites.findWhere name: siteName
+  throw new error "bad Site -- #{siteName}" unless site
+  newStory = makeStory site, category,slug
+  siteTemplateFile ="./domains/#{siteName}/templates/#{siteName}template.coffee"
+  storySrcDir = "./domains/#{siteName}/templates/#{category}/#{slug}"
+  storySourcePath = "./#{storySrcDir}.coffee"
+  newFile = [
+    fs.readFileSync "./domains/#{siteName}/templates/starter-template.coffee",'utf-8'
+    """
+#
+db[id="#{newStory.get 'id'}"] =
+  #{newStory.fieldsOf 0}
+#
+      """
+    "#end of story"
+    ]
+  execSync "mkdir -p #{storySrcDir}"
+  fs.writeFileSync storySourcePath, newFile.join '\n'
+  # update DB
+  stories.add newStory
+  fs.writeFileSync "nowstories.json", JSON.stringify stories.toWriteable()
   process.exit 0
-
-
+  
   
 brunchify = (theSite,thePort,options) ->
     try
@@ -258,33 +187,6 @@ task 'dumpSites','sites to JSON',()->
 task 'dumpStories','stories to JSON',()->
   console.log JSON.stringify stories.toWriteable()
   
-task 'upgradeDraft','set acceptance and embargo to published', (id)->
-  [myname,drafts...] = id.arguments
-  for id in drafts
-    s = stories.get id
-    continue unless s
-    s.set 'accepted',true
-    s.set 'embargo', moment()
-    s.set 'published', moment()
-  invoke 'dumpStories'  
-  process.exit 0
-
-task 'downgradeDraft','unset acceptance and embargo to published', (id)->
-  [myname,drafts...] = id.arguments
-  for id in drafts
-    s = stories.get id
-    continue if !s
-    s.set 'accepted',false
-  invoke 'dumpStories'  
-  process.exit 0
-
-task 'toYml','dump DB entry as coffee-script',(cli)->
-  [myname,drafts...] = cli.arguments
-  for id in drafts
-    s=stories.get id
-    console.log s.fieldsOf ' '
-    
-    
 option '-i', '--id storyid', 'story ID to bump'
 
 Processes = {}

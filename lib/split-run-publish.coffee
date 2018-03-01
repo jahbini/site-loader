@@ -16,7 +16,7 @@ srp.expand = (story)->
   theSite = srp.sites.get story.get 'site'
   siteName = theSite.get 'name'
   category = story.get 'category'
-  category = category.replace /\ /g,'%20'
+  category = category.replace /\ /g,'_'
   slug = story.get 'slug'
   
   siteTemplateFile ="./domains/#{siteName}/templates/#{siteName}template.coffee"

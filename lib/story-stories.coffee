@@ -44,4 +44,27 @@ buildStories = (json)->
     stories.add fields
   stories
 
-module.exports = { Story, Stories, buildStories }
+makeStory = (site,category,slug)->
+  return new Story
+    title: slug
+    slug: slug
+    category: category
+    site: site.get 'id'
+    accepted: false
+    index: false
+    sourcePath: ""
+    headlines: []
+    tags: []
+    snippets: "{\"first name\":\"first name\"}"
+    memberOf: []
+    created: moment()
+    lastEdited: moment()
+    published: moment()
+    embargo: moment()
+    captureDate: moment()
+    TimeStamp: moment().valueOf() 
+    debug: ""
+    author: site.get 'author'
+    id: "#{site.get 'name'}#{category}#{slug}"
+    name: slug
+module.exports = { Story, Stories, buildStories, makeStory }
