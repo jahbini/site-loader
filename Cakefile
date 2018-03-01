@@ -36,7 +36,6 @@ taskHelper = (cli,next,work=null)->
     next = null
   [myname,drafts...] = cli.arguments
   if drafts.length == 1 and drafts[0]=='all'
-    console.log "WOW"
     for story in stories.models
       work story
   else for id in drafts
@@ -47,7 +46,7 @@ taskHelper = (cli,next,work=null)->
   
 global.srp = {sites:sites}
 task 'srp','split, run and publish', (cli)->
-  console.log "srP"
+  destPre = "./public-"
   dbChanged = false
   # if one of the stories has modified the DB, write it back out
   dbHelper = ()->
@@ -55,7 +54,6 @@ task 'srp','split, run and publish', (cli)->
       fs.writeFileSync './nowstories.json', JSON.stringify stories.toWriteable()
       
   doStory =(story)->
-    console.log "srP",story.get 'name'
     srp.expand story
     theSite = sites.get story.get 'site'
     slug = story.get 'slug'
@@ -72,6 +70,7 @@ db[id="#{story.get 'id'}"] =
   #{story.fieldsOf 0}
 #
       """
+      
     story.set srp.db
     
     # now publish the story
@@ -79,7 +78,7 @@ db[id="#{story.get 'id'}"] =
     
     # remove bogus category of '-' for index files
     category = '.' if category == '-'
-    destPre = "./public-"
+
     if story.canPublish()
       if !sitesStories[siteName]
         sitesStories[siteName] = new Sites
@@ -94,15 +93,17 @@ db[id="#{story.get 'id'}"] =
       execSync "mkdir -p #{destPre}#{siteName}/draft/#{category}"
       execSync "cp -rf #{storySrcDir} #{destPre}#{siteName}/draft/#{category} || true"
       fs.writeFileSync "./public-#{siteName}/draft/#{category}/#{slug}.html",srp.rendered
-  #allFields is a sorted list of the keys of the story
-  for siteName,collection of sitesStories
-    fs.writeFileSync "#{destPre}#{siteName}/allstories.json","allStories="+JSON.stringify activeStories.toJSON()
-    fs.writeFileSync "#{destPre}#{siteName}/mystories.json","myStories="+JSON.stringify collection.toJSON()
-  fs.writeFileSync './nowstories.json', JSON.stringify stories.toWriteable()
   
     
   CoffeeScript.run fs.readFileSync('./lib/split-run-publish.coffee').toString()
   taskHelper cli, dbHelper, doStory
+  # write out the new json db files
+  for siteName,collection of sitesStories
+    fs.writeFileSync "#{destPre}#{siteName}/allstories.json","allStories="+JSON.stringify activeStories.toJSON()
+    fs.writeFileSync "#{destPre}#{siteName}/mystories.json","myStories="+JSON.stringify collection.toJSON()
+  fs.writeFileSync './nowstories.json', JSON.stringify stories.toWriteable()
+  console.log "mv nowstories to stories244, OK?"
+  process.exit 0
   
 task 'new','create new site,category, slug',(cli)->
   [myName,siteName,category,slug] = cli.arguments
