@@ -70,12 +70,10 @@ db[id="#{story.get 'id'}"] =
   #{story.fieldsOf 0}
 #
       """
-      
     story.set srp.db
     
-    # now publish the story
     console.log "processed #{slug}"
-    
+    # now publish the story
     # remove bogus category of '-' for index files
     category = '.' if category == '-'
 
