@@ -13,4 +13,3 @@
       
     initialize: () ->
       super()
-      console.debug 'Story#initialize'

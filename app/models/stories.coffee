@@ -19,7 +19,6 @@ class Stories extends Collection
     @fetch()
 
   fetch: =>
-    console.debug 'stories#fetch'
     @push @someStories
 module.exports =
   allStories: new Stories allStories
