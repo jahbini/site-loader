@@ -80,8 +80,9 @@ db[id="#{story.get 'id'}"] =
     if story.canPublish()
       if !sitesStories[siteName]
         sitesStories[siteName] = new Sites
-      sitesStories[siteName].add story
-      activeStories.add story
+      if 'error' != story.get 'category'
+        sitesStories[siteName].add story
+        activeStories.add story
       console.log "publishing to #{destPre}#{siteName}/#{category}/#{slug}.html"
       execSync "mkdir -p #{destPre}#{siteName}/#{category}"
       execSync "cp -rf #{storySrcDir} #{destPre}#{siteName}/#{category} || true"
