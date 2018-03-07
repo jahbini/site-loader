@@ -14,7 +14,7 @@ SitesJSON = require './sitedef.json'
 sites = buildSites SitesJSON
 
 #process.exit 0
-StoriesJSON = require './stories244.json'
+StoriesJSON = require './story-db.json'
 {Story,Stories,buildStories,makeStory} = require './lib/story-stories.coffee'
 stories = buildStories StoriesJSON
 
@@ -51,8 +51,13 @@ task 'srp','split, run and publish', (cli)->
   # if one of the stories has modified the DB, write it back out
   dbHelper = ()->
     if dbChanged
-      fs.writeFileSync './nowstories.json', JSON.stringify stories.toWriteable()
-      
+      fs.writeFileSync './story-db.json', JSON.stringify stories.toWriteable()
+    # write out the new json db files
+    for siteName,collection of sitesStories
+      fs.writeFileSync "#{destPre}#{siteName}/allstories.json","allStories="+JSON.stringify activeStories.toJSON()
+      fs.writeFileSync "#{destPre}#{siteName}/mystories.json","myStories="+JSON.stringify collection.toJSON()
+    return
+    
   doStory =(story)->
     srp.expand story
     theSite = sites.get story.get 'site'
@@ -96,12 +101,7 @@ db[id="#{story.get 'id'}"] =
     
   CoffeeScript.run fs.readFileSync('./lib/split-run-publish.coffee').toString()
   taskHelper cli, dbHelper, doStory
-  # write out the new json db files
-  for siteName,collection of sitesStories
-    fs.writeFileSync "#{destPre}#{siteName}/allstories.json","allStories="+JSON.stringify activeStories.toJSON()
-    fs.writeFileSync "#{destPre}#{siteName}/mystories.json","myStories="+JSON.stringify collection.toJSON()
-  fs.writeFileSync './nowstories.json', JSON.stringify stories.toWriteable()
-  console.log "mv nowstories to stories244, OK?"
+
   process.exit 0
   
 task 'new','create new site,category, slug',(cli)->
