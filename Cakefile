@@ -1,9 +1,7 @@
 #cakefile
-chokidar=require 'chokidar'
 Backbone = require 'backbone'
 _=require 'underscore'
 fs = require 'fs'
-moment = require 'moment'
 CoffeeScript = require 'coffee-script'
 Cson = require 'cson'
 
@@ -90,7 +88,10 @@ db[id="#{story.get 'id'}"] =
         activeStories.add story
       console.log "publishing to #{destPre}#{siteName}/#{category}/#{slug}.html"
       execSync "mkdir -p #{destPre}#{siteName}/#{category}"
-      execSync "cp -rf #{storySrcDir} #{destPre}#{siteName}/#{category} || true"
+      try
+        if fs.statSync(storySrcDir)
+          execSync "cp -rf #{storySrcDir} #{destPre}#{siteName}/#{category} || true"
+      catch
       fs.writeFileSync "./public-#{siteName}/#{category}/#{slug}.html",srp.rendered
     else
       execSync "rm -f #{destPre}#{siteName}/#{category}/#{slug}.html"
@@ -126,60 +127,9 @@ db[id="#{newStory.get 'id'}"] =
   fs.writeFileSync storySourcePath, newFile.join '\n'
   # update DB
   stories.add newStory
-  fs.writeFileSync "nowstories.json", JSON.stringify stories.toWriteable()
+  fs.writeFileSync "story-db.json", JSON.stringify stories.toWriteable()
   process.exit 0
-  
-  
-brunchify = (theSite,thePort,options) ->
-    try
-      console.log "Creating App for #{theSite}"
-      opts=process.env
-      opts["SITE"] = theSite
-      brunch = spawn "brunch", ['watch', '-s', "-P", thePort],{
-        env:opts
-      }
-    catch badHoodoo
-      console.log badHoodoo
-      process.exit()
 
-    brunch.on 'error',(badHoodoo)->
-      console.log badHoodoo
-      console.log "Death from #{theSite}"
-      process.exit()
-
-    brunch.stdout.on 'data', (data) ->
-        console.log "#{theSite}::#{data}"
-
-    brunch.stderr.on 'data', (data) ->
-        console.log "#{theSite}::#{data}
-
-    brunch.on 'exit', (code) ->
-        console.log "#{theSite}:: exit with code: #{code}"
-
-    return brunch
-
-
-task 'upload',"Rsync all Sites to the Cloud.", ()->
-  Rsync = require('rsync');
-  for domain in fs.readdirSync 'domains'
-    subSite = (require domain)[domain]
-    console.log "Starting Rsync on site #{domain} -- #{subSite.title}"
-    # Build the command
-    rsync = new Rsync()
-      .shell 'ssh'
-      .flags 'vraz'
-      .delete()
-      .exclude '.git'
-      .exclude '.DS_Store'
-      .source "./public-#{domain}/"
-      .destination subSite.rsyncDestination
-
-    #Execute the command
-    rsync.execute (error, code, cmd)->
-      #we're done
-      console.log "Error (#{error}) on rsync for #{subSite}" if error
-      console.log "rsync exit code #{code}"
-      console.log "rsync on #{subSite}:", cmd
 
 task 'dumpSites','sites to JSON',()->
   console.log JSON.stringify sites.toWriteable()
