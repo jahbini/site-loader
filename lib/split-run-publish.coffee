@@ -31,7 +31,7 @@ srp.expand = (story)->
 #preamble
     """
     fs.readFileSync siteTemplateFile,'utf-8'
-    fs.readFileSync storySourcePath,'utf-8'
+    srp.source = fs.readFileSync storySourcePath,'utf-8'
     """
 #postamble
 srp.rendered = rendered

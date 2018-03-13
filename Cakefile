@@ -18,6 +18,7 @@ stories = buildStories StoriesJSON
 
 sitesStories = {}
 activeStories = new Stories
+dbChanged = false
 
 analyzeRawStories = ()->
   allFields = ''
@@ -39,6 +40,7 @@ taskHelper = (cli,next,work=null)->
   else for id in drafts
     work stories.get id
   process.exit 0 unless next
+  console.log "finalizing"
   next()
   #execSync "cat domains/#{siteName}/templates/#{siteName}template.coffee #{storySrcPath} | coffee --stdio >#{destPre}#{siteName}/#{category}/#{slug}.html"
   
@@ -48,6 +50,7 @@ task 'srp','split, run and publish', (cli)->
   dbChanged = false
   # if one of the stories has modified the DB, write it back out
   dbHelper = ()->
+    console.log "FINAL",dbChanged
     if dbChanged
       fs.writeFileSync './story-db.json', JSON.stringify stories.toWriteable()
     # write out the new json db files
@@ -57,7 +60,8 @@ task 'srp','split, run and publish', (cli)->
     return
     
   doStory =(story)->
-    srp.expand story
+    srp.expand story # populates srp. source, rendered and db from the story
+    storyId = story.get 'id'
     theSite = sites.get story.get 'site'
     slug = story.get 'slug'
     category = story.get 'category'
@@ -67,14 +71,17 @@ task 'srp','split, run and publish', (cli)->
     storySourcePath = "./#{storySrcDir}.coffee"
     story.on "change",->
       dbChanged = true
-      fs.appendFileSync storySourcePath,"""
-#
-db[id="#{story.get 'id'}"] =
+      front = srp.source.split "db[id=\"#{storyId}\"]"
+      front = front[0]
+      fs.writeFileSync storySourcePath,"""#{front}
+db[id="#{storyId}"] =
   #{story.fieldsOf 0}
 #
       """
-    story.set srp.db
-    
+    story.set srp.db #update all attributes from srp.db object
+    # some past mods that never need be done again
+    #story.unset 'sourcePath'
+    #story.set 'author', 'Copyright 2010-2018 ' + theSite.get 'author'
     console.log "processed #{slug}"
     # now publish the story
     # remove bogus category of '-' for index files
