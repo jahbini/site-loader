@@ -1,11 +1,11 @@
 domains/
-public/
+node_modules/
 *.swp
 app/published
 app/generated/
 logs/
 *.tgz
-public-*/
+public-*
 newSite/
 .c9/*
 
