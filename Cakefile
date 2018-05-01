@@ -20,6 +20,11 @@ sitesStories = {}
 activeStories = new Stories
 dbChanged = false
 
+# analyze all the stories gathering all the keys up so we have the 'universal' set of object keys
+# spit out a log entry when a new key is introduced
+#  why is this necessary? everytime a sory has been movdd from one db to another, some
+# keys are introdced, some made redundant, n/a or obsolete 
+## fortunately, it only needs to be done after each DB re-jigger
 analyzeRawStories = ()->
   allFields = ''
   stories.each (story)->
@@ -147,13 +152,11 @@ task 'dumpStories','stories to JSON',()->
 option '-i', '--id storyid', 'story ID to bump'
 
 Processes = {}
-task 'go','start up the siteMaster build on sites', ()->
+task 'go','brunch build on all siteMaster sites', ()->
   console.log "start"
   s = ['./lib']
   for theSite, thePort of Sites
     console.log "brunchify - #{theSite} - http://localhost:#{thePort}/"
     Processes[theSite] = brunchify theSite,thePort
     s.push "domains/#{theSite}"
-  console.log "starting Publisher on sites ",s
-  publishAll s
-  console.log "started"
+  console.log "built"

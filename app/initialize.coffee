@@ -13,7 +13,7 @@ PylonTemplate = Backbone.Model.extend
     Palx: require 'palx'
     Utils: require './lib/utils'
     Underscore: require 'underscore'
-    
+    Button: require './components/button'
 window.Pylon = Pylon = new PylonTemplate
 Pylon.on 'all', (event,rest...)->
   mim = event.match /((.*):.*):/
