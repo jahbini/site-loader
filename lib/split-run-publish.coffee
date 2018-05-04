@@ -7,8 +7,46 @@ _ = require 'underscore'
 fs = require 'fs'
 CoffeeScript = require 'coffee-script'
 
-blend= (l)->
-  CoffeeScript.run (l.join '\n')
+blend= (directories,l)->
+  newl = ''
+  sl = l
+  for s in l
+    fragment =s.split /^( *#include .*)$[\n\r]?/m
+    for subs in fragment
+      if subs.match  /^( *#include .*)$/
+        #console.log "match substring", subs
+        leading = subs.match /^ */
+        fileName = subs.replace /^ *#include /,''
+        contents = null
+        for directory in directories
+          if ! contents
+            try
+              contents = fs.readFileSync directory+fileName,'utf8'
+            catch
+              contents = null
+            
+        if !contents 
+          console.log "Fatal - no file #{directory+fileName} for #include"
+          process.exit 1
+        contents = contents.replace /^/gm,leading #prepend leading spaces
+        newl += contents.replace /[\s\uFEFF\xA0\n]+$/, '' # trim last line endings
+        #console.log "contents=",[contents]
+        newl += "\r\n"
+      else
+        newl += subs.replace /[\s\uFEFF\xA0\n]+$/, '' # trim last line endings
+        newl += "\r\n"
+
+#  console.log "done  ",[newl] 
+#  console.log "    l=",l
+#  console.log "origl=",sl
+#
+#
+#blend [
+# "wow"
+# "goomba\r\n 98765432\r\r\n <-trimmed???->\r\r"
+# "baba baba \r\n#include corny\r\n lalalax\r\n  #include blarney\r\nnonononoooo!"
+# ]
+  CoffeeScript.run newl
   return
   
 srp.expand = (story)->
@@ -19,14 +57,23 @@ srp.expand = (story)->
   category = category.replace /\ /g,'_'
   slug = story.get 'slug'
   
-  siteTemplateFile ="./domains/#{siteName}/templates/#{siteName}template.coffee"
-  storySrcDir = "./domains/#{siteName}/templates/#{category}/#{slug}"
-  storySourcePath = "./#{storySrcDir}.coffee"
+  templateDir = "./domains/#{siteName}/templates/"
+  siteTemplateFile ="#{templateDir}#{siteName}template.coffee"
+  categoryDir = "#{templateDir}#{category}/"
+  storySrcTmp = "#{categoryDir}#{slug}"
+  storySourcePath = "./#{storySrcTmp}.coffee"
+  storySrcDir = storySrcTmp + "/"
   htmlDest = "#{destPre}#{siteName}/#{category}/#{slug}.html"
-  
+  directories = [
+    storySrcDir
+    categoryDir
+    templateDir
+    "./includes/"
+    ]
+    
   #fs.writeFileSync storySourcePath, storySource
   
-  blend [
+  blend directories,[
     """
 #preamble
     """

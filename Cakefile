@@ -1,7 +1,18 @@
 #cakefile
 Backbone = require 'backbone'
-_=require 'underscore'
-fs = require 'fs'
+PylonTemplate = Backbone.Model.extend
+#  state: (require './models/state.coffee').state
+    #Mithril: require 'mithril'
+    #Mui: require 'mui'
+    #Mss: require 'mss-js'
+    #Halvalla: require 'halvalla/lib/halvalla-teacup'
+    #Palx: require 'palx'
+    #Utils: require './lib/utils'
+    Underscore: _ = require 'underscore'
+    fs: fs = require 'fs'
+    #Button: require './components/button'
+(window? || global).Pylon = Pylon = new PylonTemplate
+
 CoffeeScript = require 'coffee-script'
 Cson = require 'cson'
 
@@ -83,7 +94,9 @@ db[id="#{storyId}"] =
   #{story.fieldsOf 0}
 #
       """
+    storyId = "#{siteName}/#{category}/#{slug}"
     story.set srp.db #update all attributes from srp.db object
+    story.set 'id',storyId
     # some past mods that never need be done again
     #story.unset 'sourcePath'
     #story.set 'author', 'Copyright 2010-2018 ' + theSite.get 'author'

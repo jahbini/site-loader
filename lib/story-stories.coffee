@@ -65,6 +65,6 @@ makeStory = (site,category,slug)->
     TimeStamp: moment().valueOf() 
     debug: ""
     author: site.get 'author'
-    id: "#{site.get 'name'}#{category}#{slug}"
+    id: "#{site.get 'name'}/#{category}/#{slug}"
     name: slug
 module.exports = { Story, Stories, buildStories, makeStory }
