@@ -1,5 +1,6 @@
 #cakefile
 Backbone = require 'backbone'
+CoffeeScript = require 'coffee-script'
 PylonTemplate = Backbone.Model.extend
 #  state: (require './models/state.coffee').state
     #Mithril: require 'mithril'
@@ -7,13 +8,12 @@ PylonTemplate = Backbone.Model.extend
     #Mss: require 'mss-js'
     #Halvalla: require 'halvalla/lib/halvalla-teacup'
     #Palx: require 'palx'
-    #Utils: require './lib/utils'
+    fileOps: require './lib/file-ops.coffee'
     Underscore: _ = require 'underscore'
     fs: fs = require 'fs'
     #Button: require './components/button'
 (window? || global).Pylon = Pylon = new PylonTemplate
 
-CoffeeScript = require 'coffee-script'
 Cson = require 'cson'
 
 {spawn,exec,execSync} = require 'child_process'
@@ -104,7 +104,8 @@ db[id="#{storyId}"] =
     # now publish the story
     # remove bogus category of '-' for index files
     category = '.' if category == '-'
-
+    
+    Pylon.fileOps.copyStoryAssets story
     if story.canPublish()
       if !sitesStories[siteName]
         sitesStories[siteName] = new Sites
@@ -112,18 +113,10 @@ db[id="#{storyId}"] =
         sitesStories[siteName].add story
         activeStories.add story
       console.log "publishing to #{destPre}#{siteName}/#{category}/#{slug}.html"
-      execSync "mkdir -p #{destPre}#{siteName}/#{category}"
-      try
-        if fs.statSync(storySrcDir)
-          execSync "cp -rf #{storySrcDir} #{destPre}#{siteName}/#{category} || true"
-      catch
       fs.writeFileSync "./public-#{siteName}/#{category}/#{slug}.html",srp.rendered
     else
       execSync "rm -f #{destPre}#{siteName}/#{category}/#{slug}.html"
-      execSync "mkdir -p #{destPre}#{siteName}/draft/#{category}"
-      execSync "cp -rf #{storySrcDir} #{destPre}#{siteName}/draft/#{category} || true"
       fs.writeFileSync "./public-#{siteName}/draft/#{category}/#{slug}.html",srp.rendered
-  
     
   CoffeeScript.run fs.readFileSync('./lib/split-run-publish.coffee').toString()
   taskHelper cli, dbHelper, doStory
