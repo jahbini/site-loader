@@ -27,8 +27,6 @@ StoriesJSON = require './story-db.json'
 {Story,Stories,buildStories,makeStory} = require './lib/story-stories.coffee'
 stories = buildStories StoriesJSON
 
-sitesStories = {}
-activeStories = new Stories
 dbChanged = false
 
 # analyze all the stories gathering all the keys up so we have the 'universal' set of object keys
@@ -64,15 +62,23 @@ global.srp = {sites:sites}
 task 'srp','split, run and publish', (cli)->
   destPre = "./public-"
   dbChanged = false
-  # if one of the stories has modified the DB, write it back out
+  # dbHelper writes out the story db for each site
   dbHelper = ()->
     console.log "FINAL",dbChanged
+    # if one of the stories has modified the DB, write it back out
     if dbChanged
       fs.writeFileSync './story-db.json', JSON.stringify stories.toWriteable()
     # write out the new json db files
-    for siteName,collection of sitesStories
-      fs.writeFileSync "#{destPre}#{siteName}/allstories.json","allStories="+JSON.stringify activeStories.toJSON()
-      fs.writeFileSync "#{destPre}#{siteName}/mystories.json","myStories="+JSON.stringify collection.toJSON()
+    activeStories = stories.filter (story)->
+      return story?.canPublish() && 'error' != story.get 'category'
+    sites.forEach (site)->
+      siteName = site.get 'name'
+      sID = site.id
+      myStories = stories.filter (story)->
+        return story?.canPublish() && (sID == story.get 'site') && 'error' != story.get 'category'
+        
+      fs.writeFileSync "#{destPre}#{siteName}/allstories.json","allStories="+JSON.stringify activeStories
+      fs.writeFileSync "#{destPre}#{siteName}/mystories.json","myStories="+JSON.stringify myStories
     return
     
   doStory =(story)->
@@ -107,11 +113,6 @@ db[id="#{storyId}"] =
     
     Pylon.fileOps.copyStoryAssets story
     if story.canPublish()
-      if !sitesStories[siteName]
-        sitesStories[siteName] = new Sites
-      if 'error' != story.get 'category'
-        sitesStories[siteName].add story
-        activeStories.add story
       console.log "publishing to #{destPre}#{siteName}/#{category}/#{slug}.html"
       fs.writeFileSync "./public-#{siteName}/#{category}/#{slug}.html",srp.rendered
     else
@@ -120,7 +121,6 @@ db[id="#{storyId}"] =
     
   CoffeeScript.run fs.readFileSync('./lib/split-run-publish.coffee').toString()
   taskHelper cli, dbHelper, doStory
-
   process.exit 0
   
 task 'new','create new site,category, slug',(cli)->
