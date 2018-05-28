@@ -50,6 +50,7 @@ blend= (directories,l)->
   return
   
 srp.expand = (story)->
+  console.log "expanding", story.id
   destPre = './public-'
   theSite = srp.sites.get story.get 'site'
   siteName = theSite.get 'name'
@@ -81,6 +82,9 @@ srp.expand = (story)->
     srp.source = fs.readFileSync storySourcePath,'utf-8'
     """
 #postamble
+if renderer?
+  page = new renderer db[id]
+  rendered = T.render page.html
 srp.rendered = rendered
 srp.db= db[id]
     """

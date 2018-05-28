@@ -13,8 +13,10 @@ PylonTemplate = Backbone.Model.extend
     Palx: require 'palx'
     Utils: require './lib/utils'
     Underscore: require 'underscore'
-    Button: require './components/button'
 window.Pylon = Pylon = new PylonTemplate
+
+Pylon.Button = require './components/button' # Pylon is assumed to be a global for this guy
+
 Pylon.on 'all', (event,rest...)->
   mim = event.match /((.*):.*):/
   return null if !mim || mim[2] != 'systemEvent'
