@@ -20,13 +20,13 @@ module.exports = T.bless class Storybar
     intermediate = collection.filter filter,@
     story = null
     until story
-      story = collection.pop()
+      story = _.sample intermediate
       return null unless story
       badClass = 'category' == story.get 'className'
-      badHeadline = !(story.get 'headlines')
+      badHeadline = (story.get 'headlines') < 1
       story = null if badClass || badHeadline
     try
-      storyFrom = story.get('site').name
+      storyFrom = story.get('site')
     catch error
       console.log "Ailing Story",story
       return null
@@ -34,9 +34,10 @@ module.exports = T.bless class Storybar
     siteBase.shift()
     siteBase.unshift storyFrom
   
-    V=T.tag 'Link', ".goto.border.p2.inline-block",{
-      href: story.href 'http://'+siteBase.join '.'
-      }, =>
-        T.tag 'Badge', bg: 'gray.7', =>
-          T.tag 'Subhead','.h5', "From around the Web:"
-          T.tag 'Text', ".Text.h4","#{story.get 'title'}: #{_.sample story.get 'headlines'}"
+    return T.div ".c-card",->
+      T.div ".c-card__item.bg-silver",->
+        T.a ".c-link.c-link--brand",href: (story.href 'http://'+siteBase.join '.'),-> 
+          T.div ->
+            T.h4 ->
+              T.raw "From Around the Web: "
+              T.span ".u-text--quiet.u-text--highlight","#{story.get 'title'}: #{(_.sample story.get 'headlines')||''}"

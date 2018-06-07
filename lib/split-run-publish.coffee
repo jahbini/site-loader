@@ -50,7 +50,8 @@ blend= (directories,l)->
   return
   
 srp.expand = (story)->
-  console.log "expanding", story.id
+  console.log "expanding", story?.id || story? || "story null"
+  return unless story?
   destPre = './public-'
   theSite = srp.sites.get story.get 'site'
   siteName = theSite.get 'name'
@@ -83,7 +84,7 @@ srp.expand = (story)->
     """
 #postamble
 if renderer?
-  page = new renderer db[id]
+  page = new renderer db[id],db
   rendered = T.render page.html
 srp.rendered = rendered
 srp.db= db[id]

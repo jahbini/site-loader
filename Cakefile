@@ -52,6 +52,8 @@ taskHelper = (cli,next,work=null)->
     for story in stories.models
       work story
   else for id in drafts
+    s = stories.get id
+    console.log "no story at #{id}";continue unless s
     work stories.get id
   process.exit 0 unless next
   console.log "finalizing"
@@ -76,6 +78,23 @@ task 'srp','split, run and publish', (cli)->
       sID = site.id
       myStories = stories.filter (story)->
         return story?.canPublish() && (sID == story.get 'site') && 'error' != story.get 'category'
+      blackListFields = [ 'created','lastEdited','captureDate','TimeStamp']
+      #console.log "myStories",myStories
+      myStories = myStories.map (s)->
+        try
+          x=s.toJSON?() || s
+        catch badDog
+          console.log "BAD S",badDog
+          process.exit 0
+        return _.omit x, blackListFields
+      #console.log "myStories",myStories
+      activeStories= _.map activeStories,(s)->
+        try
+          x=s.toJSON?() || s
+        catch badDog
+          console.log "BAD X",s,badDog
+          process.exit 0
+        return _.omit x, blackListFields
         
       fs.writeFileSync "#{destPre}#{siteName}/allstories.json","allStories="+JSON.stringify activeStories
       fs.writeFileSync "#{destPre}#{siteName}/mystories.json","myStories="+JSON.stringify myStories

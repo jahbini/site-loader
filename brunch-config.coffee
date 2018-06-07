@@ -38,16 +38,16 @@ theResult =
     ],
     "css/vendor.css": [
       "normalize"
+      "blaze"
       "ace-css"
       "basscss-grid"
-      "blaze"
     ]
     nameCleaner: (path) =>
       c=path.replace /^app\//, ''
       c=c.replace ///^assets/#{siteName}///, ''
       c=c.replace ///^domains\////, ''
       c=c.replace ///#{siteName}[\/]brunch-payload-///,'payload-'
-      console.log "path Cleaner: #{path} - #{c}" if path.match "minify"
+      console.log "path Cleaner: #{path} - #{c}" if path.match "nothing to see here"
       return c
   files:
     javascripts:
@@ -65,8 +65,9 @@ theResult =
         after:  /helpers\//
 
     stylesheets:
-      order:
-        before: ['normalize', "ace-css", "basscss-grid","blaze"]
+      order:   # must use full names not anyMatch syntax
+        before: "node_modules/blaze/scss/dist/blaze.min.css"
+        after: [ "node_modules/ace-css/css/ace.css", "node_modules/basscss-grid/css/grid.css"]
       joinTo:
         'assets/css/app.css': [/^app/,///domains\/#{siteName}\/brunch-payload-///]
         'assets/css/vendor.css': ///^vendor|^bower_components|^node_modules///
@@ -88,8 +89,8 @@ theResult =
 
     styles: {
       "blaze": ["scss/dist/blaze.min.css"]
-      "basscss-grid": [ "css/grid.css" ]
       "ace-css": [ "css/ace.css" ]
+      "basscss-grid": [ "css/grid.css" ]
     }
 
   plugins:
