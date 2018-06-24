@@ -6,16 +6,24 @@ B = require 'backbone'
 #Link = T.bless Link
 #PanelHeader = T.bless PanelHeader
 
-
 Template = require "payload-/#{siteHandle}.coffee"
 template = new Template T
 
 module.exports =  T.bless class Sidebar extends B.Model
   displayName: 'Sidebar'
   clickHandler:(e)=> 
-    targ = e.currentTarget
-    targ.setAttribute 'aria-expanded', if 'false' == targ.getAttribute('aria-expanded') then 'true' else 'false'
+    debugger
+    targ = e.currentTarget.parentNode.childNodes[1]
+    if "true" == targ.getAttribute "aria-expanded"
+      targ.setAttribute 'aria-expanded', false
+      targ.setAttribute 'hidden',"hidden"
+    else 
+      targ.setAttribute 'aria-expanded', 'true'
+      targ.removeAttribute 'hidden'
+    return
+    
   view: (vnode)=>
+    debugger
     collection = vnode.attrs.collection
     filter = vnode.attrs.filter || ()->true
     intermediate = collection.filter filter,@
@@ -30,8 +38,7 @@ module.exports =  T.bless class Sidebar extends B.Model
         catPrefix = category.replace /[^\/]/g,''
         catPrefix = catPrefix.replace /\//g, ' -'
         catPostfix = catPostfix.toString().replace /\//g, '- '
-        headliner = _(stories).find (story)=>
-        #find index for this category
+        headliner = _(stories).find (story)=> #find index for this category
           attrX =
             'aria-expanded':
               'false'
@@ -39,19 +46,19 @@ module.exports =  T.bless class Sidebar extends B.Model
               @clickHandler
             role:
               'heading'
-          T.div '.Panel.c-card.c-card--accordion', =>
+          T.div '.btn-group.btn-group-vertical', =>
             if headliner
-              T.button '.c-card__control', attrX, =>
+              T.button ".btn.btn-group.btn-outline-light.btn-block", attrX, =>T.h5 '', =>
                 T.text "#{category}: "
-                T.em ".h4", _.sample headliner.get 'headlines'
+                T.em ".h6", _.sample headliner.get 'headlines'
             else
-              T.button '.c-card__control', attrX, "#{catPrefix} #{catPostfix}"
-            T.section ".pr1.c-card__item.c-card__item--pane", =>
-              T.ul ".c-list c-list--unstyled",=>
+              T.button ".btn.btn-group.btn-outline-light.btn-block", attrX, => T.h6 '', "#{catPrefix} #{catPostfix}"
+            T.section ".pr1.btn-group.btn-outline-light", hidden: "hidden", "aria-expanded":'false', =>
+              T.ul ".my-2",=>
                 _(stuff[category]).each (story) =>
                   return if 'category' == story.get 'className'
-                  T.li ".c-list__item.b1.mb1", =>
-                    T.a ".Link",
+                  T.li "", =>
+                    T.a "",
                       'color': 'white'
                       #bg: 'gray.8'
                       href: if siteHandle == story.get 'siteHandle'

@@ -41,6 +41,7 @@ theResult =
       "blaze"
       "ace-css"
       "basscss-grid"
+      "bootstrap"
     ]
     nameCleaner: (path) =>
       c=path.replace /^app\//, ''
@@ -67,7 +68,7 @@ theResult =
     stylesheets:
       order:   # must use full names not anyMatch syntax
         before: "node_modules/blaze/scss/dist/blaze.min.css"
-        after: [ "node_modules/ace-css/css/ace.css", "node_modules/basscss-grid/css/grid.css"]
+        after: [ "node_modules/ace-css/css/ace.css", "node_modules/basscss-grid/css/grid.css", "node_modules/bootstrap/dist/css/bootstrap.min.css"]
       joinTo:
         'assets/css/app.css': [/^app/,///domains\/#{siteName}\/brunch-payload-///]
         'assets/css/vendor.css': ///^vendor|^bower_components|^node_modules///
@@ -89,6 +90,7 @@ theResult =
 
     styles: {
       "blaze": ["scss/dist/blaze.min.css"]
+      "bootstrap": ["dist/css/bootstrap.min.css"]
       "ace-css": [ "css/ace.css" ]
       "basscss-grid": [ "css/grid.css" ]
     }
