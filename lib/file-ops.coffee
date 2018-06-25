@@ -7,12 +7,11 @@ moveTo = '/home/mike/dev/node/sonar/tome'
 ###
 copy subdirectory files if they exist into the public and draft directories
 ###
-tld = "/site-master/"
 preparedDirectories = {}
 prepareDirectory= (d)->
   return if preparedDirectories[d]?.isDirectory() 
   paths = d.split '/'
-  startPath = ''
+  startPath = paths.shift()
   for path in paths
     continue unless path
     startPath += '/'+ path
@@ -35,13 +34,13 @@ prepareDirectory= (d)->
 module.exports.copyStoryAssets= (story)->
   # Loop through all the files in the temp directory
   [siteName,category,slug] = story.id.split '/'
-  storySourceAssets = "/site-master/sites/#{siteName}/templates/#{category}/#{slug}/"
+  storySourceAssets = "./domains/#{siteName}/templates/#{category}/#{slug}/"
   try
     fs.statSync storySourceAssets
   catch
     return 
-  storyPublishedAssets = "/site-master/public-#{story.id}/"
-  storyDraftAssets = "/site-master/public-#{siteName}/draft/#{category}/#{slug}/"
+  storyPublishedAssets = "./public-#{story.id}/"
+  storyDraftAssets = "./public-#{siteName}/draft/#{category}/#{slug}/"
   if story.canPublish()
     destDir = storyPublishedAssets
     wipeDir = storyDraftAssets

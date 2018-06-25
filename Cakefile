@@ -27,6 +27,7 @@ StoriesJSON = require './story-db.json'
 {Story,Stories,buildStories,makeStory} = require './lib/story-stories.coffee'
 stories = buildStories StoriesJSON
 
+destPre = "./public-"
 dbChanged = false
 
 # analyze all the stories gathering all the keys up so we have the 'universal' set of object keys
@@ -62,7 +63,6 @@ taskHelper = (cli,next,work=null)->
   
 global.srp = {sites:sites}
 task 'srp','split, run and publish', (cli)->
-  destPre = "./public-"
   dbChanged = false
   # dbHelper writes out the story db for each site
   dbHelper = ()->
@@ -132,11 +132,13 @@ db[id="#{storyId}"] =
     
     Pylon.fileOps.copyStoryAssets story
     if story.canPublish()
+      execSync "mkdir -p #{destPre}#{siteName}/#{category}"
       console.log "publishing to #{destPre}#{siteName}/#{category}/#{slug}.html"
-      fs.writeFileSync "./public-#{siteName}/#{category}/#{slug}.html",srp.rendered
+      fs.writeFileSync "#{destPre}#{siteName}/#{category}/#{slug}.html",srp.rendered
     else
       execSync "rm -f #{destPre}#{siteName}/#{category}/#{slug}.html"
-      fs.writeFileSync "./public-#{siteName}/draft/#{category}/#{slug}.html",srp.rendered
+      execSync "mkdir -p #{destPre}#{siteName}/draft/#{category}"
+      fs.writeFileSync "#{destPre}#{siteName}/draft/#{category}/#{slug}.html",srp.rendered
     
   CoffeeScript.run fs.readFileSync('./lib/split-run-publish.coffee').toString()
   taskHelper cli, dbHelper, doStory
