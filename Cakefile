@@ -54,7 +54,9 @@ taskHelper = (cli,next,work=null)->
       work story
   else for id in drafts
     s = stories.get id
-    console.log "no story at #{id}";continue unless s
+    unless s
+      console.log "no story at #{id}"
+      continue
     work stories.get id
   process.exit 0 unless next
   console.log "finalizing"
@@ -138,6 +140,7 @@ db[id="#{storyId}"] =
     else
       execSync "rm -f #{destPre}#{siteName}/#{category}/#{slug}.html"
       execSync "mkdir -p #{destPre}#{siteName}/draft/#{category}"
+      console.log "publishing draft to #{destPre}#{siteName}/draft/#{category}/#{slug}.html"
       fs.writeFileSync "#{destPre}#{siteName}/draft/#{category}/#{slug}.html",srp.rendered
     
   CoffeeScript.run fs.readFileSync('./lib/split-run-publish.coffee').toString()
@@ -146,8 +149,11 @@ db[id="#{storyId}"] =
   
 task 'new','create new site,category, slug',(cli)->
   [myName,siteName,category,slug] = cli.arguments
+  if siteName.match /.+\/.+\/.+/
+    [siteName,category,slug] = siteName.split '/'
+    
   site = sites.findWhere name: siteName
-  throw new error "bad Site -- #{siteName}" unless site
+  throw new Error "bad Site -- #{siteName}" unless site
   newStory = makeStory site, category,slug
   siteTemplateFile ="./domains/#{siteName}/templates/#{siteName}template.coffee"
   storySrcDir = "./domains/#{siteName}/templates/#{category}/#{slug}"

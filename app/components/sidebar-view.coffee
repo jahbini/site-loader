@@ -12,7 +12,6 @@ template = new Template T
 module.exports =  T.bless class Sidebar extends B.Model
   displayName: 'Sidebar'
   clickHandler:(e)=> 
-    debugger
     targ = e.currentTarget.parentNode.childNodes[1]
     if "true" == targ.getAttribute "aria-expanded"
       targ.setAttribute 'aria-expanded', false
@@ -23,7 +22,6 @@ module.exports =  T.bless class Sidebar extends B.Model
     return
     
   view: (vnode)=>
-    debugger
     collection = vnode.attrs.collection
     filter = vnode.attrs.filter || ()->true
     intermediate = collection.filter filter,@
