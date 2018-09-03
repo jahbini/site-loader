@@ -21,7 +21,7 @@ if !theSite
 theResult =
   # See http://brunch.io/#documentation for docs.
   paths:
-    public: "public-#{siteName}"
+    public: "domains/#{siteName}/public"
     watched:[
       "domains/#{siteName}/brunch-payload-"
       'vendor'

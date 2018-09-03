@@ -39,8 +39,8 @@ module.exports.copyStoryAssets= (story)->
     fs.statSync storySourceAssets
   catch
     return 
-  storyPublishedAssets = "./public-#{story.id}/"
-  storyDraftAssets = "./public-#{siteName}/draft/#{category}/#{slug}/"
+  storyPublishedAssets = "./domains/#{siteName}/public/#{category}/#{slug}/"
+  storyDraftAssets = "./domains/#{siteName}/public/draft/#{category}/#{slug}/"
   if story.canPublish()
     destDir = storyPublishedAssets
     wipeDir = storyDraftAssets
@@ -59,6 +59,7 @@ module.exports.copyStoryAssets= (story)->
       if stat.isFile()
         data = fs.readFileSync fromPath, encoding: null
         fs.writeFileSync toPath,data ,encoding: null,mode: 0o644
+        console.log "asset copy",fromPath,toPath
         #fs.copyFileSync fromPath, toPath,fs.constants.COPYFILE_FICLONE
         try
           fs.unlinkSync killPath

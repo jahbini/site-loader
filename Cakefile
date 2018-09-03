@@ -24,10 +24,13 @@ sites = buildSites SitesJSON
 
 #process.exit 0
 StoriesJSON = require './story-db.json'
-{Story,Stories,buildStories,makeStory} = require './lib/story-stories.coffee'
-stories = buildStories StoriesJSON
+{Story,Stories,makeStory} = require './lib/story-stories.coffee'
+stories = new Stories
+sites.forEach (s)->
+  StoriesJSON = require "./domains/#{s.get 'name'}/story-db.json"
+  stories.addStoriesFromJSON StoriesJSON
+#stories = buildStories StoriesJSON
 
-destPre = "./public-"
 dbChanged = false
 
 # analyze all the stories gathering all the keys up so we have the 'universal' set of object keys
@@ -61,7 +64,6 @@ taskHelper = (cli,next,work=null)->
   process.exit 0 unless next
   console.log "finalizing"
   next()
-  #execSync "cat domains/#{siteName}/templates/#{siteName}template.coffee #{storySrcPath} | coffee --stdio >#{destPre}#{siteName}/#{category}/#{slug}.html"
   
 global.srp = {sites:sites}
 task 'srp','split, run and publish', (cli)->
@@ -70,7 +72,12 @@ task 'srp','split, run and publish', (cli)->
   dbHelper = ()->
     console.log "FINAL",dbChanged
     # if one of the stories has modified the DB, write it back out
-    if dbChanged
+    if dbChanged || true
+      sites.forEach (site)->
+        siteStories = new Stories()
+        siteName = site.get 'name'
+        siteStories.add  stories.where site:siteName
+        fs.writeFileSync "./domains/#{siteName}/story-db.json", JSON.stringify siteStories.toWriteable()
       fs.writeFileSync './story-db.json', JSON.stringify stories.toWriteable()
     # write out the new json db files
     activeStories = stories.filter (story)->
@@ -98,8 +105,8 @@ task 'srp','split, run and publish', (cli)->
           process.exit 0
         return _.omit x, blackListFields
         
-      fs.writeFileSync "#{destPre}#{siteName}/allstories.json","allStories="+JSON.stringify activeStories
-      fs.writeFileSync "#{destPre}#{siteName}/mystories.json","myStories="+JSON.stringify myStories
+      fs.writeFileSync "./domains/#{siteName}/public/allstories.json","allStories="+JSON.stringify activeStories
+      fs.writeFileSync "./domains/#{siteName}/public/mystories.json","myStories="+JSON.stringify myStories
     return
     
   doStory =(story)->
@@ -134,14 +141,14 @@ db[id="#{storyId}"] =
     
     Pylon.fileOps.copyStoryAssets story
     if story.canPublish()
-      execSync "mkdir -p #{destPre}#{siteName}/#{category}"
-      console.log "publishing to #{destPre}#{siteName}/#{category}/#{slug}.html"
-      fs.writeFileSync "#{destPre}#{siteName}/#{category}/#{slug}.html",srp.rendered
+      execSync "mkdir -p ./domains/#{siteName}/public/#{category}"
+      console.log "publishing to ./domains/#{siteName}/public/#{category}/#{slug}.html"
+      fs.writeFileSync "./domains/#{siteName}/public/#{category}/#{slug}.html",srp.rendered
     else
-      execSync "rm -f #{destPre}#{siteName}/#{category}/#{slug}.html"
-      execSync "mkdir -p #{destPre}#{siteName}/draft/#{category}"
-      console.log "publishing draft to #{destPre}#{siteName}/draft/#{category}/#{slug}.html"
-      fs.writeFileSync "#{destPre}#{siteName}/draft/#{category}/#{slug}.html",srp.rendered
+      execSync "rm -f ./domains/#{siteName}/public/#{category}/#{slug}.html"
+      execSync "mkdir -p ./domains/#{siteName}/public/draft/#{category}"
+      console.log "publishing draft to ./domains/#{siteName}/public/draft/#{category}/#{slug}.html"
+      fs.writeFileSync "./domains/#{siteName}/public/draft/#{category}/#{slug}.html",srp.rendered
     
   CoffeeScript.run fs.readFileSync('./lib/split-run-publish.coffee').toString()
   taskHelper cli, dbHelper, doStory

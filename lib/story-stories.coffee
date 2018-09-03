@@ -31,19 +31,17 @@ class Stories extends Backbone.Collection
     return 
       results:@.map (site)->site.toWriteable()
       count: @.size()
-
-buildStories = (json)->
-  stories = new Stories
-  for story in json.results
-    fields=story.fields
-    fields.id = story.id
-    fields.snippets ='{}' unless fields.snippets
-    fields.author = '' unless fields.author
-    fields.name = story.name
-    delete fields.content
-    stories.add fields
-  stories
-
+  addStoriesFromJSON: (json)=>
+    for story in json.results
+      fields=story.fields
+      fields.id = story.id
+      fields.snippets ='{}' unless fields.snippets
+      fields.author = '' unless fields.author
+      fields.name = story.name
+      delete fields.content
+      @add fields
+    @
+  
 makeStory = (site,category,slug)->
   return new Story
     title: slug
@@ -67,4 +65,4 @@ makeStory = (site,category,slug)->
     author: site.get 'author'
     id: "#{site.get 'name'}/#{category}/#{slug}"
     name: slug
-module.exports = { Story, Stories, buildStories, makeStory }
+module.exports = { Story, Stories, makeStory }
