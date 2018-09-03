@@ -23,7 +23,7 @@ SitesJSON = require './sitedef.json'
 sites = buildSites SitesJSON
 
 #process.exit 0
-StoriesJSON = require './story-db.json'
+#StoriesJSON = require './story-db.json'
 {Story,Stories,makeStory} = require './lib/story-stories.coffee'
 stories = new Stories
 sites.forEach (s)->
