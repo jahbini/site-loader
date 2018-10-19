@@ -66,6 +66,12 @@ taskHelper = (cli,next,work=null)->
   next()
   
 global.srp = {sites:sites}
+writeSiteStories= (site)->
+  siteStories = new Stories()
+  siteName = site.get 'name'
+  siteStories.add  stories.where site:siteName
+  fs.writeFileSync "./domains/#{siteName}/story-db.json", JSON.stringify siteStories.toWriteable()
+  return
 task 'srp','split, run and publish', (cli)->
   dbChanged = false
   # dbHelper writes out the story db for each site
@@ -73,12 +79,8 @@ task 'srp','split, run and publish', (cli)->
     console.log "FINAL",dbChanged
     # if one of the stories has modified the DB, write it back out
     if dbChanged || true
-      sites.forEach (site)->
-        siteStories = new Stories()
-        siteName = site.get 'name'
-        siteStories.add  stories.where site:siteName
-        fs.writeFileSync "./domains/#{siteName}/story-db.json", JSON.stringify siteStories.toWriteable()
-      fs.writeFileSync './story-db.json', JSON.stringify stories.toWriteable()
+      sites.forEach writeSiteStories
+      
     # write out the new json db files
     activeStories = stories.filter (story)->
       return story?.canPublish() && 'error' != story.get 'category'
@@ -153,8 +155,28 @@ db[id="#{storyId}"] =
   CoffeeScript.run fs.readFileSync('./lib/split-run-publish.coffee').toString()
   taskHelper cli, dbHelper, doStory
   process.exit 0
+
+task 'newSite', 'create new site for publishing',(cli)->
+  [noname,siteName] = cli.arguments
+  site = sites.findWhere name: siteName
+  if site
+    console.log "Site already exists -- #{siteName}"
+    process.exit 1
+  siteSpec = null
+  try
+    siteSpec = require "./domains/#{siteName}/site.coffee"
+  catch
+  unless siteSpec
+    console.log "No file site.coffee in ./domains/#{siteName}/"
+    process.exit 1
+  siteSpec.fields.name = siteName
+  siteSpec.fields.id = siteName
+  sites.add siteSpec.fields
+  fs.writeFileSync "sitedef.json", JSON.stringify sites.toWriteable()
+  process.exit 0
   
-task 'new','create new site,category, slug',(cli)->
+  
+task 'newStory','create new story from site,category, slug',(cli)->
   [myName,siteName,category,slug] = cli.arguments
   if siteName.match /.+\/.+\/.+/
     [siteName,category,slug] = siteName.split '/'
@@ -177,9 +199,9 @@ db[id="#{newStory.get 'id'}"] =
     ]
   execSync "mkdir -p #{storySrcDir}"
   fs.writeFileSync storySourcePath, newFile.join '\n'
-  # update DB
+  # update DB and write to site's story-db.json
   stories.add newStory
-  fs.writeFileSync "story-db.json", JSON.stringify stories.toWriteable()
+  writeSiteStories site
   process.exit 0
 
 

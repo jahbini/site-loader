@@ -3,11 +3,6 @@
 T = Pylon.Halvalla
 B = require 'backbone'
 
-#Badge = T.bless R.Badge
-#Subhead = T.bless R.Subhead
-#Text = T.bless R.Text
-#Link = T.bless R.Link
-
 siteBase = topDomain.split '.'
 z=siteBase.shift()
 

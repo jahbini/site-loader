@@ -1,14 +1,13 @@
 T = Pylon.Halvalla
 B = require 'backbone'
 {  Panel, PanelHeader, Link } = Pylon.Rebass
-  
+###  
 Panel = T.bless Panel
 Link = T.bless Link
 PanelHeader = T.bless PanelHeader
 
 module.exports.holyGrail = T.bless class HolyGrail extends React.Component
 
-  constructor: (@props)->
     
   render: ()=>
     options = _.pluck @props, 'user','navLinks','story','page'
@@ -51,3 +50,4 @@ module.exports.PanelHeader =   class PanelHeader extends B.Model
   view: ()->
       T.crel 'Header', style: @style @vode.style
       
+###

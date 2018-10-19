@@ -37,9 +37,9 @@ module.exports =  T.bless class Sidebar extends B.Model
         catPrefix = catPrefix.replace /\//g, ' -'
         catPostfix = catPostfix.toString().replace /\//g, '- '
         headliner = _(stories).find (story)=> #find index for this category
+          autoExpand = Object.keys(stuff).length <4  #start with open if number of elements in this category is small
           attrX =
-            'aria-expanded':
-              'false'
+            'aria-expanded':autoExpand
             onclick:
               @clickHandler
             role:
@@ -51,7 +51,11 @@ module.exports =  T.bless class Sidebar extends B.Model
                 T.em ".h6", _.sample headliner.get 'headlines'
             else
               T.button ".btn.btn-group.btn-outline-light.btn-block", attrX, => T.h6 '', "#{catPrefix} #{catPostfix}"
-            T.section ".pr1.btn-group.btn-outline-light", hidden: "hidden", "aria-expanded":'false', =>
+            attrY =
+              'aria-expanded':autoExpand
+            attrY.hidden='hidden' unless autoExpand
+
+            T.section ".pr1.btn-group.btn-outline-light", attrY,=>
               T.ul ".my-2",=>
                 _(stuff[category]).each (story) =>
                   return if 'category' == story.get 'className'

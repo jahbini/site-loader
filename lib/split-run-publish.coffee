@@ -36,7 +36,7 @@ blend= (directories,l)->
         newl += subs.replace /[\s\uFEFF\xA0\n]+$/, '' # trim last line endings
         newl += "\r\n"
 
-#  console.log "done  ",[newl] 
+#  console.log "done  ",newl 
 #  console.log "    l=",l
 #  console.log "origl=",sl
 #
@@ -86,6 +86,9 @@ srp.expand = (story)->
 if renderer?
   page = new renderer db[id],db
   rendered = T.render page.html
+else
+  console.log "story does not define a renderer"
+  process.exit 1
 srp.rendered = rendered
 srp.db= db[id]
     """
