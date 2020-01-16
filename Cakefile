@@ -169,9 +169,11 @@ task 'newSite', 'create new site for publishing',(cli)->
   unless siteSpec
     console.log "No file site.coffee in ./domains/#{siteName}/"
     process.exit 1
-  siteSpec.fields.name = siteName
-  siteSpec.fields.id = siteName
-  sites.add siteSpec.fields
+  console.log siteSpec
+  
+  siteSpec.name = siteName
+  siteSpec.id = siteName
+  sites.add siteSpec
   fs.writeFileSync "sitedef.json", JSON.stringify sites.toWriteable()
   process.exit 0
   

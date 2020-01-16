@@ -1,4 +1,5 @@
 domains/
+domains
 node_modules/
 *.swp
 app/published
