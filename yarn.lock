@@ -896,9 +896,9 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
-bootstrap@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.1.1.tgz#3aec85000fa619085da8d2e4983dfd67cf2114cb"
+bootstrap@^4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.3.1.tgz#280ca8f610504d99d7b6b4bfc4b68cec601704ac"
 
 bower-config@^1.4.0:
   version "1.4.1"
@@ -1922,9 +1922,9 @@ gzip-brunch@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/gzip-brunch/-/gzip-brunch-1.3.0.tgz#98600a0e885f1c1d83a175379ca96f570d14a9f5"
 
-halvalla@^1.8.2:
-  version "1.8.3"
-  resolved "https://registry.yarnpkg.com/halvalla/-/halvalla-1.8.3.tgz#2a73e35476ffd775c4bb8c68987ef347c9bb6884"
+halvalla@^1.8.4:
+  version "1.8.4"
+  resolved "https://registry.yarnpkg.com/halvalla/-/halvalla-1.8.4.tgz#381e47dbe5499e2f35c9bc25656708bd664d33b8"
   dependencies:
     coffee-script ">=1.8.0"
 
