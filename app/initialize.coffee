@@ -6,14 +6,16 @@ Backbone = require 'backbone'
 
 PylonTemplate = Backbone.Model.extend
 #  state: (require './models/state.coffee').state
-    Mithril: require 'mithril'
-    #Mui: require 'mui'
-    Mss: require 'mss-js'
-    Halvalla: require 'halvalla/lib/halvalla-mithril'
-    Palx: require 'palx'
-    Utils: require './lib/utils'
-    Underscore: require 'underscore'
+   Mithril: require 'mithril'
+   #Mui: require 'mui'
+   Mss: require 'mss-js'
+   Halvalla: require 'halvalla/lib/halvalla-mithril'
+   Palx: require 'palx'
+   Utils: require './lib/utils'
+   Underscore: require 'underscore'
+   Backbone: Backbone
 window.Pylon = Pylon = new PylonTemplate
+window._$_ = Pylon
 
 Pylon.Button = require './components/button' # Pylon is assumed to be a global for this guy
 
