@@ -177,7 +177,18 @@ task 'newSite', 'create new site for publishing',(cli)->
   fs.writeFileSync "sitedef.json", JSON.stringify sites.toWriteable()
   process.exit 0
   
-  
+task 'useStory',"use template file at site/category/slug", (cli)->
+  [myName,siteName,category,slug] = cli.arguments
+  if siteName.match /.+\/.+\/.+/
+    [siteName,category,slug] = siteName.split '/'
+    
+  site = sites.findWhere name: siteName
+  throw new Error "bad Site -- #{siteName}" unless site
+  newStory = makeStory site, category,slug
+  stories.add newStory
+  writeSiteStories site
+  process.exit 0
+
 task 'newStory','create new story from site,category, slug',(cli)->
   [myName,siteName,category,slug] = cli.arguments
   if siteName.match /.+\/.+\/.+/

@@ -7,9 +7,6 @@ B = require 'backbone'
 #PanelHeader = T.bless PanelHeader
 
 
-Template = require "payload-/#{siteHandle}.coffee"
-template = new Template T
-
 module.exports =  T.bless class Fibonacci extends B.Model
   displayName: 'Fibonacci'
   

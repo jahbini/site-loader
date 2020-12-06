@@ -23,7 +23,7 @@ theResult =
   paths:
     public: "domains/#{siteName}/public"
     watched:[
-      "domains/#{siteName}/brunch-payload-"
+      "domains/#{siteName}/payload-"
       'vendor'
       'app'
       ]
@@ -33,8 +33,7 @@ theResult =
   modules:
     autoRequire: css: [
       siteName
-      "#{siteName}/brunch-payload-/#{siteName}"
-      "payload-/#{siteName}"
+      "#{siteName}/payload-/run-time.css"
     ],
     "css/vendor.css": [
       "normalize"
@@ -47,13 +46,13 @@ theResult =
       c=path.replace /^app\//, ''
       c=c.replace ///^assets/#{siteName}///, ''
       c=c.replace ///^domains\////, ''
-      c=c.replace ///#{siteName}[\/]brunch-payload-///,'payload-'
+      c=c.replace ///#{siteName}[\/]payload-///,'payload-'
       console.log "path Cleaner: #{path} - #{c}" if path.match "nothing to see here"
       return c
   files:
     javascripts:
       joinTo:
-        'assets/js/app.js': [/^app/,///domains/#{siteName}\/brunch-payload-/// ]
+        'assets/js/app.js': [/^app/,///domains/#{siteName}\/payload-/// ]
         'assets/js/vendor.js': (f)->
           pattern= ///vendor|bower_components|node_modules///
           #console.log pattern
@@ -70,7 +69,7 @@ theResult =
         before: "node_modules/blaze/scss/dist/blaze.min.css"
         after: [ "node_modules/ace-css/css/ace.css", "node_modules/basscss-grid/css/grid.css", "node_modules/bootstrap/dist/css/bootstrap.min.css"]
       joinTo:
-        'assets/css/app.css': [/^app/,///domains\/#{siteName}\/brunch-payload-///]
+        'assets/css/app.css': [/^app/,///domains\/#{siteName}\/payload-///]
         'assets/css/vendor.css': ///^vendor|^bower_components|^node_modules///
 
     templates:

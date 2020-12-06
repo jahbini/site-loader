@@ -42,7 +42,7 @@ newColors.black= document.styling.black
 newColors.white= document.styling.white
 
 # gather the global JSONs into Backbone collections 
-{myStories,allStories} = require 'models/stories'
+{myStories,allStories} = require './models/stories'
 
 # suppress react styling
 ###

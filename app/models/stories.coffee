@@ -1,5 +1,5 @@
-Collection = require 'models/base/collection',
-Story = require 'models/story'
+Collection = require '../models/base/collection.coffee',
+Story = require '../models/story.coffee'
 #allStories is global, as is myStories
 
 'use strict'

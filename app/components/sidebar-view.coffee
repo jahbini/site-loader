@@ -6,17 +6,17 @@ B = require 'backbone'
 #Link = T.bless Link
 #PanelHeader = T.bless PanelHeader
 
-Template = require "payload-/#{siteHandle}.coffee"
+Template = require "payload-/run-time-template.coffee"
 template = new Template T
 
 module.exports =  T.bless class Sidebar extends B.Model
   displayName: 'Sidebar'
-  clickHandler:(e)=> 
+  clickHandler:(e)=>
     targ = e.currentTarget.parentNode.childNodes[1]
     if "true" == targ.getAttribute "aria-expanded"
       targ.setAttribute 'aria-expanded', false
       targ.setAttribute 'hidden',"hidden"
-    else 
+    else
       targ.setAttribute 'aria-expanded', 'true'
       targ.removeAttribute 'hidden'
     return

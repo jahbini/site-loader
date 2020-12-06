@@ -21,7 +21,7 @@
     "babel-brunch": "^6.1.1",
     "babel-plugin-minify-dead-code-elimination": "^0.1.7",
     "babel-preset-react": "^6.24.1",
-    "brunch": "latest",
+    "brunch": "^2.10.12",
     "chokidar": "^1.5.1",
     "clean-css-brunch": "^1.8.0",
     "coffee-script-brunch": "latest",

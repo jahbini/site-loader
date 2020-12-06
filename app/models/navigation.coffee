@@ -1,5 +1,5 @@
 
-  Model = require 'models/base/model'
+  Model = require './models/base/model.coffee'
 
   'use strict'
 
