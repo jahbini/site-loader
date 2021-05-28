@@ -1,5 +1,14 @@
 results:
   -
+    id: ccbs.nia.edu.kh
+    name: ccbs.nia.edu.kh
+    fields:
+      author: 'James A. Hinds:Principle Investigator'
+      description: 'To recover ancient knowledge, gather new and assess it for practical uses of bamboo for the Cambodian People'
+      title: 'Cambodian Center for Bamboo Studies'
+      keywords: 'bamboo snow,dinoderus minutus,absorbent,dessicant,organic,bamboo byproduct,bamboo,bamboo growth,bamboo uses'
+      rsyncDestination: 'stjohnsjim@stjohnsjim.com:bamboosnow.com'
+  -
     id: bamboosnow
     name: bamboosnow
     fields:
@@ -55,9 +64,4 @@ results:
       gitHubSettings: ""
       twitterSettings: ""
       pinitSettings: ""
-  -
-    id: cambodiancenterforbamboostudies
-    name: cambodiancenterforbamboostudies
-    fields:
-      cambodiancenterforbamboostudies: {author: 'James A. Hinds:Principle Investigator', description: 'To recover ancient knowledge, gather new and assess it for practical uses of bamboo for the Cambodian People', title: 'Cambodian Center for Bamboo Studies', keywords: 'bamboo snow,dinoderus minutus,absorbent,dessicant,organic,bamboo byproduct,bamboo,bamboo growth,bamboo uses', lurl: cambodiancenterforbamboostudies.com, rsyncDestination: 'stjohnsjim@stjohnsjim.com:bamboosnow.com'}
 count: 5

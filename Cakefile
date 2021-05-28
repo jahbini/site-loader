@@ -22,8 +22,6 @@ SitesJSON = require './sitedef.json'
 {Site,Sites,buildSites} = require './lib/site-sites.coffee'
 sites = buildSites SitesJSON
 
-#process.exit 0
-#StoriesJSON = require './story-db.json'
 {Story,Stories,makeStory} = require './lib/story-stories.coffee'
 stories = new Stories
 sites.forEach (s)->
@@ -234,4 +232,21 @@ task 'go','brunch build on all siteMaster sites', ()->
     console.log "brunchify - #{theSite} - http://localhost:#{thePort}/"
     Processes[theSite] = brunchify theSite,thePort
     s.push "domains/#{theSite}"
-  console.log "built"
+  console.log  "built"
+
+task  'publish','rsync to destination servers',(cli = 'all') ->
+  [myname,siteNames...] = cli.arguments
+  console.log cli
+  sites.forEach (site)->
+    name = site.get 'name'
+    console.log 'name',name
+    if ('all' in siteNames) || name in siteNames
+      console.log 'synching',name
+      suffix = if name.match /\.kh$|\.org$/  then '' else '.com'
+      #execSync "scp -r ./domains/#{name}/public/* user-data@#{name+suffix}:/home/user-data/www/#{name+suffix}/"
+      console.log "rsync -v -d --exclude='draft' ./domains/#{name}/public/ user-data@#{name}#{suffix}:~/www/#{name}#{suffix}"
+      execSync "rsync -v -d --exclude='draft' ./domains/#{name}/public/ user-data@#{name}#{suffix}:~/www/#{name}#{suffix}"
+  process.exit 0
+
+
+
