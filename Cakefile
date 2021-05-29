@@ -244,8 +244,8 @@ task  'publish','rsync to destination servers',(cli = 'all') ->
       console.log 'synching',name
       suffix = if name.match /\.kh$|\.org$/  then '' else '.com'
       #execSync "scp -r ./domains/#{name}/public/* user-data@#{name+suffix}:/home/user-data/www/#{name+suffix}/"
-      console.log "rsync -v -d --exclude='draft' ./domains/#{name}/public/ user-data@#{name}#{suffix}:~/www/#{name}#{suffix}"
-      execSync "rsync -v -d --exclude='draft' ./domains/#{name}/public/ user-data@#{name}#{suffix}:~/www/#{name}#{suffix}"
+      console.log "rsync -vrzd --exclude='draft' ./domains/#{name}/public/ user-data@#{name}#{suffix}:~/www/#{name}#{suffix}"
+      execSync "rsync -vrzd --exclude='draft' ./domains/#{name}/public/ user-data@#{name}#{suffix}:~/www/#{name}#{suffix}"
   process.exit 0
 
 
