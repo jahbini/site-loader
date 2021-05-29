@@ -195,7 +195,7 @@ task 'newStory','create new story from site,category, slug',(cli)->
   site = sites.findWhere name: siteName
   throw new Error "bad Site -- #{siteName}" unless site
   newStory = makeStory site, category,slug
-  siteTemplateFile ="./domains/#{siteName}/templates/#{siteName}template.coffee"
+  siteTemplateFile ="./domains/#{siteName}/templates/site-template.coffee"
   storySrcDir = "./domains/#{siteName}/templates/#{category}/#{slug}"
   storySourcePath = "./#{storySrcDir}.coffee"
   newFile = [

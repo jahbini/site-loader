@@ -60,7 +60,7 @@ srp.expand = (story)->
   slug = story.get 'slug'
   
   templateDir = "./domains/#{siteName}/templates/"
-  siteTemplateFile ="#{templateDir}#{siteName}template.coffee"
+  siteTemplateFile ="#{templateDir}site-template.coffee"
   categoryDir = "#{templateDir}#{category}/"
   storySrcTmp = "#{categoryDir}#{slug}"
   storySourcePath = "./#{storySrcTmp}.coffee"
