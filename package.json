@@ -26,7 +26,7 @@
     "clean-css-brunch": "^1.8.0",
     "coffee-script-brunch": "latest",
     "javascript-brunch": ">= 1.0 < 1.8",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.6",
     "mkdirp": "^0.5.1",
     "pushserve": "^1.0.2",
     "slug": "^0.9.1",
