@@ -7,7 +7,7 @@ for aSite in Sites.results
   S[aSite.name] = aSite.fields
 Sites = S
 
-path = require 'path'
+# ???    path = require 'path'
 siteName = process.env.SITE
 if !siteName
   console.log "Must specify env on cmd line: SITE='' brunch ..."
@@ -24,29 +24,42 @@ theResult =
     public: "domains/#{siteName}/public"
     watched:[
       "domains/#{siteName}/payload-"
+      "domains/#{siteName}/templates"
       'vendor'
       'app'
       ]
   conventions:
     ignored: (path) -> /\.c9|\.git/.test path
-    assets: /(css.fonts|assets)[\\/]/
+    assets: (path)->
+      console.log  "JAH PATH", path
+      if path.match 'templates'
+        console.log  "JAH", path
+        return true
+      return true if path.match 'css/'
+      return true if path.match 'fonts/'
+      return true if path.match 'assets/'
+      return false
+
   modules:
-    autoRequire: css: [
-      siteName
-      "#{siteName}/payload-/run-time.css"
-    ],
-    "css/vendor.css": [
-      "normalize"
-      "blaze"
-      "ace-css"
-      "basscss-grid"
-      "bootstrap"
-    ]
+    autoRequire:
+      css: [
+        siteName
+        "#{siteName}/payload-/run-time.css"
+      ],
+      "css/vendor.css": [
+        "normalize"
+        "blaze"
+        "ace-css"
+        "basscss-grid"
+        "bootstrap"
+      ]
+
     nameCleaner: (path) =>
       c=path.replace /^app\//, ''
       c=c.replace ///^assets/#{siteName}///, ''
       c=c.replace ///^domains\////, ''
       c=c.replace ///#{siteName}[\/]payload-///,'payload-'
+      c=c.replace ///#{siteName}[\/]templates///,''
       console.log "path Cleaner: #{path} - #{c}" if path.match "nothing to see here"
       return c
   files:
@@ -95,7 +108,10 @@ theResult =
     }
 
   plugins:
-    order: [ 'coffeescript', 'babel' ]
+    'halvalla':
+      destination: "domains/#{siteName}/public/"
+                    
+    order: [ 'coffeescript','halvalla', 'babel' ]
     uglify:
       ignored: /app.js/
     gzip:

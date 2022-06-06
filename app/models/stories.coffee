@@ -1,9 +1,7 @@
+#allStories is global, as is myStories
 Collection = require '../models/base/collection.coffee',
 Story = require '../models/story.coffee'
-#allStories is global, as is myStories
-
-'use strict'
-
+ 
 class Stories extends Collection
 
   # Stories are local,, so no need to Mix in a SyncMachine
@@ -20,6 +18,8 @@ class Stories extends Collection
 
   fetch: =>
     @push @someStories
+allStories = {}
+myStories = {}
 module.exports =
   allStories: new Stories allStories
   myStories: new Stories myStories

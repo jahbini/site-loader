@@ -4,18 +4,20 @@ window.$= jQuery
 window._ = require 'lodash'
 Backbone = require 'backbone'
 
-PylonTemplate = Backbone.Model.extend
-#  state: (require './models/state.coffee').state
-   Mithril: require 'mithril'
-   #Mui: require 'mui'
-   Mss: require 'mss-js'
-   Halvalla: require 'halvalla/lib/halvalla-mithril'
-   Palx: require 'palx'
-   Utils: require './lib/utils'
-   Underscore: require 'underscore'
-   Backbone: Backbone
-window.Pylon = Pylon = new PylonTemplate
-window._$_ = Pylon
+try
+  PylonTemplate = Backbone.Model.extend()
+  window.Pylon = Pylon = new PylonTemplate
+    Mithril: require 'mithril'
+    #Mui: require 'mui'
+    #  Mss: require 'mss-js'
+    Halvalla: require 'halvalla/lib/halvalla-mithril'
+    Palx: require 'palx'
+    Utils: require './lib/utils'
+    Underscore: require 'underscore'
+    Backbone: Backbone
+  window._$_ = Pylon
+catch baddy
+  alert baddy
 
 Pylon.Button = require './components/button' # Pylon is assumed to be a global for this guy
 
@@ -27,19 +29,21 @@ Pylon.on 'all', (event,rest...)->
   Pylon.trigger mim[2],event,rest
   return null
 
+try
+  FontFaceObserver = require 'font-face-observer'
+  T = Pylon.Halvalla
+  Mithril = Pylon.Mithril
+  Sidebar = require './components/sidebar-view'
+  #Storybar = require './components/storybar-view'
+  #Fibonacci = require './components/fibonacci'
+  routes = require './routes'
+  #Palx = Pylon.Palx
+catch dingodog
+  alert dingodog
 
-FontFaceObserver = require 'font-face-observer'
-T = Pylon.Halvalla
-Mithril = Pylon.Mithril
-Sidebar = require './components/sidebar-view'
-Storybar = require './components/storybar-view'
-Fibonacci = require './components/fibonacci'
-routes = require './routes'
-Palx = Pylon.Palx
-
-newColors = Palx document.styling.palx
-newColors.black= document.styling.black
-newColors.white= document.styling.white
+#newColors = Palx document.styling.palx
+#newColors.black= document.styling.black
+#newColors.white= document.styling.white
 
 # gather the global JSONs into Backbone collections 
 {myStories,allStories} = require './models/stories'
@@ -61,7 +65,6 @@ injectGlobal"""
 
 # Initialize the application on DOM ready event.
 $ ->
-  
   mine =
     collection: myStories
     filter: (story)-> 'draft' != story.get 'category'
@@ -77,6 +80,7 @@ $ ->
     Mithril.render realNode, sidebarContents
   catch badDog
     console.log badDog
+  
   
   divs= $('.siteInvitation')
   divs.each (key,div)->

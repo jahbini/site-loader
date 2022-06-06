@@ -49,6 +49,7 @@
     "fs-extra": "^0.28.0",
     "gzip-brunch": "^1.3.0",
     "halvalla": "^1.8.4",
+    "halvalla-pages-brunch": "../development/halvalla-pages-brunch",
     "jquery": "^3.2.1",
     "jsonp": "^0.2.1",
     "loglevel": "^1.4.0",
