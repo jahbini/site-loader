@@ -4,20 +4,24 @@ window.$= jQuery
 window._ = require 'lodash'
 Backbone = require 'backbone'
 
-try
-  PylonTemplate = Backbone.Model.extend()
-  window.Pylon = Pylon = new PylonTemplate
-    Mithril: require 'mithril'
-    #Mui: require 'mui'
-    #  Mss: require 'mss-js'
-    Halvalla: require 'halvalla/lib/halvalla-mithril'
-    Palx: require 'palx'
-    Utils: require './lib/utils'
-    Underscore: require 'underscore'
-    Backbone: Backbone
-  window._$_ = Pylon
-catch baddy
-  alert baddy
+Mithril = require 'mithril'
+#Mui = require 'mui'
+#  Mss = require 'mss-js'
+Halvalla = require 'halvalla/lib/halvalla-mithril.js'
+Palx = require 'palx'
+Utils = require './lib/utils'
+Underscore = require 'underscore'
+
+PylonTemplate = Backbone.Model.extend
+  Mithril: Mithril
+  Halvalla: Halvalla
+  Palx: Palx
+  Utils: Utils
+  Underscore: Underscore
+  Backbone: Backbone
+
+window.Pylon = Pylon = new PylonTemplate()
+window._$_ = Pylon
 
 Pylon.Button = require './components/button' # Pylon is assumed to be a global for this guy
 
@@ -33,35 +37,22 @@ try
   FontFaceObserver = require 'font-face-observer'
   T = Pylon.Halvalla
   Mithril = Pylon.Mithril
-  Sidebar = require './components/sidebar-view'
   #Storybar = require './components/storybar-view'
   #Fibonacci = require './components/fibonacci'
   routes = require './routes'
   #Palx = Pylon.Palx
+  Sidebar = require './components/sidebar-view'
 catch dingodog
   alert dingodog
-
 #newColors = Palx document.styling.palx
 #newColors.black= document.styling.black
 #newColors.white= document.styling.white
 
 # gather the global JSONs into Backbone collections 
-{myStories,allStories} = require './models/stories'
-
-# suppress react styling
-###
-styled= require   'styled-components'
-{ injectGlobal, keyframes } = styled
-styled = styled.default
-
-injectGlobal""" 
-  body {
-    * {box-sizing: border-box; }
-    body { margin: 0; }
-    font-family: sans-serif;
-  }
-"""
-###
+try
+  {myStories,allStories} = require './models/stories.coffee'
+catch badDog
+  alert badDog
 
 # Initialize the application on DOM ready event.
 $ ->
@@ -72,15 +63,13 @@ $ ->
   theirs =
     collection: allStories
     filter: (story)-> 'draft' != story.get 'category'
-    
+
   try
     realNode = document.getElementById('sidebar')
-    #sidebarContents = T.Provider  theme: colors: newColors, Sidebar mine
     sidebarContents = Sidebar mine
     Mithril.render realNode, sidebarContents
   catch badDog
-    console.log badDog
-  
+    alert badDog
   
   divs= $('.siteInvitation')
   divs.each (key,div)->

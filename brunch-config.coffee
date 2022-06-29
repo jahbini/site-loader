@@ -42,6 +42,7 @@ theResult =
 
   modules:
     autoRequire:
+      js: [ "halvalla/lib/halvalla-mithril.js" ]
       css: [
         siteName
         "#{siteName}/payload-/run-time.css"
@@ -110,6 +111,7 @@ theResult =
   plugins:
     'halvalla':
       destination: "domains/#{siteName}/public/"
+      allStories: "./app/assets/assets/allstories.json"
                     
     order: [ 'coffeescript','halvalla', 'babel' ]
     uglify:
