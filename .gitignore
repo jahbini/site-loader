@@ -1,4 +1,5 @@
 domains/
+.DS_Store
 domains
 node_modules/
 *.swp
