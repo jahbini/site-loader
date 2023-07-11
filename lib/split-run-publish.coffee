@@ -17,13 +17,17 @@ blend= (directories,l)->
         #console.log "match substring", subs
         leading = subs.match /^ */
         fileName = subs.replace /^ *#include /,''
+        fileName = fileName.replace /halvalla$/,'coffee'
         contents = null
         for directory in directories
           if ! contents
             try
               contents = fs.readFileSync directory+fileName,'utf8'
             catch
-              contents = null
+              try
+                contents = fs.readFileSync directory+'_'+fileName,'utf8'
+              catch
+                contents = null
             
         if !contents 
           console.log "Fatal - no file #{directory+fileName} for #include"
@@ -60,7 +64,7 @@ srp.expand = (story)->
   slug = story.get 'slug'
   
   templateDir = "./domains/#{siteName}/templates/"
-  siteTemplateFile ="#{templateDir}site-template.coffee"
+  siteTemplateFile ="#{templateDir}_site-template.coffee"
   categoryDir = "#{templateDir}#{category}/"
   storySrcTmp = "#{categoryDir}#{slug}"
   storySourcePath = "./#{storySrcTmp}.coffee"
@@ -85,7 +89,10 @@ srp.expand = (story)->
 #postamble
 if renderer?
   page = new renderer db[id],db
-  rendered = T.render page.html
+  rendered = T.render page.bloviation
+  try
+    rendered = T.render page.storyBar
+  catch
 else
   console.log "story does not define a renderer"
   process.exit 1

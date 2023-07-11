@@ -138,7 +138,6 @@
         destination: `domains/${siteName}/public/`,
         allStories: "./app/assets/assets/allstories.json"
       },
-      order: ['coffeescript', 'halvalla', 'babel'],
       uglify: {
         ignored: /app.js/
       },

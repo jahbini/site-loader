@@ -36,12 +36,12 @@ module.exports.copyStoryAssets= (story)->
   [siteName,category,slug] = story.id.split '/'
   storySourceAssets = "./domains/#{siteName}/templates/#{category}/#{slug}/"
   try
+    console.log "Assets???",storySourceAssets
     fs.statSync storySourceAssets
   catch
-    console.error "Noassetdirectory ",storySourceAssets
     return 
-  storyPublishedAssets = "./domains/#{siteName}/public/#{category}/#{slug}/"
-  storyDraftAssets = "./domains/#{siteName}/public/draft/#{category}/#{slug}/"
+  storyPublishedAssets = "./domains/#{siteName}/svelte/#{category}/#{slug}/"
+  storyDraftAssets = "./domains/#{siteName}/svelte/draft/#{category}/#{slug}/"
   if story.canPublish()
     destDir = storyPublishedAssets
     wipeDir = storyDraftAssets
