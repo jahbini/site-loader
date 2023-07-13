@@ -45,6 +45,8 @@ analyzeRawStories = ()->
     console.log fieldsOf if fieldsOf != allFields
     allFields = fieldsOf
 
+storyMeta = []
+
 taskHelper = (cli,next,work=null)->
   if !work
     work=next
@@ -106,8 +108,8 @@ task 'srp','split, run and publish', (cli)->
           process.exit 0
         return _.omit x, blackListFields
 
-      fs.writeFileSync "./domains/#{siteName}/svelte/allstories.json","allStories="+JSON.stringify activeStories,null,2
-      fs.writeFileSync "./domains/#{siteName}/svelte/mystories.json","myStories="+JSON.stringify myStories,null,2
+      fs.writeFileSync "./domains/#{siteName}/svelte/allstories.json",JSON.stringify activeStories,null,2
+      fs.writeFileSync "./domains/#{siteName}/svelte/mystories.json",JSON.stringify myStories,null,2
     return
 
   doStory =(story)->
@@ -155,12 +157,14 @@ db[id="#{storyId}"] =
 """
     execSync "mkdir -p ./domains/#{siteName}/svelte/#{category}/#{slug}/"
     Pylon.fileOps.copyStoryAssets story
+    fs.writeFileSync "./domains/#{siteName}/svelte/#{category}/#{slug}/+page.json",JSON.stringify story.toWriteable(),"utf8",2
     console.log "publishing to ./domains/#{siteName}/svelte/#{category}/#{slug}/+page.html"
     fs.writeFileSync "./domains/#{siteName}/svelte/#{category}/#{slug}/+page.html",srp.rendered
 
     fs.writeFileSync "./domains/#{siteName}/svelte/#{category}/#{slug}/+page.svelte",sveltePre
-    execSync "html2pug  -f -c <./domains/#{siteName}/svelte/#{category}/#{slug}/+page.html >>./domains/#{siteName}/svelte/#{category}/#{slug}/+page.svelte"
+    execSync "html2pug  -f -c <./domains/#{siteName}/svelte/#{category}/#{slug}/+page.html | sed -e s/{{{/Tag:/  >>./domains/#{siteName}/svelte/#{category}/#{slug}/+page.svelte"
     fs.appendFileSync "./domains/#{siteName}/svelte/#{category}/#{slug}/+page.svelte",sveltePost
+    # fs.unlinkSync "./domains/#{siteName}/svelte/#{category}/#{slug}/+page.html"
 
 
   CoffeeScript.run fs.readFileSync('./lib/split-run-publish.coffee').toString()
